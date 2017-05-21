@@ -11,8 +11,8 @@ using System.Threading;
 // simple HTTP explanation
 // http://www.jmarshall.com/easy/http/
 
-namespace Bend.Util {
-
+namespace MarqueServer
+{
     public class HttpProcessor {
         public TcpClient socket;        
         public HttpServer srv;
@@ -175,7 +175,8 @@ namespace Bend.Util {
         protected IPAddress oIPAddress;
         TcpListener listener;
         bool is_active = true;
-       
+        public GameObject oGameObject;
+
         public HttpServer(IPAddress oIPAddress, int port) {
             this.port = port;
             this.oIPAddress = oIPAddress;
@@ -201,48 +202,74 @@ namespace Bend.Util {
             }
 
         }
-
         public abstract void handleGETRequest(HttpProcessor p);
         public abstract void handlePOSTRequest(HttpProcessor p, StreamReader inputData);
     }
 
     public class MyHttpServer : HttpServer {
+        private static string sCachedFilename;
+        private static string sCachedMakeImageSrcData;
+
         public MyHttpServer(IPAddress oIPAddress, int port)
             : base(oIPAddress, port) {
         }
         public override void handleGETRequest (HttpProcessor p)
 		{
 
-			if (p.http_url.Equals ("/Test.png")) {
-				Stream fs = File.Open("../../Test.png",FileMode.Open);
-
-				p.writeSuccess("image/png");
-				fs.CopyTo (p.outputStream.BaseStream);
-				p.outputStream.BaseStream.Flush ();
-			}
-
+            //if (p.http_url.Equals ("/Test.png")) {
+		    string sTestImage =
+		        "data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7";
+              //"data:image/jpg; base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2NjIpLCBxdWFsaXR5ID0gODUK/9sAQwAF"
+            sTestImage = MakeImageSrcData(oGameObject.Marque);
             Console.WriteLine("request: {0}", p.http_url);
             p.writeSuccess();
-            p.outputStream.WriteLine("<html><body><h1>test server</h1>");
-            p.outputStream.WriteLine("Current Time: " + DateTime.Now.ToString());
-            p.outputStream.WriteLine("url : {0}", p.http_url);
-
-            p.outputStream.WriteLine("<form method=post action=/form>");
-            p.outputStream.WriteLine("<input type=text name=foo value=foovalue>");
-            p.outputStream.WriteLine("<input type=submit name=bar value=barvalue>");
-            p.outputStream.WriteLine("</form>");
+            p.outputStream.WriteLine("<html><head><meta http-equiv=\"refresh\" content=\"15\"></head><body>");
+            p.outputStream.WriteLine(@"
+<div class='bgSizeContain'/>
+<style>
+.bgSizeContain {
+  height: 100%;
+  width: 100%;
+  background-image: url(
+" + sTestImage + @"
+  );
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+ </style>
+");
+		   // p.outputStream.WriteLine("<img src=\"" + MakeImageSrcData(oGameObject.Marque) + "\" style=\"max-width:100%;max-height:100%;height:10000;\">");
+		    p.outputStream.WriteLine("</body></html>");
+            
         }
 
         public override void handlePOSTRequest(HttpProcessor p, StreamReader inputData) {
-            Console.WriteLine("POST request: {0}", p.http_url);
-            string data = inputData.ReadToEnd();
+            //Console.WriteLine("POST request: {0}", p.http_url);
+            //string data = inputData.ReadToEnd();
 
-            p.writeSuccess();
-            p.outputStream.WriteLine("<html><body><h1>test server</h1>");
-            p.outputStream.WriteLine("<a href=/test>return</a><p>");
-            p.outputStream.WriteLine("postbody: <pre>{0}</pre>", data);
+            //p.writeSuccess();
+            //p.outputStream.WriteLine("<html><body><h1>test server</h1>");
+            //p.outputStream.WriteLine("<a href=/test>return</a><p>");
+            //p.outputStream.WriteLine("postbody: <pre>{0}</pre>", data);
             
+        }
 
+        string MakeImageSrcData(string sFilename)
+        {
+            if (sFilename == sCachedFilename)
+            {
+                return sCachedMakeImageSrcData;
+            }
+
+            if (File.Exists(sFilename))
+            {
+                sCachedFilename = sFilename;
+                sCachedMakeImageSrcData = @"data:image/" + Path.GetExtension(sFilename).Substring(1) + ";base64," +
+                       Convert.ToBase64String(File.ReadAllBytes(sFilename));
+                return sCachedMakeImageSrcData;
+            }
+
+            return string.Empty;
         }
     }
 

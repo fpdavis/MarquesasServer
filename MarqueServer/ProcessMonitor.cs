@@ -12,6 +12,12 @@ namespace MarqueServer
     {
         ManagementEventWatcher startWatch;
         ManagementEventWatcher stopWatch;
+        public GameObject oGameObject;
+
+        public ProcessMonitor()
+        {
+        }
+
         public void WaitForProcess()
         {
             startWatch = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStartTrace"));
