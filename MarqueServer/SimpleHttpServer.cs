@@ -215,43 +215,22 @@ namespace MarqueServer
         }
         public override void handleGETRequest (HttpProcessor p)
 		{
-
-            //if (p.http_url.Equals ("/Test.png")) {
-		    string sTestImage =
-		        "data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7";
-              //"data:image/jpg; base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2NjIpLCBxdWFsaXR5ID0gODUK/9sAQwAF"
-            sTestImage = MakeImageSrcData(oGameObject.Marque);
-            Console.WriteLine("request: {0}", p.http_url);
-            p.writeSuccess();
-            p.outputStream.WriteLine("<html><head><meta http-equiv=\"refresh\" content=\"15\"></head><body>");
-            p.outputStream.WriteLine(@"
-<div class='bgSizeContain'/>
-<style>
-.bgSizeContain {
-  height: 100%;
-  width: 100%;
-  background-image: url(
-" + sTestImage + @"
-  );
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
- </style>
-");
-		   // p.outputStream.WriteLine("<img src=\"" + MakeImageSrcData(oGameObject.Marque) + "\" style=\"max-width:100%;max-height:100%;height:10000;\">");
-		    p.outputStream.WriteLine("</body></html>");
-            
+		    switch (p.http_url.ToLower())
+		    {
+                case "/manual":
+                    p.writeSuccess();
+                    break;
+                //case "marque":
+                default:
+                    p.writeSuccess();
+                    p.outputStream.WriteLine(Properties.Resources.HTML_Marque.Replace("<!-- Base64Image -->", MakeImageSrcData(oGameObject.Marque)));
+                    break;
+            }
         }
 
-        public override void handlePOSTRequest(HttpProcessor p, StreamReader inputData) {
-            //Console.WriteLine("POST request: {0}", p.http_url);
-            //string data = inputData.ReadToEnd();
-
-            //p.writeSuccess();
-            //p.outputStream.WriteLine("<html><body><h1>test server</h1>");
-            //p.outputStream.WriteLine("<a href=/test>return</a><p>");
-            //p.outputStream.WriteLine("postbody: <pre>{0}</pre>", data);
-            
+        public override void handlePOSTRequest(HttpProcessor p, StreamReader inputData)
+        {
+            handleGETRequest(p);
         }
 
         string MakeImageSrcData(string sFilename)
