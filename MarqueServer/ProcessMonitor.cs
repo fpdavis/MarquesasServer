@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Management;
 using System.ComponentModel;
 
-namespace MarqueServer
+namespace MarquesasServer
 {
     class ProcessMonitor
     {

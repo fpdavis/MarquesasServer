@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unbroken.LaunchBox.Plugins;
 
-namespace MarqueServer
+namespace MarquesasServer
 {
     public class MarqueServer_ISystemMenuItemPlugin : ISystemMenuItemPlugin
     {

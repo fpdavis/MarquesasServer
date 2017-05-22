@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.Windows.Forms;
 
-namespace MarqueServer
+namespace MarquesasServer
 {
     public class PluginAppSettings : IDisposable
     {

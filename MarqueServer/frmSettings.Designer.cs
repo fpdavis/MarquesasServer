@@ -1,4 +1,4 @@
-﻿namespace MarqueServer
+﻿namespace MarquesasServer
 {
     partial class frmSettings
     {
@@ -38,10 +38,11 @@
             this.lblStatus = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.cmbAutomaticUpdates = new System.Windows.Forms.ComboBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnCheckForUpdates = new System.Windows.Forms.Button();
             this.linkLabelExampleLink = new System.Windows.Forms.LinkLabel();
             this.label4 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.cmbIPAddress = new System.Windows.Forms.ComboBox();
+            this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.SuspendLayout();
             // 
             // btnStartServer
@@ -53,6 +54,7 @@
             this.btnStartServer.TabIndex = 0;
             this.btnStartServer.Text = "Start Server";
             this.btnStartServer.UseVisualStyleBackColor = true;
+            this.btnStartServer.Click += new System.EventHandler(this.btnStartServer_Click);
             // 
             // btnSave
             // 
@@ -73,6 +75,7 @@
             this.btnClose.TabIndex = 2;
             this.btnClose.Text = "&Close";
             this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // label1
             // 
@@ -91,6 +94,7 @@
             this.txtPort.Size = new System.Drawing.Size(43, 20);
             this.txtPort.TabIndex = 4;
             this.txtPort.ValidatingType = typeof(int);
+            this.txtPort.TextChanged += new System.EventHandler(this.ValueChanged);
             // 
             // label2
             // 
@@ -133,16 +137,18 @@
             this.cmbAutomaticUpdates.Name = "cmbAutomaticUpdates";
             this.cmbAutomaticUpdates.Size = new System.Drawing.Size(75, 21);
             this.cmbAutomaticUpdates.TabIndex = 10;
+            this.cmbAutomaticUpdates.SelectedIndexChanged += new System.EventHandler(this.ValueChanged);
             // 
-            // button1
+            // btnCheckForUpdates
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Location = new System.Drawing.Point(197, 119);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 11;
-            this.button1.Text = "Update...";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnCheckForUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnCheckForUpdates.Location = new System.Drawing.Point(197, 119);
+            this.btnCheckForUpdates.Name = "btnCheckForUpdates";
+            this.btnCheckForUpdates.Size = new System.Drawing.Size(75, 23);
+            this.btnCheckForUpdates.TabIndex = 11;
+            this.btnCheckForUpdates.Text = "Update...";
+            this.btnCheckForUpdates.UseVisualStyleBackColor = true;
+            this.btnCheckForUpdates.Click += new System.EventHandler(this.btnCheckForUpdates_Click);
             // 
             // linkLabelExampleLink
             // 
@@ -163,23 +169,24 @@
             this.label4.TabIndex = 13;
             this.label4.Text = "Marque Link:";
             // 
-            // comboBox1
+            // cmbIPAddress
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(116, 91);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(75, 21);
-            this.comboBox1.TabIndex = 14;
+            this.cmbIPAddress.FormattingEnabled = true;
+            this.cmbIPAddress.Location = new System.Drawing.Point(116, 91);
+            this.cmbIPAddress.Name = "cmbIPAddress";
+            this.cmbIPAddress.Size = new System.Drawing.Size(75, 21);
+            this.cmbIPAddress.TabIndex = 14;
+            this.cmbIPAddress.SelectedIndexChanged += new System.EventHandler(this.ValueChanged);
             // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 226);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.cmbIPAddress);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.linkLabelExampleLink);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnCheckForUpdates);
             this.Controls.Add(this.cmbAutomaticUpdates);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.lblStatus);
@@ -196,6 +203,7 @@
             this.MinimizeBox = false;
             this.Name = "frmSettings";
             this.Text = "Marquesas Server settings";
+            this.Load += new System.EventHandler(this.frmSettings_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -212,9 +220,10 @@
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox cmbAutomaticUpdates;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnCheckForUpdates;
         private System.Windows.Forms.LinkLabel linkLabelExampleLink;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox cmbIPAddress;
+        private System.Windows.Forms.HelpProvider helpProvider1;
     }
 }

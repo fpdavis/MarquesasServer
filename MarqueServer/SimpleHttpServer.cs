@@ -11,7 +11,7 @@ using System.Threading;
 // simple HTTP explanation
 // http://www.jmarshall.com/easy/http/
 
-namespace MarqueServer
+namespace MarquesasServer
 {
     public class HttpProcessor {
         public TcpClient socket;        
@@ -171,12 +171,13 @@ namespace MarqueServer
 
     public abstract class HttpServer {
 
-        protected int port;
-        protected IPAddress oIPAddress;
+        public int port;
+        public IPAddress oIPAddress;
         TcpListener listener;
         bool is_active = true;
         public GameObject oGameObject;
 
+        public HttpServer(){}
         public HttpServer(IPAddress oIPAddress, int port) {
             this.port = port;
             this.oIPAddress = oIPAddress;
@@ -205,53 +206,6 @@ namespace MarqueServer
         public abstract void handleGETRequest(HttpProcessor p);
         public abstract void handlePOSTRequest(HttpProcessor p, StreamReader inputData);
     }
-
-    public class MyHttpServer : HttpServer {
-        private static string sCachedFilename;
-        private static string sCachedMakeImageSrcData;
-
-        public MyHttpServer(IPAddress oIPAddress, int port)
-            : base(oIPAddress, port) {
-        }
-        public override void handleGETRequest (HttpProcessor p)
-		{
-		    switch (p.http_url.ToLower())
-		    {
-                case "/manual":
-                    p.writeSuccess();
-                    break;
-                //case "marque":
-                default:
-                    p.writeSuccess();
-                    p.outputStream.WriteLine(Properties.Resources.HTML_Marque.Replace("<!-- Base64Image -->", MakeImageSrcData(oGameObject.Marque)));
-                    break;
-            }
-        }
-
-        public override void handlePOSTRequest(HttpProcessor p, StreamReader inputData)
-        {
-            handleGETRequest(p);
-        }
-
-        string MakeImageSrcData(string sFilename)
-        {
-            if (sFilename == sCachedFilename)
-            {
-                return sCachedMakeImageSrcData;
-            }
-
-            if (File.Exists(sFilename))
-            {
-                sCachedFilename = sFilename;
-                sCachedMakeImageSrcData = @"data:image/" + Path.GetExtension(sFilename).Substring(1) + ";base64," +
-                       Convert.ToBase64String(File.ReadAllBytes(sFilename));
-                return sCachedMakeImageSrcData;
-            }
-
-            return string.Empty;
-        }
-    }
-
 }
 
 

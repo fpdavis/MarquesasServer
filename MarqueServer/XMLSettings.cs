@@ -7,7 +7,7 @@ using System.Configuration;
 using System.IO;
 using System.Xml.Linq;
 
-namespace MarqueServer
+namespace MarquesasServer
 {
     class XMLSettings
     {
