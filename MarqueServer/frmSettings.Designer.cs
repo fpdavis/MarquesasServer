@@ -59,17 +59,18 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(197, 191);
+            this.btnSave.Location = new System.Drawing.Point(205, 191);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 1;
             this.btnSave.Text = "&Save";
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(116, 191);
+            this.btnClose.Location = new System.Drawing.Point(124, 191);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 2;
@@ -80,7 +81,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(83, 66);
+            this.label1.Location = new System.Drawing.Point(95, 66);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(29, 13);
             this.label1.TabIndex = 3;
@@ -88,9 +89,10 @@
             // 
             // txtPort
             // 
-            this.txtPort.Location = new System.Drawing.Point(116, 63);
+            this.txtPort.Location = new System.Drawing.Point(128, 63);
             this.txtPort.Mask = "00000";
             this.txtPort.Name = "txtPort";
+            this.txtPort.PromptChar = ' ';
             this.txtPort.Size = new System.Drawing.Size(43, 20);
             this.txtPort.TabIndex = 4;
             this.txtPort.ValidatingType = typeof(int);
@@ -99,7 +101,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(51, 95);
+            this.label2.Location = new System.Drawing.Point(63, 95);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(61, 13);
             this.label2.TabIndex = 6;
@@ -121,7 +123,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 124);
+            this.label3.Location = new System.Drawing.Point(24, 124);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(100, 13);
             this.label3.TabIndex = 9;
@@ -131,18 +133,18 @@
             // 
             this.cmbAutomaticUpdates.FormattingEnabled = true;
             this.cmbAutomaticUpdates.Items.AddRange(new object[] {
-            "Yes",
-            "No"});
-            this.cmbAutomaticUpdates.Location = new System.Drawing.Point(116, 120);
+            "On",
+            "Off"});
+            this.cmbAutomaticUpdates.Location = new System.Drawing.Point(128, 120);
             this.cmbAutomaticUpdates.Name = "cmbAutomaticUpdates";
-            this.cmbAutomaticUpdates.Size = new System.Drawing.Size(75, 21);
+            this.cmbAutomaticUpdates.Size = new System.Drawing.Size(43, 21);
             this.cmbAutomaticUpdates.TabIndex = 10;
             this.cmbAutomaticUpdates.SelectedIndexChanged += new System.EventHandler(this.ValueChanged);
             // 
             // btnCheckForUpdates
             // 
             this.btnCheckForUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnCheckForUpdates.Location = new System.Drawing.Point(197, 119);
+            this.btnCheckForUpdates.Location = new System.Drawing.Point(177, 119);
             this.btnCheckForUpdates.Name = "btnCheckForUpdates";
             this.btnCheckForUpdates.Size = new System.Drawing.Size(75, 23);
             this.btnCheckForUpdates.TabIndex = 11;
@@ -153,7 +155,7 @@
             // linkLabelExampleLink
             // 
             this.linkLabelExampleLink.AutoSize = true;
-            this.linkLabelExampleLink.Location = new System.Drawing.Point(116, 153);
+            this.linkLabelExampleLink.Location = new System.Drawing.Point(128, 153);
             this.linkLabelExampleLink.Name = "linkLabelExampleLink";
             this.linkLabelExampleLink.Size = new System.Drawing.Size(55, 13);
             this.linkLabelExampleLink.TabIndex = 12;
@@ -163,7 +165,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(43, 153);
+            this.label4.Location = new System.Drawing.Point(55, 153);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(69, 13);
             this.label4.TabIndex = 13;
@@ -172,9 +174,9 @@
             // cmbIPAddress
             // 
             this.cmbIPAddress.FormattingEnabled = true;
-            this.cmbIPAddress.Location = new System.Drawing.Point(116, 91);
+            this.cmbIPAddress.Location = new System.Drawing.Point(128, 91);
             this.cmbIPAddress.Name = "cmbIPAddress";
-            this.cmbIPAddress.Size = new System.Drawing.Size(75, 21);
+            this.cmbIPAddress.Size = new System.Drawing.Size(94, 21);
             this.cmbIPAddress.TabIndex = 14;
             this.cmbIPAddress.SelectedIndexChanged += new System.EventHandler(this.ValueChanged);
             // 
@@ -182,7 +184,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 226);
+            this.ClientSize = new System.Drawing.Size(292, 226);
             this.Controls.Add(this.cmbIPAddress);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.linkLabelExampleLink);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 
 namespace MarquesasServer
@@ -18,17 +19,42 @@ namespace MarquesasServer
         }
         public override void handleGETRequest(HttpProcessor p)
         {
+            // Cache the response in the browser using the Etag and If-None-Match
+            if (p.httpHeaders["If-None-Match"]?.ToString() == p.http_url.ToLower() + "-" + oGameObject.Title)
+            {
+                p.writeNotModified();
+                return;
+            }
+
+            string sHTMLResponse = string.Empty;
+
             switch (p.http_url.ToLower())
             {
                 case "/manual":
-                    p.writeSuccess();
+                    p.writeFailure();
                     break;
                 //case "/marque":
                 default:
-                    p.writeSuccess();
-                    p.outputStream.WriteLine(Properties.Resources.HTML_Marque.Replace("<!-- Base64Image -->", MakeImageSrcData(oGameObject.Marque)));
+                    sHTMLResponse = DoMarque(p);
                     break;
             }
+
+            if (!string.IsNullOrWhiteSpace(sHTMLResponse))
+            {
+                p.writeSuccess(p.http_url.ToLower() + "-" + oGameObject.Title);
+                p.outputStream.WriteLine(sHTMLResponse);
+            }
+            else
+            {
+                p.writeFailure();
+            }
+        }
+
+        private string DoMarque(HttpProcessor p)
+        {
+            return (Properties.Resources.HTML_Marque.Replace("<!-- Base64Image -->", MakeImageSrcData(oGameObject.Marque)));
+
+
         }
 
         public override void handlePOSTRequest(HttpProcessor p, StreamReader inputData)
@@ -38,11 +64,6 @@ namespace MarquesasServer
 
         string MakeImageSrcData(string sFilename)
         {
-            if (sFilename == sCachedFilename)
-            {
-                return sCachedMakeImageSrcData;
-            }
-
             if (File.Exists(sFilename))
             {
                 sCachedFilename = sFilename;

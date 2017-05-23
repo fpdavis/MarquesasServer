@@ -50,7 +50,7 @@ namespace MarquesasServer
         {
 
             helpProvider1.SetHelpString(cmbIPAddress, oPluginAppSettings.GetString("IPAddress_Help").Replace("  ", " "));
-            helpProvider1.SetHelpString(txtPort, oPluginAppSettings.GetString("txtPort_Help").Replace("  ", " "));
+            helpProvider1.SetHelpString(txtPort, oPluginAppSettings.GetString("Port_Help").Replace("  ", " "));
             helpProvider1.SetHelpString(cmbAutomaticUpdates, oPluginAppSettings.GetString("AutomaticUpdates_Help").Replace("  ", " "));
 
         }
@@ -81,8 +81,8 @@ namespace MarquesasServer
 
         private void StoreSettingsInAppStrings()
         {
-            oPluginAppSettings.SetString("MaxNumberOfLines", txtPort.Text);
-
+            oPluginAppSettings.SetString("Port", txtPort.Text);
+            oPluginAppSettings.SetString("IPAddress", cmbIPAddress.SelectedItem.ToString() == "All" ? "" : cmbIPAddress.SelectedItem.ToString());
             oPluginAppSettings.SetString("AutomaticUpdates", cmbAutomaticUpdates.SelectedItem.ToString() == "On" ? "True" : "False");
         }
 

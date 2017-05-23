@@ -155,15 +155,23 @@ namespace MarquesasServer
 
         }
 
-        public void writeSuccess(string content_type="text/html") {
-            outputStream.WriteLine("HTTP/1.0 200 OK");            
+        public void writeSuccess(string Etag, string content_type="text/html") {
+            outputStream.WriteLine("HTTP/1.1 200 OK");            
             outputStream.WriteLine("Content-Type: " + content_type);
+            outputStream.WriteLine("Etag: " + Etag);
             outputStream.WriteLine("Connection: close");
             outputStream.WriteLine("");
         }
 
         public void writeFailure() {
-            outputStream.WriteLine("HTTP/1.0 404 File not found");
+            outputStream.WriteLine("HTTP/1.1 404 File not found");
+            outputStream.WriteLine("Connection: close");
+            outputStream.WriteLine("");
+        }
+
+        public void writeNotModified()
+        {
+            outputStream.WriteLine("HTTP/1.1 304 Not Modified");
             outputStream.WriteLine("Connection: close");
             outputStream.WriteLine("");
         }
