@@ -16,7 +16,7 @@ namespace MarquesasServer
         static void Main(string[] args)
         {
             PluginAppSettings oPluginAppSettings = new PluginAppSettings();
-            List<MarquesasHttpServer> oaMarquesasHttpServers = new List<MarquesasHttpServer>();
+            //List<MarquesasHttpServer> oaMarquesasHttpServers = new List<MarquesasHttpServer>();
             GameObject oGameObject = new GameObject();
 
             frmSettings oFrmSettings = new frmSettings();
@@ -25,8 +25,15 @@ namespace MarquesasServer
             oGameObject.Title = "SelectedGame";
             oGameObject.Marque = @"C:\OneDrive\Data\Source\MarqueServer\ScreenShots\WindowsSecurityAlert.PNG";
             //oGameObject.Marque = @"C:\Users\pdavis.UMPH\Desktop\T0K631M3L-U0K63PQRW-d63ccb8475c7-512.jpg.e5c305a8468794ca6218e7d7b31eb355.jpg";
-//            new Spinup(oaMarquesasHttpServers, oPluginAppSettings, oGameObject);
+            //new Spinup(MarquesasHttpServers.RunningServers, oPluginAppSettings, oGameObject);
+
             
+            MarquesasHttpServerInstance.RunningServer.oGameObject = oGameObject;
+            MarquesasHttpServerInstance.RunningServer.port = oPluginAppSettings.GetInt("Port") == 0 ? 80 : oPluginAppSettings.GetInt("Port");
+            MarquesasHttpServerInstance.RunningServer.secure_port = oPluginAppSettings.GetInt("SecurePort") == 0 ? 443 : oPluginAppSettings.GetInt("SecurePort");
+            MarquesasHttpServerInstance.RunningServer.Initialize();
+            MarquesasHttpServerInstance.RunningServer.Start();
+
             //var oProcessMonitor = new ProcessMonitor();
             //oProcessMonitor.oGameObject = oGameObject;
             //oProcessMonitor.WaitForProcess();

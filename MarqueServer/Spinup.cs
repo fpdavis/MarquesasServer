@@ -33,56 +33,57 @@ namespace MarquesasServer
 
             Console.WriteLine();
 
-            if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["IPAddress"]))
-            {
-                Console.WriteLine("Using IP Address bindings from App.config...");
+        //    if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["IPAddress"]))
+          //  {
+                //Console.WriteLine("Using IP Address bindings from App.config...");
 
-                var saConfigIPAddresses = ConfigurationManager.AppSettings["IPAddress"].Split(',');
-                IPAddress oIPAddress;
+                //var saConfigIPAddresses = ConfigurationManager.AppSettings["IPAddress"].Split(',');
+                //IPAddress oIPAddress;
 
-                foreach (string sConfigIPAddress in saConfigIPAddresses)
-                {
-                    if (IPAddress.TryParse(sConfigIPAddress, out oIPAddress))
-                    {
-                        Console.WriteLine("   Binding to " + oIPAddress.ToString() + " on port " + iPort);
+                //foreach (string sConfigIPAddress in saConfigIPAddresses)
+                //{
+                //    if (IPAddress.TryParse(sConfigIPAddress, out oIPAddress))
+                //    {
+                //        Console.WriteLine("   Binding to " + oIPAddress.ToString() + " on port " + iPort);
 
-                        oaMarquesasHttpServers.Add(new MarquesasHttpServer());
-                        oaMarquesasHttpServers[0].port = iPort;
-                        oaMarquesasHttpServers[0].oIPAddress = oIPAddress;
-                        oaMarquesasHttpServers[0].oGameObject = oGameObject;
-                        Thread thread = new Thread(new ThreadStart(oaMarquesasHttpServers[0].listen));
-                        thread.Start();
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine("Binding to all available IP Addresses...");
+                     //   oaMarquesasHttpServers.Add(new MarquesasHttpServer(iPort));
+                  //      oaMarquesasHttpServers[0].port = iPort;
+                  //      oaMarquesasHttpServers[0].oIPAddress = oIPAddress;
+                //        oaMarquesasHttpServers[0].oGameObject = oGameObject;
+            //oaMarquesasHttpServers[0].Start();
+                  //      Thread thread = new Thread(new ThreadStart(oaMarquesasHttpServers[0].listen));
+                  //      thread.Start();
+                  //    }
+                  //}
+                  //  }
+                  //else
+                  //{
+                  //    Console.WriteLine("Binding to all available IP Addresses...");
 
-                foreach (var i in System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces())
-                    foreach (var oIPAddress in i.GetIPProperties().UnicastAddresses)
-                    {
-                        if (oIPAddress.Address.AddressFamily == AddressFamily.InterNetwork)
-                        {
-                            Console.WriteLine("   Binding to " + oIPAddress.Address.ToString() + " on port " + iPort);
+            //    foreach (var i in System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces())
+            //        foreach (var oIPAddress in i.GetIPProperties().UnicastAddresses)
+            //        {
+            //            if (oIPAddress.Address.AddressFamily == AddressFamily.InterNetwork)
+            //            {
+            //                Console.WriteLine("   Binding to " + oIPAddress.Address.ToString() + " on port " + iPort);
 
-                            try
-                            {
-                                oaMarquesasHttpServers.Add(new MarquesasHttpServer());
-                                oaMarquesasHttpServers[oaMarquesasHttpServers.Count - 1].port = iPort;
-                                oaMarquesasHttpServers[oaMarquesasHttpServers.Count - 1].oIPAddress = oIPAddress.Address;
-                                oaMarquesasHttpServers[oaMarquesasHttpServers.Count - 1].oGameObject = oGameObject;
-                                Thread thread = new Thread(new ThreadStart(oaMarquesasHttpServers[oaMarquesasHttpServers.Count - 1].listen));
-                                thread.Start();
-                            }
-                            catch
-                            {
-                                Console.WriteLine("Could not bind to " + oIPAddress.Address.ToString());
-                            }
-                        }
-                    }
-            }
-            
+            //                try
+            //                {
+            //                    oaMarquesasHttpServers.Add(new MarquesasHttpServer());
+            //                    oaMarquesasHttpServers[oaMarquesasHttpServers.Count - 1].port = iPort;
+            //                    oaMarquesasHttpServers[oaMarquesasHttpServers.Count - 1].oIPAddress = oIPAddress.Address;
+            //                    oaMarquesasHttpServers[oaMarquesasHttpServers.Count - 1].oGameObject = oGameObject;
+            //                    Thread thread = new Thread(new ThreadStart(oaMarquesasHttpServers[oaMarquesasHttpServers.Count - 1].listen));
+            //                    thread.Start();
+            //                }
+            //                catch
+            //                {
+            //                    Console.WriteLine("Could not bind to " + oIPAddress.Address.ToString());
+            //                }
+            //            }
+            //        }
+            //}
+
         }
 
         public void Dispose()

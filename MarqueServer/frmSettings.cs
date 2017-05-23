@@ -14,7 +14,6 @@ namespace MarquesasServer
     public partial class frmSettings : Form
     {
         private PluginAppSettings oPluginAppSettings = new PluginAppSettings();
-        private List<MarquesasHttpServer> oaMarquesasHttpServers = new List<MarquesasHttpServer>();
         private GameObject oGameObject = new GameObject();
 
         public frmSettings()
@@ -25,34 +24,55 @@ namespace MarquesasServer
 
         private void frmSettings_Load(object sender, EventArgs e)
         {
-            cmbIPAddress.Items.Add("All");
-
             // Available IP Addresses
             foreach (var i in System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces())
             foreach (var ua in i.GetIPProperties().UnicastAddresses)
             {
                 if (ua.Address.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    cmbIPAddress.Items.Add(ua.Address);
+                    //cmbIPAddress.Items.Add(ua.Address);
                 }
             }
-
-            cmbIPAddress.SelectedItem = string.IsNullOrWhiteSpace(oPluginAppSettings.GetString("IPAddress")) ? "All" : oPluginAppSettings.GetString("IPAddress");
-
+            
             txtPort.Text = oPluginAppSettings.GetInt("Port") == 0 ? "80" : oPluginAppSettings.GetInt("Port").ToString();
+            txtSecurePort.Text = oPluginAppSettings.GetInt("SecurePort") == 0 ? "443" : oPluginAppSettings.GetInt("SecurePort").ToString();
+
+            chkPortEnabled.Checked = oPluginAppSettings.GetBoolean("PortEnabled");
+            chkSecurePortEnabled.Checked = oPluginAppSettings.GetBoolean("SecurePortEnabled");
+
             cmbAutomaticUpdates.SelectedItem = oPluginAppSettings.GetBoolean("AutomaticUpdates") ? "On" : "Off";
+            
+            SetServerStatus();
 
             btnSave.Enabled = false;
             btnCheckForUpdates.Enabled = true;
         }
 
+        private void SetServerStatus()
+        {
+            if (MarquesasHttpServerInstance.RunningServer.IsRunning)
+            {
+                lblStatus.Text = "Running";
+                lblStatus.ForeColor = Color.DarkGreen;
+                btnStartServer.Text = "Stop Server";
+            }
+            else
+            {
+                lblStatus.Text = "Stopped";
+                lblStatus.ForeColor = Color.DarkRed;
+                btnStartServer.Text = "Start Server";
+            }
+        }
+
         private void SetHelpText()
         {
-
-            helpProvider1.SetHelpString(cmbIPAddress, oPluginAppSettings.GetString("IPAddress_Help").Replace("  ", " "));
             helpProvider1.SetHelpString(txtPort, oPluginAppSettings.GetString("Port_Help").Replace("  ", " "));
-            helpProvider1.SetHelpString(cmbAutomaticUpdates, oPluginAppSettings.GetString("AutomaticUpdates_Help").Replace("  ", " "));
+            helpProvider1.SetHelpString(chkPortEnabled, oPluginAppSettings.GetString("PortEnabled_Help").Replace("  ", " "));
 
+            helpProvider1.SetHelpString(txtSecurePort, oPluginAppSettings.GetString("SecurePort_Help").Replace("  ", " "));
+            helpProvider1.SetHelpString(chkSecurePortEnabled, oPluginAppSettings.GetString("SecurePortEnabled_Help").Replace("  ", " "));
+
+            helpProvider1.SetHelpString(cmbAutomaticUpdates, oPluginAppSettings.GetString("AutomaticUpdates_Help").Replace("  ", " "));          
         }
 
         private void ValueChanged(object sender, EventArgs e)
@@ -66,7 +86,20 @@ namespace MarquesasServer
             oGameObject.Title = "SelectedGame";
             oGameObject.Marque = @"C:\OneDrive\Data\Source\MarqueServer\ScreenShots\WindowsSecurityAlert.PNG";
 
-            new Spinup(oaMarquesasHttpServers, oPluginAppSettings, oGameObject);
+            if (MarquesasHttpServerInstance.RunningServer.IsRunning)
+            {
+                MarquesasHttpServerInstance.RunningServer.Stop();
+            }
+            else
+            {
+                MarquesasHttpServerInstance.RunningServer.oGameObject = oGameObject;
+                MarquesasHttpServerInstance.RunningServer.port = chkPortEnabled.Checked ? Convert.ToInt16(txtPort.Text) : -1;
+                MarquesasHttpServerInstance.RunningServer.secure_port = chkSecurePortEnabled.Checked ? Convert.ToInt16(txtSecurePort.Text) : -1;
+                MarquesasHttpServerInstance.RunningServer.Initialize();
+                MarquesasHttpServerInstance.RunningServer.Start();
+            }
+            
+            SetServerStatus();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -82,7 +115,11 @@ namespace MarquesasServer
         private void StoreSettingsInAppStrings()
         {
             oPluginAppSettings.SetString("Port", txtPort.Text);
-            oPluginAppSettings.SetString("IPAddress", cmbIPAddress.SelectedItem.ToString() == "All" ? "" : cmbIPAddress.SelectedItem.ToString());
+            oPluginAppSettings.SetString("PortEnabled", chkPortEnabled.Checked ? "True" : "False");
+
+            oPluginAppSettings.SetString("SecurePort", txtSecurePort.Text);
+            oPluginAppSettings.SetString("SecurePortEnabled", chkSecurePortEnabled.Checked ? "True" : "False");
+
             oPluginAppSettings.SetString("AutomaticUpdates", cmbAutomaticUpdates.SelectedItem.ToString() == "On" ? "True" : "False");
         }
 
@@ -107,6 +144,18 @@ namespace MarquesasServer
             oPluginAppSettings.SetString("AutomaticUpdates", "False");
 
             new Update(oPluginAppSettings);
+        }
+
+        private void chkPortEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            txtPort.Enabled = chkPortEnabled.Checked;
+            ValueChanged(sender, e);
+        }
+
+        private void chkSecurePortEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            txtSecurePort.Enabled = chkSecurePortEnabled.Checked;
+            ValueChanged(sender, e);
         }
     }
 }

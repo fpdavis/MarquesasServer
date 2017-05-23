@@ -34,15 +34,17 @@
             this.btnClose = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.txtPort = new System.Windows.Forms.MaskedTextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.lblStatus = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.cmbAutomaticUpdates = new System.Windows.Forms.ComboBox();
             this.btnCheckForUpdates = new System.Windows.Forms.Button();
             this.linkLabelExampleLink = new System.Windows.Forms.LinkLabel();
             this.label4 = new System.Windows.Forms.Label();
-            this.cmbIPAddress = new System.Windows.Forms.ComboBox();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
+            this.txtSecurePort = new System.Windows.Forms.MaskedTextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.chkPortEnabled = new System.Windows.Forms.CheckBox();
+            this.chkSecurePortEnabled = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnStartServer
@@ -81,7 +83,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(95, 66);
+            this.label1.Location = new System.Drawing.Point(95, 67);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(29, 13);
             this.label1.TabIndex = 3;
@@ -97,15 +99,6 @@
             this.txtPort.TabIndex = 4;
             this.txtPort.ValidatingType = typeof(int);
             this.txtPort.TextChanged += new System.EventHandler(this.ValueChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(63, 95);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(61, 13);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "IP Address:";
             // 
             // lblStatus
             // 
@@ -171,28 +164,63 @@
             this.label4.TabIndex = 13;
             this.label4.Text = "Marque Link:";
             // 
-            // cmbIPAddress
+            // txtSecurePort
             // 
-            this.cmbIPAddress.FormattingEnabled = true;
-            this.cmbIPAddress.Location = new System.Drawing.Point(128, 91);
-            this.cmbIPAddress.Name = "cmbIPAddress";
-            this.cmbIPAddress.Size = new System.Drawing.Size(94, 21);
-            this.cmbIPAddress.TabIndex = 14;
-            this.cmbIPAddress.SelectedIndexChanged += new System.EventHandler(this.ValueChanged);
+            this.txtSecurePort.Location = new System.Drawing.Point(128, 91);
+            this.txtSecurePort.Mask = "00000";
+            this.txtSecurePort.Name = "txtSecurePort";
+            this.txtSecurePort.PromptChar = ' ';
+            this.txtSecurePort.Size = new System.Drawing.Size(43, 20);
+            this.txtSecurePort.TabIndex = 15;
+            this.txtSecurePort.ValidatingType = typeof(int);
+            this.txtSecurePort.TextChanged += new System.EventHandler(this.ValueChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(58, 95);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(66, 13);
+            this.label2.TabIndex = 14;
+            this.label2.Text = "Secure Port:";
+            // 
+            // chkPortEnabled
+            // 
+            this.chkPortEnabled.AutoSize = true;
+            this.chkPortEnabled.Location = new System.Drawing.Point(187, 65);
+            this.chkPortEnabled.Name = "chkPortEnabled";
+            this.chkPortEnabled.Size = new System.Drawing.Size(65, 17);
+            this.chkPortEnabled.TabIndex = 16;
+            this.chkPortEnabled.Text = "Enabled";
+            this.chkPortEnabled.UseVisualStyleBackColor = true;
+            this.chkPortEnabled.CheckedChanged += new System.EventHandler(this.chkPortEnabled_CheckedChanged);
+            // 
+            // chkSecurePortEnabled
+            // 
+            this.chkSecurePortEnabled.AutoSize = true;
+            this.chkSecurePortEnabled.Location = new System.Drawing.Point(187, 93);
+            this.chkSecurePortEnabled.Name = "chkSecurePortEnabled";
+            this.chkSecurePortEnabled.Size = new System.Drawing.Size(65, 17);
+            this.chkSecurePortEnabled.TabIndex = 17;
+            this.chkSecurePortEnabled.Text = "Enabled";
+            this.chkSecurePortEnabled.UseVisualStyleBackColor = true;
+            this.chkSecurePortEnabled.CheckedChanged += new System.EventHandler(this.chkSecurePortEnabled_CheckedChanged);
             // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(292, 226);
-            this.Controls.Add(this.cmbIPAddress);
+            this.Controls.Add(this.chkSecurePortEnabled);
+            this.Controls.Add(this.chkPortEnabled);
+            this.Controls.Add(this.txtSecurePort);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.linkLabelExampleLink);
             this.Controls.Add(this.btnCheckForUpdates);
             this.Controls.Add(this.cmbAutomaticUpdates);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.lblStatus);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.txtPort);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnClose);
@@ -218,14 +246,16 @@
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.MaskedTextBox txtPort;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox cmbAutomaticUpdates;
         private System.Windows.Forms.Button btnCheckForUpdates;
         private System.Windows.Forms.LinkLabel linkLabelExampleLink;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox cmbIPAddress;
         private System.Windows.Forms.HelpProvider helpProvider1;
+        private System.Windows.Forms.MaskedTextBox txtSecurePort;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox chkPortEnabled;
+        private System.Windows.Forms.CheckBox chkSecurePortEnabled;
     }
 }

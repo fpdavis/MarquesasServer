@@ -78,6 +78,17 @@
       <DependentUpon>frmSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="GameObject.cs" />
+    <Compile Include="HTTPServer\Crypto\CertProperties.cs" />
+    <Compile Include="HTTPServer\Crypto\CryptContext.cs" />
+    <Compile Include="HTTPServer\Crypto\CryptKey.cs" />
+    <Compile Include="HTTPServer\Crypto\DisposableObject.cs" />
+    <Compile Include="HTTPServer\Crypto\KeyExchangeKey.cs" />
+    <Compile Include="HTTPServer\Crypto\KeyType.cs" />
+    <Compile Include="HTTPServer\Crypto\SignatureKey.cs" />
+    <Compile Include="HTTPServer\Crypto\Win32ErrorHelper.cs" />
+    <Compile Include="HTTPServer\Crypto\Win32Native.cs" />
+    <Compile Include="HTTPServer\Mime.cs" />
+    <Compile Include="HTTPServer\SimpleHttpServer.cs" />
     <Compile Include="ISystemMenuItemPlugin.cs" />
     <Compile Include="MarquesasHttpServer.cs" />
     <Compile Include="PluginAppSettings.cs" />
@@ -89,8 +100,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SimpleHttpServer.cs" />
-    <Compile Include="Spinup.cs" />
     <Compile Include="Update.cs" />
     <Compile Include="XMLSettings.cs" />
   </ItemGroup>

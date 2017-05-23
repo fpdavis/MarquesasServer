@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace MarquesasServer
 {
@@ -11,4 +7,10 @@ namespace MarquesasServer
         public string Title;
         public string Marque;
     }
+
+    public static class MarquesasHttpServerInstance
+    {
+        public static MarquesasHttpServer RunningServer = new MarquesasHttpServer();
+    }
+
 }
