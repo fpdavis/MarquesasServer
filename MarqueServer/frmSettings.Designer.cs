@@ -235,7 +235,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmSettings";
-            this.Text = "Marquesas Server settings";
+            this.Text = "Marquesas Server Administrator";
             this.Load += new System.EventHandler(this.frmSettings_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
