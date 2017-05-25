@@ -46,27 +46,21 @@ namespace MarquesasServer
 
         public Boolean GetBoolean(String key)
         {
-            Boolean bAppSetting;
-
-            Boolean.TryParse(GetString(key), out bAppSetting);
+            Boolean.TryParse(GetString(key), out bool bAppSetting);
 
             return bAppSetting;
         }
 
         public int GetInt(String key)
         {
-            int iAppSetting;
-
-            int.TryParse(GetString(key), out iAppSetting);
+            int.TryParse(GetString(key), out int iAppSetting);
 
             return iAppSetting;
         }
 
         public Decimal GetDecimal(String key)
         {
-            Decimal dAppSetting;
-
-            Decimal.TryParse(GetString(key), out dAppSetting);
+            Decimal.TryParse(GetString(key), out decimal dAppSetting);
 
             return dAppSetting;
         }
@@ -97,7 +91,7 @@ namespace MarquesasServer
                 }
                 else
                 {
-                    MessageBox.Show("Warning: The AppSetting Key (" + key + ") doesn't exist in " + PluginConfig.FilePath);
+                    PluginConfig.AppSettings.Settings.Add(key, value);
                 }
             }
         }
@@ -111,6 +105,12 @@ namespace MarquesasServer
         public void Dispose()
         {
             _PluginConfig = null;
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool bAllResources)
+        {
+            GC.SuppressFinalize(this);
         }
     }
 }

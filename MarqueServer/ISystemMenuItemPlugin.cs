@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using Unbroken.LaunchBox.Plugins;
 
 namespace MarquesasServer
 {
-    public class MarqueServer_ISystemMenuItemPlugin : ISystemMenuItemPlugin
+    public class MarquesasServer_ISystemMenuItemPlugin : ISystemMenuItemPlugin
     {
         public void OnSelected()
         {
@@ -18,7 +13,7 @@ namespace MarquesasServer
 
         public string Caption
         {
-            get { return "Marquesas Server Settings"; }
+            get { return "Marquesas Server Admin"; }
         }
 
         public Image IconImage

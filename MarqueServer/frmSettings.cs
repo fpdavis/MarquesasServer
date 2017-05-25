@@ -14,11 +14,12 @@ namespace MarquesasServer
     public partial class frmSettings : Form
     {
         private PluginAppSettings oPluginAppSettings = new PluginAppSettings();
-        private GameObject oGameObject = new GameObject();
+        //private MarqueServer_IGame oGameObject = new MarqueServer_IGame();
 
         public frmSettings()
         {
             InitializeComponent();
+            
             SetHelpText();
         }
 
@@ -83,16 +84,13 @@ namespace MarquesasServer
 
         private void btnStartServer_Click(object sender, EventArgs e)
         {
-            oGameObject.Title = "SelectedGame";
-            oGameObject.Marque = @"C:\OneDrive\Data\Source\MarqueServer\ScreenShots\WindowsSecurityAlert.PNG";
-
             if (MarquesasHttpServerInstance.RunningServer.IsRunning)
             {
                 MarquesasHttpServerInstance.RunningServer.Stop();
             }
             else
             {
-                MarquesasHttpServerInstance.RunningServer.oGameObject = oGameObject;
+                //MarquesasHttpServerInstance.RunningServer.oGameObject = MarqueServer_IGame;
                 MarquesasHttpServerInstance.RunningServer.port = chkPortEnabled.Checked ? Convert.ToInt16(txtPort.Text) : -1;
                 MarquesasHttpServerInstance.RunningServer.secure_port = chkSecurePortEnabled.Checked ? Convert.ToInt16(txtSecurePort.Text) : -1;
                 MarquesasHttpServerInstance.RunningServer.Initialize();

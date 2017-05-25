@@ -13,6 +13,8 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            oPluginAppSettings.Dispose();
+
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -102,16 +104,17 @@
             // 
             // lblStatus
             // 
-            this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblStatus.AutoSize = true;
+            this.lblStatus.BackColor = System.Drawing.SystemColors.Info;
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatus.ForeColor = System.Drawing.Color.Green;
-            this.lblStatus.Location = new System.Drawing.Point(67, 11);
+            this.lblStatus.Location = new System.Drawing.Point(3, 11);
+            this.lblStatus.MinimumSize = new System.Drawing.Size(286, 0);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(143, 37);
+            this.lblStatus.Size = new System.Drawing.Size(286, 37);
             this.lblStatus.TabIndex = 8;
             this.lblStatus.Text = "Running";
+            this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label3
             // 

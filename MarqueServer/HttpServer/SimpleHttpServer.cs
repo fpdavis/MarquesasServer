@@ -270,7 +270,7 @@ namespace SimpleHttp
 					RawQueryString = ParseQueryStringArguments(this.request_url.Query, preserveKeyCharacterCase: true);
 					QueryString = ParseQueryStringArguments(this.request_url.Query);
 					requestCookies = Cookies.FromString(GetHeaderValue("Cookie", ""));
-					requestedPage = Uri.UnescapeDataString(request_url.AbsolutePath.TrimStart('/'));
+					requestedPage = Uri.UnescapeDataString(request_url.AbsolutePath.TrimStart('/').TrimEnd('/').ToLower());
 					pathParts = requestedPage.Split('/');
 					try
 					{
@@ -955,10 +955,10 @@ namespace SimpleHttp
 		/// </summary>
 		public void Start()
 		{
-			if (thrHttp != null)
-				thrHttp.Start(false);
-			if (thrHttps != null)
-				thrHttps.Start(true);
+		    stopRequested = false;
+
+		    thrHttp?.Start(false);
+		    thrHttps?.Start(true);
 
 		    _isRunning = true;
 		}
@@ -968,55 +968,54 @@ namespace SimpleHttp
 		/// </summary>
 		public void Stop()
 		{
-			if (stopRequested)
-				return;
 			stopRequested = true;
-			if (unsecureListener != null)
-				try
-				{
-					unsecureListener.Stop();
-				}
-				catch (Exception ex)
-				{
-					SimpleHttpLogger.Log(ex);
-				}
-			if (secureListener != null)
-				try
-				{
-					secureListener.Stop();
-				}
-				catch (Exception ex)
-				{
-					SimpleHttpLogger.Log(ex);
-				}
-			if (thrHttp != null)
-				try
-				{
-					thrHttp.Abort();
-				}
-				catch (Exception ex)
-				{
-					SimpleHttpLogger.Log(ex);
-				}
-			if (thrHttps != null)
-				try
-				{
-					thrHttps.Abort();
-				}
-				catch (Exception ex)
-				{
-					SimpleHttpLogger.Log(ex);
-				}
-			try
-			{
-				stopServer();
-			}
-			catch (Exception ex)
-			{
-				SimpleHttpLogger.Log(ex);
-			}
 
-		    _isRunning = false;
+            if (unsecureListener != null)
+                try
+                {
+                    unsecureListener.Stop();
+                }
+                catch (Exception ex)
+                {
+                    SimpleHttpLogger.Log(ex);
+                }
+            if (secureListener != null)
+                try
+                {
+                    secureListener.Stop();
+                }
+                catch (Exception ex)
+                {
+                    SimpleHttpLogger.Log(ex);
+                }
+            if (thrHttp != null)
+                try
+                {
+                    thrHttp.Abort();
+                }
+                catch (Exception ex)
+                {
+                    SimpleHttpLogger.Log(ex);
+                }
+            if (thrHttps != null)
+                try
+                {
+                    thrHttps.Abort();
+                }
+                catch (Exception ex)
+                {
+                    SimpleHttpLogger.Log(ex);
+                }
+            try
+            {
+                stopServer();
+            }
+            catch (Exception ex)
+            {
+                SimpleHttpLogger.Log(ex);
+            }
+            
+            _isRunning = false;
 
 		}
 

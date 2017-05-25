@@ -1,13 +1,42 @@
-# MarqueServer
-Plugin for LaunchBox. Serves the Marque for the current game being played in LaunchBox.
+# Marquesas Server
+Small footprint HTTP Server Plugin for LaunchBox. Provides the following:
+
+   Standard HTTP interface for retrieving HTML pages for the current game containing.
+   Any *ImagePath property can be retrieved from the IGame object (Unbroken.LaunchBox.Plugins.Data.IGame.*)
+   by specifying /Image/ followed by the Image descriptor (the part preceeding ImagePath)
+
+   	  * /Image/Back
+      * /Image/Background
+      * /Image/Box3D
+      * /Image/Cart3D
+      * /Image/CartBack
+      * /Image/CartFront
+      * /Image/ClearLogo
+      * /Image/Front
+      * /Image/Marque
+      * /Image/PlatformClearLogo
+      * /Image/Screenshot
+
+	  * /Manual - Not yet implemented 
+
+   JSON API for retrieving:
+
+      * /StateManager (Unbroken.LaunchBox.Plugins.PluginHelper.StateManager)
+	  * /StateManager/* (Unbroken.LaunchBox.Plugins.PluginHelper.StateManager.*)
+	  * /StateManager/SelectedGames (Unbroken.LaunchBox.Plugins.Data.IGame)
+	  * /StateManager/SelectedGames/* (Unbroken.LaunchBox.Plugins.Data.IGame.*)
+	  * /StateManager/IsInGame
+
+
 
 Todo:
-* Convert to plugin
-* Figure out how to communicate between the on start code and the menu settings code.
 * Add quick links in settings.
-* Center status in form.
 * Complete renaming of project to Marquesas Server since it will be able to do more than
   just serve up Marques when completed.
+* Implement /Manual
+* Need to return a default html page with links
+* Memory/CPU profile
+* Gracefully handle empty properties, currently returns 404s
 
 Changes:
 * Moved the spin up of the http server into its own class
@@ -38,3 +67,10 @@ Changes:
   This should not be an issue in most cases.
 * Added opton for Secure port number.
 * Added ability to enable or disable each of the ports.
+
+* Added API Interface for retrieving StateManager information.
+* Removed unused files.
+* Centered the status form.
+* Added communications pathway between ISystemMenuItemPlugin and ISystemEventsPlugin for starting and 
+  stopping the server using MarquesasHttpServerInstance.RunningServer.
+* Updated PluginAppSettings.cs to store newly added App.config settings instead of displaying a warning.
