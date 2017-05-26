@@ -109,7 +109,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="frmSettings.resx">

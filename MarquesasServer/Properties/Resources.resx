@@ -121,8 +121,8 @@
     <value>Marquesas Server</value>
   </data>
   <data name="HTML_Marque" xml:space="preserve">
-    <value>&lt;html&gt;&lt;head&gt;&lt;meta http-equiv="refresh" content="15"&gt;&lt;/head&gt;&lt;body&gt;&lt;div class='bgSizeContain'/&gt;&lt;style&gt;.bgSizeContain { height: 100%; width: 100%; background-image: url(&lt;!-- Base64Image --&gt;); background-repeat: no-repeat;  background-position: center; background-size: contain; &lt;/style&gt;&lt;/body&gt;&lt;/html&gt;</value>
-    <comment>Replace &lt;!-- Base64Image --&gt; with data</comment>
+    <value>&lt;html&gt;&lt;head&gt;&lt;meta http-equiv="refresh" content="&lt;!-- SecondsBetweenRefresh --&gt;"&gt;&lt;/head&gt;&lt;body&gt;&lt;div class='bgSizeContain'/&gt;&lt;style&gt;.bgSizeContain { height: 100%; width: 100%; background-image: url(&lt;!-- Base64Image --&gt;); background-repeat: no-repeat;  background-position: center; background-size: contain; &lt;/style&gt;&lt;/body&gt;&lt;/html&gt;</value>
+    <comment>Replace &lt;!-- SecondsBetweenRefresh --&gt; and &lt;!-- Base64Image --&gt; with data</comment>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="icon_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">

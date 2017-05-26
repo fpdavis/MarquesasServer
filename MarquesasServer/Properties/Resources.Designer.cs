@@ -70,7 +70,7 @@ namespace MarquesasServer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;html&gt;&lt;head&gt;&lt;meta http-equiv=&quot;refresh&quot; content=&quot;15&quot;&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=&apos;bgSizeContain&apos;/&gt;&lt;style&gt;.bgSizeContain { height: 100%; width: 100%; background-image: url(&lt;!-- Base64Image --&gt;); background-repeat: no-repeat;  background-position: center; background-size: contain; &lt;/style&gt;&lt;/body&gt;&lt;/html&gt;.
+        ///   Looks up a localized string similar to &lt;html&gt;&lt;head&gt;&lt;meta http-equiv=&quot;refresh&quot; content=&quot;&lt;!-- SecondsBetweenRefresh --&gt;&quot;&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=&apos;bgSizeContain&apos;/&gt;&lt;style&gt;.bgSizeContain { height: 100%; width: 100%; background-image: url(&lt;!-- Base64Image --&gt;); background-repeat: no-repeat;  background-position: center; background-size: contain; &lt;/style&gt;&lt;/body&gt;&lt;/html&gt;.
         /// </summary>
         internal static string HTML_Marque {
             get {

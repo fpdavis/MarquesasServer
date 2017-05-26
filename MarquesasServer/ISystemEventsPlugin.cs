@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CommonPluginHelper;
 using Unbroken.LaunchBox.Plugins;
 using Unbroken.LaunchBox.Plugins.Data;
 
@@ -11,8 +12,6 @@ namespace MarquesasServer
 {
     class MarqueServer_ISystemEventsPlugin : ISystemEventsPlugin, IDisposable
     {
-        private PluginAppSettings oPluginAppSettings = new PluginAppSettings();
-        
         public void OnEventRaised(string eventType)
         {
             switch (eventType)
@@ -25,8 +24,8 @@ namespace MarquesasServer
                     break;
                 case SystemEventTypes.BigBoxStartupCompleted:
                 case SystemEventTypes.LaunchBoxStartupCompleted:
-                    MarquesasHttpServerInstance.RunningServer.port = oPluginAppSettings.GetBoolean("PortEnabled") ? oPluginAppSettings.GetInt("Port") : -1;
-                    MarquesasHttpServerInstance.RunningServer.secure_port = oPluginAppSettings.GetBoolean("SecurePortEnabled") ? oPluginAppSettings.GetInt("SecurePort") : -1;
+                    MarquesasHttpServerInstance.RunningServer.port = PluginAppSettings.GetBoolean("PortEnabled") ? PluginAppSettings.GetInt("Port") : -1;
+                    MarquesasHttpServerInstance.RunningServer.secure_port = PluginAppSettings.GetBoolean("SecurePortEnabled") ? PluginAppSettings.GetInt("SecurePort") : -1;
                     MarquesasHttpServerInstance.RunningServer.Initialize();
                     MarquesasHttpServerInstance.RunningServer.Start();
                     break;
@@ -39,7 +38,6 @@ namespace MarquesasServer
 
         public void Dispose()
         {
-            oPluginAppSettings?.Dispose();
         }
     }
 }

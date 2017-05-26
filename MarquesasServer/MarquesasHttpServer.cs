@@ -3,11 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using SimpleHttp;
 using Unbroken.LaunchBox.Plugins;
 using Unbroken.LaunchBox.Plugins.Data;
+using CommonPluginHelper;
 
 namespace MarquesasServer
 {
@@ -31,6 +34,9 @@ namespace MarquesasServer
                     case "statemanager":
                         DoStateManager(oHttpProcessor);
                         break;
+                    case "selectedgames":
+                        DoSelectedGames(oHttpProcessor);
+                        break;
                     case "manual":
                         oHttpProcessor.writeFailure();
                         break;
@@ -38,7 +44,7 @@ namespace MarquesasServer
                         DoImage(oHttpProcessor);
                         break;
                     default:
-                        // ToDo return default page
+                        DoDefaultPage(oHttpProcessor);
                         break;
                 }
             }
@@ -84,39 +90,17 @@ namespace MarquesasServer
                         sJSONResponse = new JavaScriptSerializer().Serialize(MarquesasHttpServerInstance.IsInGame);
                         break;
                     default:
-                        if (oHttpProcessor.pathParts[1] == "selectedgames")
+                        PropertyInfo[] oProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IStateManager).GetProperties();
+                        // A linq statement would look totally sexy here
+                        foreach (PropertyInfo oProperty in oProperties)
                         {
-                            sJSONResponse = new JavaScriptSerializer().Serialize(PluginHelper.StateManager.GetAllSelectedGames());
-                        }
-                        else
-                        {
-                            PropertyInfo[] oProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IStateManager).GetProperties();
-                            // A linq statement would look totally sexy here
-                            foreach (PropertyInfo oProperty in oProperties)
+                            if (oProperty.Name.ToLower() == oHttpProcessor.pathParts[1])
                             {
-                                if (oProperty.Name.ToLower() == oHttpProcessor.pathParts[1])
-                                {
-                                    sJSONResponse =
-                                        new JavaScriptSerializer().Serialize(oProperty.GetValue(PluginHelper
-                                            .StateManager));
-                                }
+                                sJSONResponse =
+                                    new JavaScriptSerializer().Serialize(oProperty.GetValue(PluginHelper.StateManager));
                             }
                         }
-
                         break;
-                }
-            }
-            else if (oHttpProcessor.pathParts.Length == 3 && oHttpProcessor.pathParts[1].ToLower() == "selectedgames" && PluginHelper.StateManager.GetAllSelectedGames().Length == 1)
-            {
-                PropertyInfo[] oProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IGame).GetProperties();
-
-                // A linq statement would look totally sexy here
-                foreach (PropertyInfo oProperty in oProperties)
-                {
-                    if (oProperty.Name.ToLower() == oHttpProcessor.pathParts[2].ToLower())
-                    {
-                        sJSONResponse = new JavaScriptSerializer().Serialize(oProperty.GetValue(PluginHelper.StateManager.GetAllSelectedGames()[0]));
-                    }
                 }
             }
             else
@@ -124,6 +108,30 @@ namespace MarquesasServer
                 sJSONResponse = new JavaScriptSerializer().Serialize(PluginHelper.StateManager);
             }
 
+            WriteJSON(oHttpProcessor, sJSONResponse);
+        }
+        private void DoSelectedGames(HttpProcessor oHttpProcessor)
+        {
+            string sJSONResponse = string.Empty;
+
+            if (oHttpProcessor.pathParts.Length == 1)
+            {
+                sJSONResponse = new JavaScriptSerializer().Serialize(PluginHelper.StateManager.GetAllSelectedGames());
+            }
+            else if (oHttpProcessor.pathParts.Length == 2 && PluginHelper.StateManager.GetAllSelectedGames().Length == 1)
+            {
+                PropertyInfo[] oProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IGame).GetProperties();
+
+                // A linq statement would look totally sexy here
+                foreach (PropertyInfo oProperty in oProperties)
+                {
+                    if (oProperty.Name.ToLower() == oHttpProcessor.pathParts[1].ToLower())
+                    {
+                        sJSONResponse = new JavaScriptSerializer().Serialize(oProperty.GetValue(PluginHelper.StateManager.GetAllSelectedGames()[0]));
+                    }
+                }
+            }
+ 
             WriteJSON(oHttpProcessor, sJSONResponse);
         }
 
@@ -160,8 +168,7 @@ namespace MarquesasServer
                     htCachedImagePaths[oHttpProcessor.pathParts[1]] = sImagePath;
 
                     htCachedImageHTML[oHttpProcessor.pathParts[1]] =
-                        Properties.Resources.HTML_Marque.Replace("<!-- Base64Image -->",
-                            MakeImageSrcData(sImagePath));
+                        Properties.Resources.HTML_Marque.Replace("<!-- SecondsBetweenRefresh -->", PluginAppSettings.GetString("SecondsBetweenRefresh")).Replace("<!-- Base64Image -->", MakeImageSrcData(sImagePath));
                 }
             }
 
@@ -182,6 +189,61 @@ namespace MarquesasServer
         public override void stopServer()
         {
             base.stopRequested = true;
+        }
+
+        public void DoDefaultPage(HttpProcessor oHttpProcessor)
+        {
+            StringBuilder sbDefaultPage = new StringBuilder();
+
+            PropertyInfo[] oProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IGame).GetProperties();
+
+            foreach (PropertyInfo oProperty in oProperties)
+            {
+                if (oProperty.Name.Contains("ImagePath"))
+                {
+                    sbDefaultPage.AppendLine("<li/><a href='/image/" + oProperty.Name.Replace("ImagePath", "").ToLower() + "'>Image/" +
+                                             oProperty.Name.Replace("ImagePath", "") + "</a>");
+                }
+            }
+
+            sbDefaultPage.AppendLine("<br/><br/>");
+
+            sbDefaultPage.AppendLine("<li/><a href='/statemanager'>StateManager</a>");
+            sbDefaultPage.AppendLine("<li/><a href='/statemanager/isingame'>StateManager/IsInGame</a>");
+
+            oProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IStateManager).GetProperties();
+
+            foreach (PropertyInfo oProperty in oProperties)
+            {
+                sbDefaultPage.AppendLine("<li/><a href='/statemanager/" + oProperty.Name.ToLower() + "'>StateManager/" + oProperty.Name + "</a>");
+            }
+
+            sbDefaultPage.AppendLine("<br/><br/>");
+
+            sbDefaultPage.AppendLine("<li/><a href='/selectedgames'>SelectedGames</a>");
+
+            oProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IGame).GetProperties();
+
+            foreach (PropertyInfo oProperty in oProperties)
+            {
+                    sbDefaultPage.AppendLine("<li/><a href='/selectedgames/" + oProperty.Name.ToLower() + "'>SelectedGames/" + oProperty.Name + "</a>");
+            }
+
+            List<KeyValuePair<string, string>> additionalHeaders =
+                new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("Etag",
+                        oHttpProcessor.request_url + "/" + ComputeHash(sbDefaultPage))
+                };
+
+            oHttpProcessor.writeSuccess("text/html", sbDefaultPage.ToString().Length, "200 OK", additionalHeaders);
+
+            oHttpProcessor.outputStream.Write(sbDefaultPage);
+        }
+
+        private static byte[] ComputeHash(StringBuilder sbDefaultPage)
+        {
+            return new MD5CryptoServiceProvider().ComputeHash(ASCIIEncoding.ASCII.GetBytes(sbDefaultPage.ToString()));
         }
     }
 }

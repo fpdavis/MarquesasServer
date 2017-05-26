@@ -22,19 +22,21 @@ Small footprint HTTP Server Plugin for LaunchBox. Provides the following:
    JSON API for retrieving:
 
       * /StateManager (Unbroken.LaunchBox.Plugins.PluginHelper.StateManager)
-	  * /StateManager/* (Unbroken.LaunchBox.Plugins.PluginHelper.StateManager.*)
-	  * /StateManager/SelectedGames (Unbroken.LaunchBox.Plugins.Data.IGame)
-	  * /StateManager/SelectedGames/* (Unbroken.LaunchBox.Plugins.Data.IGame.*)
 	  * /StateManager/IsInGame
+	  * /StateManager/* (Unbroken.LaunchBox.Plugins.PluginHelper.StateManager.*)
 
+	  * /SelectedGames (Unbroken.LaunchBox.Plugins.Data.IGame)
+	  * /SelectedGames/* (Unbroken.LaunchBox.Plugins.Data.IGame.*)
+	  
 
 
 Todo:
-* Add quick links in settings.
-* Complete renaming of project to Marquesas Server since it will be able to do more than
-  just serve up Marques when completed.
 * Implement /Manual
-* Need to return a default html page with links
+* Need to continue to refinen default html page
+* Complete Etag support for default html page (cache Page/MD5Sum)
+* Split up game heiarchy into SelectedGame (game being played?) vs SelectedGames (not being played, with possible multiple selections?)
+* Add support for /Game/ID to pull back game information for games not selected but in XML files.
+  ID could be the games ID, Title, or possibly some other identifier
 * Memory/CPU profile
 * Gracefully handle empty properties, currently returns 404s
 
@@ -74,3 +76,9 @@ Changes:
 * Added communications pathway between ISystemMenuItemPlugin and ISystemEventsPlugin for starting and 
   stopping the server using MarquesasHttpServerInstance.RunningServer.
 * Updated PluginAppSettings.cs to store newly added App.config settings instead of displaying a warning.
+
+* Converted Helper classes to static classes
+* Added SecondsBetweenRefresh to Admin and app.config
+* Added buttons to launch URL of main server page
+* Moved SelectedGames up one level, will further refine SelectedGame vs SelectedGames vs Game
+* Added initial default page with links to all current pages
