@@ -120,9 +120,114 @@
   <data name="ApplicationName" xml:space="preserve">
     <value>Marquesas Server</value>
   </data>
+  <data name="HTML_Manual" xml:space="preserve">
+    <value>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="content-type"
+content="text/html; charset=windows-1252"&gt;
+&lt;title&gt;Game Manual&lt;/title&gt;
+
+&lt;script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"&gt;&lt;/script&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id="pdf" style="width:100%;height:100%"&gt;&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+
+var oTimer = null;
+var sID = null
+
+function refresh() {
+document.getElementById("pdf").innerHTML = "&lt;embed src=\"&lt;!-- BinaryPath --&gt;\" type=\"application/pdf\" style=\"position:absolute\" width=\"100%\" height=\"100%\" /&gt;";
+}
+
+function autoRefresh() {
+oTimer = setTimeout("autoRefresh()", &lt;!-- SecondsBetweenRefresh --&gt;);
+CheckForUpdate();
+}
+
+function CheckForUpdate() {
+var sURL = "/selectedgames/id";
+var xmlRequest = $.ajax({
+    url: sURL,
+    type: 'GET',
+    dataType: 'json',
+    contentType: 'application/json',
+	 error: function(XMLHttpRequest, textStatus, errorThrown) { 
+        location = "/manual"; 
+    },
+    success: function(data) { 
+	   if (data)
+          {	   
+	       if (sID != data)
+	          {
+	           sID = data;
+	           refresh();
+		      }
+		  }
+      else
+	      {
+           location = "/manual";
+          }
+	}
+    });
+	
+}
+
+autoRefresh();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+    <comment>Replace &lt;!-- SecondsBetweenRefresh --&gt; and &lt;!-- BinaryPath --&gt; with data</comment>
+  </data>
   <data name="HTML_Marque" xml:space="preserve">
-    <value>&lt;html&gt;&lt;head&gt;&lt;meta http-equiv="refresh" content="&lt;!-- SecondsBetweenRefresh --&gt;"&gt;&lt;/head&gt;&lt;body&gt;&lt;div class='bgSizeContain'/&gt;&lt;style&gt;.bgSizeContain { height: 100%; width: 100%; background-image: url(&lt;!-- Base64Image --&gt;); background-repeat: no-repeat;  background-position: center; background-size: contain; &lt;/style&gt;&lt;/body&gt;&lt;/html&gt;</value>
+    <value>&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta http-equiv="refresh" content="&lt;!-- SecondsBetweenRefresh --&gt;"&gt;&lt;/head&gt;&lt;body&gt;&lt;div class='bgSizeContain'/&gt;&lt;style&gt;.bgSizeContain { height: 100%; width: 100%; background-image: url(&lt;!-- Base64Image --&gt;); background-repeat: no-repeat;  background-position: center; background-size: contain; &lt;/style&gt;&lt;/body&gt;&lt;/html&gt;</value>
     <comment>Replace &lt;!-- SecondsBetweenRefresh --&gt; and &lt;!-- Base64Image --&gt; with data</comment>
+  </data>
+  <data name="HTML_NoGame" xml:space="preserve">
+    <value>&lt;!DOCTYPE html&gt;&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="refresh" content="&lt;!-- SecondsBetweenRefresh --&gt;"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div
+style="border: 2px dashed rgb(246, 156, 85); text-align: center; height: 480px; line-height: 480px;"&gt;&lt;big
+style="text-decoration: underline;"&gt;&lt;big style="font-weight: bold;"&gt;&lt;big&gt;&lt;big&gt;No
+game currently selected&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+    <comment>Replace &lt;!-- SecondsBetweenRefresh --&gt; with data</comment>
+  </data>
+  <data name="HTML_NoResource" xml:space="preserve">
+    <value>&lt;!DOCTYPE html&gt;&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="refresh" content="&lt;!-- SecondsBetweenRefresh --&gt;"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;style&gt;
+div {
+display: table;
+height: 100px;
+width: 100%;
+text-align: center;
+border: 2px dashed #f69c55;
+}
+span {
+display: table-cell;
+vertical-align: middle;
+}
+&lt;/style&gt;
+&lt;div&gt;&lt;span&gt;&lt;big style="text-decoration: underline;"&gt;&lt;big
+style="font-weight: bold;"&gt;&lt;big&gt;&lt;big&gt;Resource not available&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;br&gt;
+Title:&lt;!-- Title --&gt; &lt;br&gt;
+Path:&lt;!-- Path --&gt; &lt;br&gt;
+&lt;/big&gt;&lt;/big&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+    <comment>Replace &lt;!-- SecondsBetweenRefresh --&gt;, &lt;!-- Title --&gt;, and &lt;!-- Path --&gt; with data</comment>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="icon_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">

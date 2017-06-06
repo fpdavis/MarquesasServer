@@ -31,14 +31,12 @@ Small footprint HTTP Server Plugin for LaunchBox. Provides the following:
 
 
 Todo:
-* Implement /Manual
-* Need to continue to refinen default html page
+* Add port use detection on startup
+* Need to continue to refinen default html page and add documentation to it
 * Complete Etag support for default html page (cache Page/MD5Sum)
-* Split up game heiarchy into SelectedGame (game being played?) vs SelectedGames (not being played, with possible multiple selections?)
 * Add support for /Game/ID to pull back game information for games not selected but in XML files.
   ID could be the games ID, Title, or possibly some other identifier
 * Memory/CPU profile
-* Gracefully handle empty properties, currently returns 404s
 
 Changes:
 * Moved the spin up of the http server into its own class
@@ -82,3 +80,13 @@ Changes:
 * Added buttons to launch URL of main server page
 * Moved SelectedGames up one level, will further refine SelectedGame vs SelectedGames vs Game
 * Added initial default page with links to all current pages
+
+* Added Manual Support
+* Added HTML Error pages
+* Split up game heiarchy into SelectedGame (game being played?) vs SelectedGames (not being played, with possible multiple selections)
+   * Renamed SelectedGames to SelectedGame (without the S)
+   * Changed SelectedGame (previously SelectedGames) so the root /SelectedGame only returns information if one and only one game is selected
+   * Added SelectedGames (with the S) JSON responses to return information on multiple games
+* Gracefully handles empty properties
+* Added Binary support
+* Continued to refine default HTML page

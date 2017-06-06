@@ -70,11 +70,90 @@ namespace MarquesasServer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;html&gt;&lt;head&gt;&lt;meta http-equiv=&quot;refresh&quot; content=&quot;&lt;!-- SecondsBetweenRefresh --&gt;&quot;&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=&apos;bgSizeContain&apos;/&gt;&lt;style&gt;.bgSizeContain { height: 100%; width: 100%; background-image: url(&lt;!-- Base64Image --&gt;); background-repeat: no-repeat;  background-position: center; background-size: contain; &lt;/style&gt;&lt;/body&gt;&lt;/html&gt;.
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///&lt;head&gt;
+        ///&lt;meta http-equiv=&quot;content-type&quot;
+        ///content=&quot;text/html; charset=windows-1252&quot;&gt;
+        ///&lt;title&gt;Game Manual&lt;/title&gt;
+        ///
+        ///&lt;script src=&quot;https://code.jquery.com/jquery-3.2.1.min.js&quot; integrity=&quot;sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
+        ///
+        ///&lt;/head&gt;
+        ///&lt;body&gt;
+        ///&lt;div id=&quot;pdf&quot; style=&quot;width:100%;height:100%&quot;&gt;&lt;/div&gt;
+        ///
+        ///&lt;script type=&quot;text/javascript&quot;&gt;
+        ///
+        ///var oTimer = null;
+        ///var sID = null
+        ///
+        ///function refresh() {
+        ///document.getElementById(&quot;pdf&quot;).innerHTML = &quot;&lt;e [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HTML_Manual {
+            get {
+                return ResourceManager.GetString("HTML_Manual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta http-equiv=&quot;refresh&quot; content=&quot;&lt;!-- SecondsBetweenRefresh --&gt;&quot;&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=&apos;bgSizeContain&apos;/&gt;&lt;style&gt;.bgSizeContain { height: 100%; width: 100%; background-image: url(&lt;!-- Base64Image --&gt;); background-repeat: no-repeat;  background-position: center; background-size: contain; &lt;/style&gt;&lt;/body&gt;&lt;/html&gt;.
         /// </summary>
         internal static string HTML_Marque {
             get {
                 return ResourceManager.GetString("HTML_Marque", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;&lt;html&gt;
+        ///&lt;head&gt;
+        ///&lt;meta http-equiv=&quot;refresh&quot; content=&quot;&lt;!-- SecondsBetweenRefresh --&gt;&quot;&gt;
+        ///&lt;/head&gt;
+        ///&lt;body&gt;
+        ///&lt;div
+        ///style=&quot;border: 2px dashed rgb(246, 156, 85); text-align: center; height: 480px; line-height: 480px;&quot;&gt;&lt;big
+        ///style=&quot;text-decoration: underline;&quot;&gt;&lt;big style=&quot;font-weight: bold;&quot;&gt;&lt;big&gt;&lt;big&gt;No
+        ///game currently selected&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;
+        ///&lt;/div&gt;
+        ///&lt;/body&gt;
+        ///&lt;/html&gt;.
+        /// </summary>
+        internal static string HTML_NoGame {
+            get {
+                return ResourceManager.GetString("HTML_NoGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;&lt;html&gt;
+        ///&lt;head&gt;
+        ///&lt;meta http-equiv=&quot;refresh&quot; content=&quot;&lt;!-- SecondsBetweenRefresh --&gt;&quot;&gt;
+        ///&lt;/head&gt;
+        ///&lt;body&gt;
+        ///&lt;style&gt;
+        ///div {
+        ///display: table;
+        ///height: 100px;
+        ///width: 100%;
+        ///text-align: center;
+        ///border: 2px dashed #f69c55;
+        ///}
+        ///span {
+        ///display: table-cell;
+        ///vertical-align: middle;
+        ///}
+        ///&lt;/style&gt;
+        ///&lt;div&gt;&lt;span&gt;&lt;big style=&quot;text-decoration: underline;&quot;&gt;&lt;big
+        ///style=&quot;font-weight: bold;&quot;&gt;&lt;big&gt;&lt;big&gt;Resource not available&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;br&gt;
+        ///Title:&lt;!-- Title --&gt; &lt;br&gt;
+        ///Path:&lt;!-- Path --&gt; &lt;br&gt;
+        ///&lt;/big&gt;&lt;/big [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HTML_NoResource {
+            get {
+                return ResourceManager.GetString("HTML_NoResource", resourceCulture);
             }
         }
         
