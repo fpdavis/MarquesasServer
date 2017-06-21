@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSettings));
             this.btnStartServer = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
@@ -38,7 +39,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.cmbAutomaticUpdates = new System.Windows.Forms.ComboBox();
             this.btnCheckForUpdates = new System.Windows.Forms.Button();
-            this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.txtSecurePort = new System.Windows.Forms.MaskedTextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.chkPortEnabled = new System.Windows.Forms.CheckBox();
@@ -47,6 +47,7 @@
             this.lblLaunchSecurePort = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.nudSecondsBetweenRefresh = new System.Windows.Forms.NumericUpDown();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.nudSecondsBetweenRefresh)).BeginInit();
             this.SuspendLayout();
             // 
@@ -75,6 +76,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.Location = new System.Drawing.Point(125, 185);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
@@ -86,11 +88,11 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(114, 67);
+            this.label1.Location = new System.Drawing.Point(82, 67);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 13);
+            this.label1.Size = new System.Drawing.Size(61, 13);
             this.label1.TabIndex = 3;
-            this.label1.Text = "Port:";
+            this.label1.Text = "HTTP Port:";
             // 
             // txtPort
             // 
@@ -107,6 +109,7 @@
             // 
             this.lblStatus.AutoSize = true;
             this.lblStatus.BackColor = System.Drawing.SystemColors.Info;
+            this.lblStatus.Cursor = System.Windows.Forms.Cursors.Hand;
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatus.ForeColor = System.Drawing.Color.Green;
             this.lblStatus.Location = new System.Drawing.Point(3, 11);
@@ -116,6 +119,7 @@
             this.lblStatus.TabIndex = 8;
             this.lblStatus.Text = "Running";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblStatus.Click += new System.EventHandler(this.lblStatus_Click);
             // 
             // label3
             // 
@@ -162,11 +166,11 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(77, 94);
+            this.label2.Location = new System.Drawing.Point(38, 94);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(66, 13);
+            this.label2.Size = new System.Drawing.Size(105, 13);
             this.label2.TabIndex = 14;
-            this.label2.Text = "Secure Port:";
+            this.label2.Text = "Secure HTTPS Port:";
             // 
             // chkPortEnabled
             // 
@@ -250,10 +254,18 @@
             0});
             this.nudSecondsBetweenRefresh.ValueChanged += new System.EventHandler(this.ValueChanged);
             // 
+            // toolTip1
+            // 
+            this.toolTip1.AutomaticDelay = 400;
+            this.toolTip1.IsBalloon = true;
+            this.toolTip1.ShowAlways = true;
+            this.toolTip1.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(293, 220);
             this.Controls.Add(this.nudSecondsBetweenRefresh);
             this.Controls.Add(this.label4);
@@ -273,7 +285,6 @@
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnStartServer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.HelpButton = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -297,7 +308,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox cmbAutomaticUpdates;
         private System.Windows.Forms.Button btnCheckForUpdates;
-        private System.Windows.Forms.HelpProvider helpProvider1;
         private System.Windows.Forms.MaskedTextBox txtSecurePort;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox chkPortEnabled;
@@ -306,5 +316,6 @@
         private System.Windows.Forms.Label lblLaunchSecurePort;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown nudSecondsBetweenRefresh;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

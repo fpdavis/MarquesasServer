@@ -183,7 +183,7 @@ autoRefresh();
     <comment>Replace &lt;!-- SecondsBetweenRefresh --&gt; and &lt;!-- BinaryPath --&gt; with data</comment>
   </data>
   <data name="HTML_Marque" xml:space="preserve">
-    <value>&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta http-equiv="refresh" content="&lt;!-- SecondsBetweenRefresh --&gt;"&gt;&lt;/head&gt;&lt;body&gt;&lt;div class='bgSizeContain'/&gt;&lt;style&gt;.bgSizeContain { height: 100%; width: 100%; background-image: url(&lt;!-- Base64Image --&gt;); background-repeat: no-repeat;  background-position: center; background-size: contain; &lt;/style&gt;&lt;/body&gt;&lt;/html&gt;</value>
+    <value>&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta http-equiv="refresh" content="&lt;!-- SecondsBetweenRefresh --&gt;"&gt;&lt;/head&gt;&lt;body&gt;&lt;div class='bgSizeContain'&gt;&lt;/div&gt;&lt;style&gt;html, body {margin:0;padding:0;height:100%;background-color:black} .bgSizeContain { height: 100%; width: 100%; background-image: url(&lt;!-- Base64Image --&gt;); background-repeat: no-repeat;  background-position: center; background-size: contain; &lt;/style&gt;&lt;/body&gt;&lt;/html&gt;</value>
     <comment>Replace &lt;!-- SecondsBetweenRefresh --&gt; and &lt;!-- Base64Image --&gt; with data</comment>
   </data>
   <data name="HTML_NoGame" xml:space="preserve">
@@ -235,5 +235,111 @@ Path:&lt;!-- Path --&gt; &lt;br&gt;
   </data>
   <data name="icon_original" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_original.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ServerStatus_Running" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="FirstTimeRun" xml:space="preserve">
+    <value>Marquesas Server has been started succesfully! To visit the Admin page select Tools-&gt;Marquesas Server Admin. To visit the index page click OK below.</value>
+  </data>
+  <data name="HTML_Index" xml:space="preserve">
+    <value>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+  &lt;title&gt;&lt;!-- ApplicationName --&gt; Index&lt;/title&gt;
+  &lt;link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"&gt;
+  &lt;script src="https://code.jquery.com/jquery-3.2.1.min.js"&gt;&lt;/script&gt;
+  &lt;script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"&gt;&lt;/script&gt;
+  &lt;script&gt;
+  $( function() {
+    $( "#tabs" ).tabs();
+  } );
+
+  $( function() {
+    $( "#APItabs" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
+    $( "#APItabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
+  } );
+  &lt;/script&gt;
+    &lt;style&gt;
+  .ui-tabs-vertical { width: 100%; }
+  .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 16em; }
+  .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
+  .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
+  .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; }
+  .ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 46em;}
+  &lt;/style&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+ 
+ &lt;p style="text-align:center"&gt;&lt;!-- ApplicationName --&gt; Index&lt;/p&gt;
+ 
+ &lt;p&gt;This is an index of links to the &lt;!-- ApplicationName --&gt; running from within your LaunchBox.
+ These links will only work while LaunchBox is active and the server is enabled. The server
+ can be accessed from any computer, phone, or tablet located on (or with access to) the same 
+ network as the machine running LaunchBox. The first time you ran LaunchBox with the plugin,
+ a Windows security dialogue should have asked if you wanted to allow it to connect to the network. 
+ You will have needed to select one of the two options presented for the server to be accessible by
+ other machines on the network.&lt;/p&gt;
+ 
+&lt;div id="tabs"&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="#tabs-1"&gt;Auto Refreshing Pages&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#tabs-2"&gt;API Requests&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href="#tabs-3"&gt;Web Sockets&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;div id="tabs-1"&gt;
+    &lt;p&gt;&lt;h3&gt;Auto Refreshing Web Pages&lt;/h3&gt;&lt;/p&gt;
+	&lt;p&gt;These pages (specifically the Marque page) were designed to be brought up on a separate computer such
+as an old tablet to display the marque of the game currently being played in BigBox. It is recommended that
+the page be loaded and then the browser set to full screen (kiosk) mode. In most browser on Windows you
+can toggle kiosk mode by hitting F11 when in your browser. Each page will refresh automatically every
+few seconds to insure that the game being played will be reflected in the browser.&lt;/p&gt;
+	&lt;!-- Auto Refreshing Web Pages --&gt;
+  &lt;/div&gt;
+  &lt;div id="tabs-2"&gt;
+	&lt;div id="APItabs"&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="#APItabs-2"&gt;Binary Requests&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#APItabs-3"&gt;State Manager&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#APItabs-4"&gt;Selected Game Information&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href="#APItabs-5"&gt;Selected Game(s) Information&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;div id="APItabs-2"&gt;
+    &lt;p&gt;&lt;h3&gt;Binary Requests&lt;/h3&gt;&lt;/p&gt;
+	&lt;p&gt;(returns raw file)&lt;/p&gt;
+	&lt;!-- Binary Requests --&gt;
+  &lt;/div&gt;
+  &lt;div id="APItabs-3"&gt;
+    &lt;p&gt;&lt;h3&gt;State Manager&lt;/h3&gt;&lt;/p&gt;
+	&lt;!-- State Manager --&gt;
+  &lt;/div&gt;
+    &lt;div id="APItabs-4"&gt;
+    &lt;p&gt;&lt;h3&gt;Selected Game Information&lt;/h3&gt;&lt;/p&gt;
+	&lt;p&gt;If no game or more than one game is selected these will return empty resulting in a json error that you may need to catch.&lt;/p&gt;
+
+	&lt;!-- Selected Game Information --&gt;
+  &lt;/div&gt;
+    &lt;div id="APItabs-5"&gt;
+    &lt;p&gt;&lt;h3&gt;Selected Game(s) Information&lt;/h3&gt;&lt;/p&gt;
+	&lt;p&gt;If no game is selected these will return empty resulting in a json error that you may need to catch.&lt;/p&gt;
+    &lt;p&gt;This returns a set of Game IDs followed by the value of the property being requested. Example: {"Game ID":"Property Value","Game 2 ID":"Property Value 2", ... }&lt;/p&gt;
+
+	&lt;!-- Selected Game(s) Information --&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+  &lt;div id="tabs-3"&gt;
+    &lt;p&gt;&lt;h3&gt;Web Sockets&lt;/h3&gt;&lt;/p&gt;
+	
+	Coming soon... let me know if you are interested in this feature to speed up  development :)
+	&lt;!-- Web Sockets --&gt;
+  &lt;/div&gt;
+ 
+ 
+&lt;/body&gt;
+&lt;/html&gt;</value>
   </data>
 </root>

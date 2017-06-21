@@ -17,7 +17,7 @@ Small footprint HTTP Server Plugin for LaunchBox. Provides the following:
       * /Image/PlatformClearLogo
       * /Image/Screenshot
 
-	  * /Manual - Not yet implemented 
+	  * /Manual
 
    JSON API for retrieving:
 
@@ -28,11 +28,35 @@ Small footprint HTTP Server Plugin for LaunchBox. Provides the following:
 	  * /SelectedGames (Unbroken.LaunchBox.Plugins.Data.IGame)
 	  * /SelectedGames/* (Unbroken.LaunchBox.Plugins.Data.IGame.*)
 	  
+   JSON API for retrieving raw binaries:
+
+	  * /Binary/ScreenshotImage
+	  * /Binary/FrontImage
+	  * /Binary/MarqueeImage
+	  * /Binary/BackImage
+	  * /Binary/Box3DImage
+	  * /Binary/BackgroundImage
+	  * /Binary/Cart3DImage
+	  * /Binary/CartFrontImage
+	  * /Binary/CartBackImage
+	  * /Binary/ClearLogoImage
+	  * /Binary/PlatformClearLogoImage
+	  * /Binary/Application
+	  * /Binary/Configuration
+	  * /Binary/DosBoxConfiguration
+	  * /Binary/Manual
+	  * /Binary/Music
+	  * /Binary/ScummVmGameDataFolder
+	  * /Binary/Video
+	  * /Binary/ThemeVideo
+
+ See the default index for detailed information.
 
 
 Todo:
-* Add port use detection on startup
-* Need to continue to refinen default html page and add documentation to it
+* Problems with Chrome and the Manual, both /Manual and /Binary/Manual
+* Evaluate integration of Web Sockets code
+* Need to continue to refine default index page and add documentation to it
 * Complete Etag support for default html page (cache Page/MD5Sum)
 * Add support for /Game/ID to pull back game information for games not selected but in XML files.
   ID could be the games ID, Title, or possibly some other identifier
@@ -90,3 +114,8 @@ Changes:
 * Gracefully handles empty properties
 * Added Binary support
 * Continued to refine default HTML page
+
+* Add port use detection on startup
+* Reworked help to use Tool Tips
+* Added first time run dialog
+* Changed background color on autoloading pages to black

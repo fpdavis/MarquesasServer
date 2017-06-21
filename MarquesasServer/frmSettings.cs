@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CommonPluginHelper;
+using MarquesasServer.Properties;
 
 namespace MarquesasServer
 {
@@ -30,8 +24,8 @@ namespace MarquesasServer
             chkPortEnabled.Checked = PluginAppSettings.GetBoolean("PortEnabled");
             chkSecurePortEnabled.Checked = PluginAppSettings.GetBoolean("SecurePortEnabled");
             nudSecondsBetweenRefresh.Value = (PluginAppSettings.GetInt("SecondsBetweenRefresh") > 0 && PluginAppSettings.GetInt("SecondsBetweenRefresh") < 1000) ? PluginAppSettings.GetInt("SecondsBetweenRefresh") : 15;
-            cmbAutomaticUpdates.SelectedText = PluginAppSettings.GetBoolean("AutomaticUpdates") ? "On" : "Off";
-            
+            cmbAutomaticUpdates.SelectedIndex = cmbAutomaticUpdates.FindString(PluginAppSettings.GetBoolean("AutomaticUpdates") ? "On" : "Off");
+         
             SetServerStatus();
 
             btnSave.Enabled = false;
@@ -40,9 +34,9 @@ namespace MarquesasServer
 
         private void SetServerStatus()
         {
-            if (MarquesasHttpServerInstance.RunningServer.IsRunning)
+            if (MarquesasHttpServerInstance.RunningServer.IsRunning.Item1 || MarquesasHttpServerInstance.RunningServer.IsRunning.Item2)
             {
-                lblStatus.Text = "Running";
+                lblStatus.Text = Resources.ServerStatus_Running;
                 lblStatus.ForeColor = Color.DarkGreen;
                 btnStartServer.Text = "Stop Server";
                 lblLaunchPort.Enabled = chkPortEnabled.Checked;
@@ -63,13 +57,47 @@ namespace MarquesasServer
 
         private void SetHelpText()
         {
-            helpProvider1.SetHelpString(txtPort, PluginAppSettings.GetString("Port_Help").Replace("  ", " "));
-            helpProvider1.SetHelpString(chkPortEnabled, PluginAppSettings.GetString("PortEnabled_Help").Replace("  ", " "));
+            toolTip1.SetToolTip(txtPort, AddNewLinesForTooltip(PluginAppSettings.GetString("Port_Help").Replace("  ", " ")));
+            toolTip1.SetToolTip(chkPortEnabled, AddNewLinesForTooltip(PluginAppSettings.GetString("PortEnabled_Help").Replace("  ", " ")));
 
-            helpProvider1.SetHelpString(txtSecurePort, PluginAppSettings.GetString("SecurePort_Help").Replace("  ", " "));
-            helpProvider1.SetHelpString(chkSecurePortEnabled, PluginAppSettings.GetString("SecurePortEnabled_Help").Replace("  ", " "));
-            helpProvider1.SetHelpString(nudSecondsBetweenRefresh, PluginAppSettings.GetString("SecondsBetweenRefresh_Help").Replace("  ", " "));
-            helpProvider1.SetHelpString(cmbAutomaticUpdates, PluginAppSettings.GetString("AutomaticUpdates_Help").Replace("  ", " "));          
+            toolTip1.SetToolTip(txtSecurePort, AddNewLinesForTooltip(PluginAppSettings.GetString("SecurePort_Help").Replace("  ", " ")));
+            toolTip1.SetToolTip(chkSecurePortEnabled, AddNewLinesForTooltip(PluginAppSettings.GetString("SecurePortEnabled_Help").Replace("  ", " ")));
+            toolTip1.SetToolTip(nudSecondsBetweenRefresh, AddNewLinesForTooltip(PluginAppSettings.GetString("SecondsBetweenRefresh_Help").Replace("  ", " ")));
+            toolTip1.SetToolTip(cmbAutomaticUpdates, AddNewLinesForTooltip(PluginAppSettings.GetString("AutomaticUpdates_Help").Replace("  ", " ")));
+
+            toolTip1.SetToolTip(lblLaunchPort, AddNewLinesForTooltip("Browse index."));
+            toolTip1.SetToolTip(lblLaunchSecurePort, AddNewLinesForTooltip("Browse index."));
+
+        }
+
+        private static string AddNewLinesForTooltip(string text)
+        {
+            if (text.Length < 20)
+                return text;
+            int lineLength = (int)Math.Sqrt((double)text.Length) * 2;
+            StringBuilder sb = new StringBuilder();
+            int currentLinePosition = 0;
+            for (int textIndex = 0; textIndex < text.Length; textIndex++)
+            {
+                // If we have reached the target line length and the next 
+                // character is whitespace then begin a new line.
+                if (currentLinePosition >= lineLength &&
+                    char.IsWhiteSpace(text[textIndex]))
+                {
+                    sb.Append(Environment.NewLine);
+                    currentLinePosition = 0;
+                }
+                // If we have just started a new line, skip all the whitespace.
+                if (currentLinePosition == 0)
+                    while (textIndex < text.Length && char.IsWhiteSpace(text[textIndex]))
+                        textIndex++;
+                // Append the next character.
+                if (textIndex < text.Length)
+                    sb.Append(text[textIndex]);
+
+                currentLinePosition++;
+            }
+            return sb.ToString();
         }
 
         private void ValueChanged(object sender, EventArgs e)
@@ -77,10 +105,10 @@ namespace MarquesasServer
             btnSave.Enabled = true;
             btnCheckForUpdates.Enabled = false;
         }
-
+        
         private void btnStartServer_Click(object sender, EventArgs e)
         {
-            if (MarquesasHttpServerInstance.RunningServer.IsRunning)
+            if (MarquesasHttpServerInstance.RunningServer.IsRunning.Item1 || MarquesasHttpServerInstance.RunningServer.IsRunning.Item2)
             {
                 MarquesasHttpServerInstance.RunningServer.Stop();
             }
@@ -89,6 +117,7 @@ namespace MarquesasServer
                 MarquesasHttpServerInstance.RunningServer.port = chkPortEnabled.Checked ? Convert.ToInt16(txtPort.Text) : -1;
                 MarquesasHttpServerInstance.RunningServer.secure_port = chkSecurePortEnabled.Checked ? Convert.ToInt16(txtSecurePort.Text) : -1;
                 MarquesasHttpServerInstance.RunningServer.Initialize();
+                MarquesasHttpServerInstance.RunningServer.WarnIfPortsAreNotAvailable(true);
                 MarquesasHttpServerInstance.RunningServer.Start();
             }
             
@@ -97,12 +126,34 @@ namespace MarquesasServer
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            StoreSettingsInAppStrings();
+            if (ValidateSettings())
+            {
+                StoreSettingsInAppStrings();
 
-            PluginAppSettings.Save();
+                PluginAppSettings.Save();
 
-            btnSave.Enabled = false;
-            btnCheckForUpdates.Enabled = true;
+                btnSave.Enabled = false;
+                btnCheckForUpdates.Enabled = true;
+            }
+        }
+
+        private Boolean ValidateSettings()
+        {
+            Boolean bValid = true;
+            string sErrorMessage = string.Empty;
+
+            if (chkPortEnabled.Checked && chkSecurePortEnabled.Checked && txtPort.Text == txtSecurePort.Text)
+            {
+                bValid = false;
+                sErrorMessage = "Secure HTTPS Port and HTTP Port cannot be the same.";
+            }
+
+            if (!bValid)
+            {
+                MessageBox.Show(sErrorMessage, "Settings could not be saved", MessageBoxButtons.OK);
+            }
+
+            return bValid;
         }
 
         private void StoreSettingsInAppStrings()
@@ -151,14 +202,19 @@ namespace MarquesasServer
             ValueChanged(sender, e);
         }
 
+        private void lblStatus_Click(object sender, EventArgs e)
+        {
+            MarquesasHttpServerInstance.RunningServer.LaunchIndexPage();
+        }
+
         private void lblLaunchPort_Click(object sender, EventArgs e)
         {
-            Process.Start("http://" + string.Join(".", MarquesasHttpServerInstance.RunningServer.localIPv4Addresses[0]) + (MarquesasHttpServerInstance.RunningServer.port != 80 ? ":" + MarquesasHttpServerInstance.RunningServer.port : ""));
+            MarquesasHttpServerInstance.RunningServer.LaunchIndexPage();
         }
 
         private void lblLaunchSecurePort_Click(object sender, EventArgs e)
         {
-            Process.Start("https://" + string.Join(".", MarquesasHttpServerInstance.RunningServer.localIPv4Addresses[0]) + (MarquesasHttpServerInstance.RunningServer.secure_port != 443 ? ":" + MarquesasHttpServerInstance.RunningServer.port : ""));
+            MarquesasHttpServerInstance.RunningServer.LaunchIndexPage(true);
         }
     }
 }

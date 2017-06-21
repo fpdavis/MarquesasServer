@@ -70,6 +70,38 @@ namespace MarquesasServer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Marquesas Server has been started succesfully! To visit the Admin page select Tools-&gt;Marquesas Server Admin. To visit the index page click OK below..
+        /// </summary>
+        internal static string FirstTimeRun {
+            get {
+                return ResourceManager.GetString("FirstTimeRun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!doctype html&gt;
+        ///&lt;html lang=&quot;en&quot;&gt;
+        ///&lt;head&gt;
+        ///  &lt;meta charset=&quot;utf-8&quot;&gt;
+        ///  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+        ///  &lt;title&gt;&lt;!-- ApplicationName --&gt; Index&lt;/title&gt;
+        ///  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css&quot;&gt;
+        ///  &lt;script src=&quot;https://code.jquery.com/jquery-3.2.1.min.js&quot;&gt;&lt;/script&gt;
+        ///  &lt;script src=&quot;https://code.jquery.com/ui/1.12.1/jquery-ui.js&quot;&gt;&lt;/script&gt;
+        ///  &lt;script&gt;
+        ///  $( function() {
+        ///    $( &quot;#tabs&quot; ).tabs();
+        ///  } );
+        ///
+        ///  $( function()  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HTML_Index {
+            get {
+                return ResourceManager.GetString("HTML_Index", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
         ///&lt;html&gt;
         ///&lt;head&gt;
@@ -98,7 +130,7 @@ namespace MarquesasServer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta http-equiv=&quot;refresh&quot; content=&quot;&lt;!-- SecondsBetweenRefresh --&gt;&quot;&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=&apos;bgSizeContain&apos;/&gt;&lt;style&gt;.bgSizeContain { height: 100%; width: 100%; background-image: url(&lt;!-- Base64Image --&gt;); background-repeat: no-repeat;  background-position: center; background-size: contain; &lt;/style&gt;&lt;/body&gt;&lt;/html&gt;.
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta http-equiv=&quot;refresh&quot; content=&quot;&lt;!-- SecondsBetweenRefresh --&gt;&quot;&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=&apos;bgSizeContain&apos;&gt;&lt;/div&gt;&lt;style&gt;html, body {margin:0;padding:0;height:100%;background-color:black} .bgSizeContain { height: 100%; width: 100%; background-image: url(&lt;!-- Base64Image --&gt;); background-repeat: no-repeat;  background-position: center; background-size: contain; &lt;/style&gt;&lt;/body&gt;&lt;/html&gt;.
         /// </summary>
         internal static string HTML_Marque {
             get {
@@ -174,6 +206,15 @@ namespace MarquesasServer.Properties {
             get {
                 object obj = ResourceManager.GetObject("icon_original", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Running.
+        /// </summary>
+        internal static string ServerStatus_Running {
+            get {
+                return ResourceManager.GetString("ServerStatus_Running", resourceCulture);
             }
         }
     }

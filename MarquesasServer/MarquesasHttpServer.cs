@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -11,6 +12,8 @@ using SimpleHttp;
 using Unbroken.LaunchBox.Plugins;
 using Unbroken.LaunchBox.Plugins.Data;
 using CommonPluginHelper;
+using MarquesasServer.Properties;
+using System.Diagnostics;
 
 namespace MarquesasServer
 {
@@ -59,7 +62,7 @@ namespace MarquesasServer
                         DoBinary(oHttpProcessor);
                         break;
                     default:
-                        DoDefaultPage(oHttpProcessor);
+                        DoIndexPage(oHttpProcessor);
                         break;
                 }
             }
@@ -72,95 +75,190 @@ namespace MarquesasServer
 
         #endregion
 
-        public void DoDefaultPage(HttpProcessor oHttpProcessor)
+        public Tuple<Boolean, Boolean> ArePortsAvailable()
         {
-            StringBuilder sbDefaultPage = new StringBuilder();
+            Boolean bIsHTTPAvailable = true;
+            Boolean bIsHTTPSAvailable = true;
             
+            var oActiveTcpListeners = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners();
+
+            foreach (var oActiveTcpListener in oActiveTcpListeners)
+            {
+                if (oActiveTcpListener.Port == base.port)
+                {
+                    bIsHTTPAvailable = false;
+                }
+
+                if (oActiveTcpListener.Port == base.secure_port)
+                {
+                    bIsHTTPSAvailable = false;
+                }
+            }
+
+            return Tuple.Create(bIsHTTPAvailable, bIsHTTPSAvailable);
+        }
+
+        public void WarnIfPortsAreNotAvailable(Boolean bInAdmin = false)
+        {
+            var tPortsAvailable = ArePortsAvailable();
+
+            if (!tPortsAvailable.Item1 || !tPortsAvailable.Item2)
+            {
+                string sWhatsNotAvailable = Resources.ApplicationName + " could not bind to either port. Please choose differnt ports";
+
+                if (!tPortsAvailable.Item1 && tPortsAvailable.Item2)
+                {
+                    sWhatsNotAvailable = sWhatsNotAvailable.Replace("either", "HTTP").Replace("differnt ports", "a different port");
+                }
+                else if (!tPortsAvailable.Item2 && tPortsAvailable.Item1)
+                {
+                    sWhatsNotAvailable = sWhatsNotAvailable.Replace("either", "HTTPS (Secure)").Replace("differnt ports", "a different port");
+                }
+
+                if (!bInAdmin)
+                {
+                    sWhatsNotAvailable += " in Tools->" + Resources.ApplicationName + " Admin";
+                }
+
+                MessageBox.Show(sWhatsNotAvailable + ".", Resources.ApplicationName + " Port Binding Error", MessageBoxButtons.OK);
+
+            }
+        }
+
+        public void FirstTimeRunCheck()
+        {
+            if ((IsRunning.Item1 || port == -1) &&
+                (IsRunning.Item2 || secure_port == -1) &&
+                !PluginAppSettings.GetBoolean("NotFirstTimeRun"))
+            {
+                PluginAppSettings.SetString("NotFirstTimeRun", "True");
+                PluginAppSettings.Save();
+
+                if (IsRunning.Item1 || IsRunning.Item2)
+                {
+                    if (MessageBox.Show(Resources.FirstTimeRun, Resources.ApplicationName + " First Time Run",
+                        MessageBoxButtons.OKCancel) == DialogResult.OK)
+                    {
+                        LaunchIndexPage();
+                    }
+                }
+            }
+        }
+
+        public void LaunchIndexPage(Boolean bUseHTTPSProtocal = false)
+        {
+            if (IsRunning.Item1 && !bUseHTTPSProtocal)
+            {
+                Process.Start(
+                    "http://" + string.Join(".", MarquesasHttpServerInstance.RunningServer.localIPv4Addresses[0]) +
+                    (MarquesasHttpServerInstance.RunningServer.port != 80
+                        ? ":" + MarquesasHttpServerInstance.RunningServer.port
+                        : ""));
+            }
+            else if (IsRunning.Item2)
+            {
+                Process.Start("https://" + string.Join(".", MarquesasHttpServerInstance.RunningServer.localIPv4Addresses[0]) + (MarquesasHttpServerInstance.RunningServer.secure_port != 443 ? ":" + MarquesasHttpServerInstance.RunningServer.port : ""));
+            }
+        }
+
+        public void DoIndexPage(HttpProcessor oHttpProcessor)
+        {
+            StringBuilder sbIndexPage = new StringBuilder(Resources.HTML_Index);
+            sbIndexPage.Replace("<!-- ApplicationName -->", Resources.ApplicationName);
+
+            StringBuilder sbTempHTML = new StringBuilder();
+
             #region Image Pages
             PropertyInfo[] oProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IGame).GetProperties();
-            sbDefaultPage.AppendLine("<h2>Auto Refreshing Pages...</h2>");
 
-            sbDefaultPage.AppendLine("<li/><a href='/manual'>Manual</a>");
+            sbTempHTML.AppendLine("<li/><a target='_blank' href='/manual'>Manual</a>");
 
             foreach (PropertyInfo oProperty in oProperties)
             {
                 if (oProperty.Name.Contains("ImagePath"))
                 {
-                    sbDefaultPage.AppendLine("<li/><a href='/image/" + oProperty.Name.Replace("ImagePath", "").ToLower() + "'>Image/" + oProperty.Name.Replace("ImagePath", "") + "</a>");
+                    sbTempHTML.AppendLine("<li/><a target='_blank' href='/image/" + oProperty.Name.Replace("ImagePath", "").ToLower() + "'>Image/" + oProperty.Name.Replace("ImagePath", "") + "</a>");
                 }
             }
+
+            sbIndexPage.Replace("<!-- Auto Refreshing Web Pages -->", sbTempHTML.ToString());
+
             #endregion
 
             #region Binary Requests
-            sbDefaultPage.AppendLine("<br/><br/>");
-            sbDefaultPage.AppendLine("<h2>Binary Requests (returns raw file)...</h2>");
 
             oProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IGame).GetProperties();
+            sbTempHTML.Clear();
 
             foreach (PropertyInfo oProperty in oProperties)
             {
-              if (oProperty.Name.Contains("Path"))
+                if (oProperty.Name.Contains("Path"))
                 {
-                    sbDefaultPage.AppendLine("<li/><a href='/binary/" + oProperty.Name.Replace("Path", "").ToLower() + "'>Binary/" + oProperty.Name.Replace("Path", "") + "</a>");
+                    sbTempHTML.AppendLine("<li/><a target='_blank' href='/binary/" + oProperty.Name.Replace("Path", "").ToLower() + "'>Binary/" + oProperty.Name.Replace("Path", "") + "</a>");
                 }
             }
+
+            sbIndexPage.Replace("<!-- Binary Requests -->", sbTempHTML.ToString());
+
             #endregion
 
             #region State Manager
-            sbDefaultPage.AppendLine("<br/><br/>");
-            sbDefaultPage.AppendLine("<h2>State Manager...</h2>");
 
-            sbDefaultPage.AppendLine("<li/><a href='/statemanager'>StateManager</a>");
-            sbDefaultPage.AppendLine("<li/><a href='/statemanager/isingame'>StateManager/IsInGame</a>");
+            sbTempHTML.Clear();
+            sbTempHTML.AppendLine("<li/><a target='_blank' href='/statemanager'>StateManager</a>");
+            sbTempHTML.AppendLine("<li/><a target='_blank' href='/statemanager/isingame'>StateManager/IsInGame</a>");
 
             oProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IStateManager).GetProperties();
 
             foreach (PropertyInfo oProperty in oProperties)
             {
-                sbDefaultPage.AppendLine("<li/><a href='/statemanager/" + oProperty.Name.ToLower() + "'>StateManager/" + oProperty.Name + "</a>");
-            } 
+                sbTempHTML.AppendLine("<li/><a target='_blank' href='/statemanager/" + oProperty.Name.ToLower() + "'>StateManager/" + oProperty.Name + "</a>");
+            }
+
+            sbIndexPage.Replace("<!-- State Manager -->", sbTempHTML.ToString());
+
             #endregion
 
             #region Selected Game Information
-            sbDefaultPage.AppendLine("<br/><br/>");
-            sbDefaultPage.AppendLine("<h2>Selected Game Information...</h2>");
-            sbDefaultPage.AppendLine("(if no game or more than one game is selected these will return empty resulting in a json error that you may need to catch)<br/>");
+            sbTempHTML.Clear();
 
-            sbDefaultPage.AppendLine("<li/><a href='/selectedgame'>SelectedGame</a>");
+            sbTempHTML.AppendLine("<li/><a target='_blank' href='/selectedgame'>SelectedGame</a>");
 
             oProperties = typeof(IGame).GetProperties();
 
             foreach (PropertyInfo oProperty in oProperties)
             {
-                sbDefaultPage.AppendLine("<li/><a href='/selectedgame/" + oProperty.Name.ToLower() + "'>SelectedGame/" + oProperty.Name + "</a>");
+                sbTempHTML.AppendLine("<li/><a target='_blank' href='/selectedgame/" + oProperty.Name.ToLower() + "'>SelectedGame/" + oProperty.Name + "</a>");
             }
+
+            sbIndexPage.Replace("<!-- Selected Game Information -->", sbTempHTML.ToString());
+
             #endregion
 
             #region Selected Game(s) Information
-            sbDefaultPage.AppendLine("<br/><br/>");
-            sbDefaultPage.AppendLine("<h2>Selected Game(s) Information...</h2>");
-            sbDefaultPage.AppendLine("If no game is selected these will return empty resulting in a json error that you may need to catch.<br/>");
-            sbDefaultPage.AppendLine("This returns a set of Game IDs followed by the value of the property being requested. Example: {\"Game ID\":\"Property Value\",\"Game 2 ID\":\"Property Value 2\", ... }<br/>");
-
-            sbDefaultPage.AppendLine("<li/><a href='/selectedgames'>SelectedGames</a>");
+            sbTempHTML.Clear();
+            sbTempHTML.AppendLine("<li/><a target='_blank' href='/selectedgames'>SelectedGames</a>");
 
             oProperties = typeof(IGame).GetProperties();
 
             foreach (PropertyInfo oProperty in oProperties)
             {
-                sbDefaultPage.AppendLine("<li/><a href='/selectedgames/" + oProperty.Name.ToLower() + "'>SelectedGames/" + oProperty.Name + "</a>");
+                sbTempHTML.AppendLine("<li/><a target='_blank' href='/selectedgames/" + oProperty.Name.ToLower() + "'>SelectedGames/" + oProperty.Name + "</a>");
             }
+
+            sbIndexPage.Replace("<!-- Selected Game(s) Information -->", sbTempHTML.ToString());
+
             #endregion
 
             List<KeyValuePair<string, string>> additionalHeaders =
                 new List<KeyValuePair<string, string>>
                 {
-                    new KeyValuePair<string, string>("Etag", oHttpProcessor.request_url + "/" + ComputeHash(sbDefaultPage))
+                    new KeyValuePair<string, string>("Etag", oHttpProcessor.request_url + "/" + ComputeHash(sbIndexPage))
                 };
 
-            oHttpProcessor.writeSuccess("text/html", sbDefaultPage.ToString().Length, "200 OK", additionalHeaders);
+            oHttpProcessor.writeSuccess("text/html", sbIndexPage.ToString().Length, "200 OK", additionalHeaders);
 
-            oHttpProcessor.outputStream.Write(sbDefaultPage);
+            oHttpProcessor.outputStream.Write(sbIndexPage);
         }
 
         #region Web APIs
@@ -287,16 +385,16 @@ namespace MarquesasServer
             }
             else
             {
-                htCachedImageHTML["manual"] = Properties.Resources.HTML_NoResource
+                htCachedImageHTML[oHttpProcessor.pathParts[1]] = Properties.Resources.HTML_NoResource
                         .Replace("<!-- SecondsBetweenRefresh -->", (PluginAppSettings.GetInt("SecondsBetweenRefresh") * 1000).ToString())
                         .Replace("<!-- Path -->", sImagePath)
                         .Replace("<!-- Title -->", PluginHelper.StateManager.GetAllSelectedGames()[0].Title)
                     ;
 
-                htCachedImagePaths["manual"] = "";
+                htCachedImagePaths[oHttpProcessor.pathParts[1]] = "";
             }
-            WriteImageHTML(oHttpProcessor, htCachedImageHTML[oHttpProcessor.pathParts[1]].ToString());
 
+            WriteImageHTML(oHttpProcessor, htCachedImageHTML[oHttpProcessor.pathParts[1]]?.ToString());
         }
 
         string MakeBinarySrcData(string sImagePath, byte[] oBianary, bool bIsPdf = false)
@@ -369,10 +467,10 @@ namespace MarquesasServer
                 // A linq statement would look totally sexy here
                 foreach (PropertyInfo oProperty in oProperties)
                 {
-                    if (oProperty.Name.ToLower() == sType + "path")
+                    if (oProperty.Name.ToLower() == sType + "path" || oProperty.Name.ToLower() == sType + "imagepath")
                     {
-                        sBinaryPath = oProperty.GetValue(PluginHelper.StateManager.GetAllSelectedGames()[0]).ToString();
-                        break;
+                     sBinaryPath = oProperty.GetValue(PluginHelper.StateManager.GetAllSelectedGames()[0])?.ToString();
+                     break;
                     }
                 }
                 
@@ -501,5 +599,6 @@ namespace MarquesasServer
         {
             return new MD5CryptoServiceProvider().ComputeHash(ASCIIEncoding.ASCII.GetBytes(sbDefaultPage.ToString()));
         }
-    }
+ 
+   }
 }

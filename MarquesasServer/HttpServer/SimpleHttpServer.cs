@@ -759,8 +759,8 @@ namespace SimpleHttp
 		public int secure_port = 443;
 		protected volatile bool stopRequested = false;
 		public X509Certificate2 ssl_certificate;
-	    private Boolean _isRunning;
-	    public bool IsRunning { get => _isRunning; }
+	    private Tuple<Boolean, Boolean> _isRunning = Tuple.Create(false, false);
+	    public Tuple<Boolean, Boolean> IsRunning { get => _isRunning; }
 
         private Thread thrHttp;
 		private Thread thrHttps;
@@ -789,6 +789,10 @@ namespace SimpleHttp
 	            thrHttp = new Thread(listen);
 	            thrHttp.Name = "HttpServer Thread";
 	        }
+	        else
+	        {
+	            thrHttp = null;
+	        }
 
 	        if (this.secure_port > -1)
 	        {
@@ -796,6 +800,10 @@ namespace SimpleHttp
 	                ssl_certificate = HttpServer.GetSelfSignedCertificate();
 	            thrHttps = new Thread(listen);
 	            thrHttps.Name = "HttpsServer Thread";
+	        }
+	        else
+	        {
+	            thrHttps = null;
 	        }
 
 	        localIPv4Addresses = new List<byte[]>();
@@ -956,11 +964,23 @@ namespace SimpleHttp
 		public void Start()
 		{
 		    stopRequested = false;
+		    _isRunning = Tuple.Create(false, false);
 
-		    thrHttp?.Start(false);
-		    thrHttps?.Start(true);
+            try
+		    {
+		        thrHttp?.Start(false);
+		        _isRunning = Tuple.Create(true, _isRunning.Item2);
+            }
+            catch (Exception e){}
 
-		    _isRunning = true;
+		    try
+		    {
+		        thrHttps?.Start(true);
+		        _isRunning = Tuple.Create(_isRunning.Item1, true);
+            }
+		    catch (Exception e){}
+            
+
 		}
 
 		/// <summary>
@@ -1015,8 +1035,7 @@ namespace SimpleHttp
                 SimpleHttpLogger.Log(ex);
             }
             
-            _isRunning = false;
-
+            _isRunning = Tuple.Create(false, false);
 		}
 
 		/// <summary>
