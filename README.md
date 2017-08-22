@@ -1,13 +1,13 @@
 # Marquesas Server
-Small Footprint HTTP Server Plugin for LaunchBox. 
+Small Footprint HTTP Server Plugin for LaunchBox
 
-Example Uses:
+Example Uses
 
    * Display the current game marque full screen on a seperate system such as a tablet or smart phone.
-   * View the current game manual on a seperate system such as a tablet, laptop, smart phone.
+   * View the current game manual on a seperate system such as a tablet, laptop, or smart phone.
    * Retrieve LaunchBox and game information through a standard HTTP JSON API.
 
-Installation:
+Installation
 
    To install unzip and copy the MarquesasServer folder into your LaunchBox/Plugins folder.
    The server will begin running whenever LaunchBox is started. The first time you run 
@@ -46,7 +46,7 @@ Auto Refreshing Web Pages
 
    * /Manual
 
-JSON API for retrieving:
+JSON API for retrieving
 
    * /StateManager (Unbroken.LaunchBox.Plugins.PluginHelper.StateManager)
    * /StateManager/IsInGame
@@ -55,7 +55,7 @@ JSON API for retrieving:
    * /SelectedGames (Unbroken.LaunchBox.Plugins.Data.IGame)
    * /SelectedGames/* (Unbroken.LaunchBox.Plugins.Data.IGame.*)
 	  
-JSON API for retrieving raw binaries:
+JSON API for retrieving raw binaries
 
    * /Binary/ScreenshotImage
    * /Binary/FrontImage
@@ -77,21 +77,23 @@ JSON API for retrieving raw binaries:
    * /Binary/Video
    * /Binary/ThemeVideo
 
-See the default index (LaunchBox->Tools->Marquesas Server Admin->Ellipses) for direct links and detailed information.
+See the default index (LaunchBox->Tools->Marquesas Server Admin->Ellipses) for a 
+compreshinsive list of dynamically generated direct links and detailed information.
 
-Source: https://github.com/fpdavis/MarquesasServer
+  Source: https://github.com/fpdavis/MarquesasServer
+Binaries: https://forums.launchbox-app.com/files/file/675-marquesas-http-server
+Binaries: https://github.com/fpdavis/MarquesasServer/releases
 
-Todo:
+Todo (in order of importance):
 
-   * Problems with Chrome and the Manual, both /Manual and /Binary/Manual
-   * Evaluate integration of Web Sockets code
+   * Add support for SuperSockets
    * Need to continue to refine default index page and add documentation to it
-   * Complete Etag support for default html page (cache Page/MD5Sum)
+   * Problems with Chrome and the Manual, both /Manual and /Binary/Manual
    * Add support for /Game/ID to pull back game information for games not selected but in XML files.
      ID could be the games ID, Title, or possibly some other identifier
    * Memory/CPU profile
 
-Changes:
+Changes (oldest to newest):
 
    * Moved the spin up of the http server into its own class
    * Created new placeholder object for game data
@@ -149,3 +151,8 @@ Changes:
    * Reworked help to use Tool Tips
    * Added first time run dialog
    * Changed background color on autoloading pages to black
+
+   * Updated update helper to handle multiple files instead of just one Dll in preperation for socket support
+   * Addded commented out socket code
+   * Completed Etag support for default html page (cache Page/MD5Sum)
+   * Fixed issue when a selected game had no available resource, the html page would not refresh as expected
