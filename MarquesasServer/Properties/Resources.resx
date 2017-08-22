@@ -205,8 +205,7 @@ game currently selected&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;
     <value>&lt;!DOCTYPE html&gt;&lt;html&gt;
 &lt;head&gt;
 &lt;meta http-equiv="refresh" content="&lt;!-- SecondsBetweenRefresh --&gt;"&gt;
-&lt;/head&gt;
-&lt;body&gt;
+
 &lt;style&gt;
 div {
 display: table;
@@ -220,11 +219,13 @@ display: table-cell;
 vertical-align: middle;
 }
 &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
 &lt;div&gt;&lt;span&gt;&lt;big style="text-decoration: underline;"&gt;&lt;big
 style="font-weight: bold;"&gt;&lt;big&gt;&lt;big&gt;Resource not available&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;br&gt;
 Title:&lt;!-- Title --&gt; &lt;br&gt;
 Path:&lt;!-- Path --&gt; &lt;br&gt;
-&lt;/big&gt;&lt;/big&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;/span&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</value>
     <comment>Replace &lt;!-- SecondsBetweenRefresh --&gt;, &lt;!-- Title --&gt;, and &lt;!-- Path --&gt; with data</comment>
@@ -341,5 +342,8 @@ few seconds to insure that the game being played will be reflected in the browse
  
 &lt;/body&gt;
 &lt;/html&gt;</value>
+  </data>
+  <data name="UpdateError" xml:space="preserve">
+    <value>This may be due to a network issue, a configuration issue, lack of file permissions, or a too out of date plugin that can not be auto updated. If this error persists please update manually by downloading the latest version from https://forums.launchbox-app.com/files/file/675-marquesas-http-server or https://github.com/fpdavis/MarquesasServer/releases</value>
   </data>
 </root>

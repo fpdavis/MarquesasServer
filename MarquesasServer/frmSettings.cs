@@ -5,6 +5,8 @@ using System.Windows.Forms;
 using CommonPluginHelper;
 using MarquesasServer.Properties;
 
+//using SuperSocket.SocketBase;
+
 namespace MarquesasServer
 {
     public partial class frmSettings : Form
@@ -12,12 +14,12 @@ namespace MarquesasServer
         public frmSettings()
         {
             InitializeComponent();
-            
+
             SetHelpText();
         }
 
         private void frmSettings_Load(object sender, EventArgs e)
-        {           
+        {
             txtPort.Text = PluginAppSettings.GetInt("Port") == 0 ? "80" : PluginAppSettings.GetInt("Port").ToString();
             txtSecurePort.Text = PluginAppSettings.GetInt("SecurePort") == 0 ? "443" : PluginAppSettings.GetInt("SecurePort").ToString();
 
@@ -25,7 +27,7 @@ namespace MarquesasServer
             chkSecurePortEnabled.Checked = PluginAppSettings.GetBoolean("SecurePortEnabled");
             nudSecondsBetweenRefresh.Value = (PluginAppSettings.GetInt("SecondsBetweenRefresh") > 0 && PluginAppSettings.GetInt("SecondsBetweenRefresh") < 1000) ? PluginAppSettings.GetInt("SecondsBetweenRefresh") : 15;
             cmbAutomaticUpdates.SelectedIndex = cmbAutomaticUpdates.FindString(PluginAppSettings.GetBoolean("AutomaticUpdates") ? "On" : "Off");
-         
+
             SetServerStatus();
 
             btnSave.Enabled = false;
@@ -67,7 +69,6 @@ namespace MarquesasServer
 
             toolTip1.SetToolTip(lblLaunchPort, AddNewLinesForTooltip("Browse index."));
             toolTip1.SetToolTip(lblLaunchSecurePort, AddNewLinesForTooltip("Browse index."));
-
         }
 
         private static string AddNewLinesForTooltip(string text)
@@ -79,7 +80,7 @@ namespace MarquesasServer
             int currentLinePosition = 0;
             for (int textIndex = 0; textIndex < text.Length; textIndex++)
             {
-                // If we have reached the target line length and the next 
+                // If we have reached the target line length and the next
                 // character is whitespace then begin a new line.
                 if (currentLinePosition >= lineLength &&
                     char.IsWhiteSpace(text[textIndex]))
@@ -105,7 +106,7 @@ namespace MarquesasServer
             btnSave.Enabled = true;
             btnCheckForUpdates.Enabled = false;
         }
-        
+
         private void btnStartServer_Click(object sender, EventArgs e)
         {
             if (MarquesasHttpServerInstance.RunningServer.IsRunning.Item1 || MarquesasHttpServerInstance.RunningServer.IsRunning.Item2)
@@ -114,15 +115,48 @@ namespace MarquesasServer
             }
             else
             {
-                MarquesasHttpServerInstance.RunningServer.port = chkPortEnabled.Checked ? Convert.ToInt16(txtPort.Text) : -1;
-                MarquesasHttpServerInstance.RunningServer.secure_port = chkSecurePortEnabled.Checked ? Convert.ToInt16(txtSecurePort.Text) : -1;
-                MarquesasHttpServerInstance.RunningServer.Initialize();
-                MarquesasHttpServerInstance.RunningServer.WarnIfPortsAreNotAvailable(true);
-                MarquesasHttpServerInstance.RunningServer.Start();
+                StartHttpServices();
             }
-            
+
+            //if (SuperSocketAppServerInstance.RunningServer.State == ServerState.Running)
+            //{
+            //    SuperSocketAppServerInstance.RunningServer.Stop();
+            //}
+            //else
+            //{
+            //    StartSuperSockets();
+            //}
+
             SetServerStatus();
         }
+
+        public void StartHttpServices()
+        {
+            MarquesasHttpServerInstance.RunningServer.port = chkPortEnabled.Checked ? Convert.ToInt16(txtPort.Text) : -1;
+            MarquesasHttpServerInstance.RunningServer.secure_port = chkSecurePortEnabled.Checked ? Convert.ToInt16(txtSecurePort.Text) : -1;
+            MarquesasHttpServerInstance.RunningServer.Initialize();
+            MarquesasHttpServerInstance.RunningServer.WarnIfPortsAreNotAvailable(true);
+            MarquesasHttpServerInstance.RunningServer.Start();
+        }
+
+        //public void StartSuperSockets()
+        //{
+        //    //Setup the appServer
+        //    if (!SuperSocketAppServerInstance.RunningServer.Setup(PluginAppSettings.GetInt("SuperSocketPort"))) //Setup with listening port
+        //    {
+        //        // Failed to setup!
+        //        MessageBox.Show("Failed setup for Socket Server.", Resources.ApplicationName, MessageBoxButtons.OK);
+        //        return;
+        //    }
+
+        //    //Try to start the appServer
+        //    if (!SuperSocketAppServerInstance.RunningServer.Start())
+        //    {
+        //        // Failed to start!
+        //        MessageBox.Show("Failed to start Socket Server on port " + PluginAppSettings.GetInt("SuperSocketPort") + ".", Resources.ApplicationName, MessageBoxButtons.OK);
+        //        return;
+        //    }
+        //}
 
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -179,7 +213,7 @@ namespace MarquesasServer
                 if (oMessageBoxResults == DialogResult.Yes) btnSave_Click(sender, e);
                 else PluginAppSettings.ReloadConfiguration();
             }
-            
+
             this.Close();
         }
 

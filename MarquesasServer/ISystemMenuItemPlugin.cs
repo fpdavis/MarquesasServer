@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Windows.Forms;
 using Unbroken.LaunchBox.Plugins;
 
 namespace MarquesasServer

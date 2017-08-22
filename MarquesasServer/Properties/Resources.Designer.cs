@@ -162,8 +162,7 @@ namespace MarquesasServer.Properties {
         ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;&lt;html&gt;
         ///&lt;head&gt;
         ///&lt;meta http-equiv=&quot;refresh&quot; content=&quot;&lt;!-- SecondsBetweenRefresh --&gt;&quot;&gt;
-        ///&lt;/head&gt;
-        ///&lt;body&gt;
+        ///
         ///&lt;style&gt;
         ///div {
         ///display: table;
@@ -177,11 +176,13 @@ namespace MarquesasServer.Properties {
         ///vertical-align: middle;
         ///}
         ///&lt;/style&gt;
+        ///&lt;/head&gt;
+        ///&lt;body&gt;
         ///&lt;div&gt;&lt;span&gt;&lt;big style=&quot;text-decoration: underline;&quot;&gt;&lt;big
         ///style=&quot;font-weight: bold;&quot;&gt;&lt;big&gt;&lt;big&gt;Resource not available&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;br&gt;
         ///Title:&lt;!-- Title --&gt; &lt;br&gt;
         ///Path:&lt;!-- Path --&gt; &lt;br&gt;
-        ///&lt;/big&gt;&lt;/big [rest of string was truncated]&quot;;.
+        ///&lt;/span&gt;&lt;/ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HTML_NoResource {
             get {
@@ -215,6 +216,15 @@ namespace MarquesasServer.Properties {
         internal static string ServerStatus_Running {
             get {
                 return ResourceManager.GetString("ServerStatus_Running", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This may be due to a network issue, a configuration issue, lack of file permissions, or a too out of date plugin that can not be auto updated. If this error persists please update manually by downloading the latest version from https://forums.launchbox-app.com/files/file/675-marquesas-http-server or https://github.com/fpdavis/MarquesasServer/releases.
+        /// </summary>
+        internal static string UpdateError {
+            get {
+                return ResourceManager.GetString("UpdateError", resourceCulture);
             }
         }
     }
