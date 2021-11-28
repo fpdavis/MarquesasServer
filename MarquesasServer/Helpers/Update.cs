@@ -19,10 +19,13 @@ namespace CommonPluginHelper
         public static void Check()
         {
             string sApplicationName = Assembly.GetExecutingAssembly().GetName().Name;
-            string sMyVersionDate = PluginAppSettings.GetString("VersionDate");
+            string sMyVersion = PluginAppSettings.GetString("Version");
             string[] aCurrentVersionData = GetCurrentVersionData();
+            
+            // The version information in the config file overrides the assembly version.
+            if (string.IsNullOrEmpty(sMyVersion)) sMyVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-            if (!string.IsNullOrWhiteSpace(aCurrentVersionData[0]) && sMyVersionDate != aCurrentVersionData[0])
+            if (!string.IsNullOrWhiteSpace(aCurrentVersionData[0]) && Version.Parse(aCurrentVersionData[0]) > Version.Parse(sMyVersion))
             {
                 if (PluginAppSettings.GetBoolean("AutomaticUpdates") || MessageBox.Show("A newer version of " + sApplicationName + " is available (" + aCurrentVersionData[0] + "). Would you like to update?", "Update Available", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
@@ -71,7 +74,7 @@ namespace CommonPluginHelper
                                 throw;
                             }
 
-                            PluginAppSettings.SetString("VersionDate", aCurrentVersionData[0]);
+                            PluginAppSettings.SetString("Version", aCurrentVersionData[0]);
                             PluginAppSettings.Save();
 
                             if (!PluginAppSettings.GetBoolean("AutomaticUpdates"))
@@ -99,7 +102,7 @@ namespace CommonPluginHelper
             }
             else if (!PluginAppSettings.GetBoolean("AutomaticUpdates"))
             {
-                MessageBox.Show("You are up to date.", "No Update Available", MessageBoxButtons.OK);
+                MessageBox.Show("You are up to date!", "Up to date", MessageBoxButtons.OK);
             }
         }
 

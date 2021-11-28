@@ -394,6 +394,10 @@ namespace SimpleHttp
 			{
 				srv.handleGETRequest(this);
 			}
+			catch (Exception oException)
+            {
+				
+            }
 			finally
 			{
 				if (!responseWritten)

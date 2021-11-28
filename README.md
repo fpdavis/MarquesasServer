@@ -1,5 +1,5 @@
 # Marquesas Server
-Small Footprint HTTP Server Plugin for LaunchBox
+Small Footprint HTTP Server Plugin for LaunchBox. Utilizes the Launchbox API found at https://pluginapi.launchbox-app.com/
 
 Example Uses
 
@@ -17,6 +17,11 @@ Installation
    LaunchBox you will see a new "Marquesas Server Admin" option under the Tools menu to
    manage the server. The server can then be accessed from any computer, phone, or tablet
    located on (or with access to) the same network as the machine running LaunchBox/BigBox.
+
+   Requires .NET Framework Version 4.8 from https://dotnet.microsoft.com/download/dotnet-framework/net48
+
+   See the default index (LaunchBox->Tools->Marquesas Server Admin->Ellipses Button) for a 
+   compreshinsive list of dynamically generated direct links and detailed information.
 
 Auto Refreshing Web Pages
 
@@ -86,11 +91,11 @@ Binaries: https://github.com/fpdavis/MarquesasServer/releases
 
 Todo (in order of importance):
 
-   * Add support for SuperSockets
-   * Need to continue to refine default index page and add documentation to it
-   * Problems with Chrome and the Manual, both /Manual and /Binary/Manual
+   * Add platform support
    * Add support for /Game/ID to pull back game information for games not selected but in XML files.
      ID could be the games ID, Title, or possibly some other identifier
+   * Add support for SuperSockets
+   * Need to continue to refine default index page and add documentation to it
    * Memory/CPU profile
 
 Changes (oldest to newest):
@@ -156,3 +161,12 @@ Changes (oldest to newest):
    * Addded commented out socket code
    * Completed Etag support for default html page (cache Page/MD5Sum)
    * Fixed issue when a selected game had no available resource, the html page would not refresh as expected
+
+   * Launchbox's upgrade to .Net core moved Unbroken.LaunchBox.Plugins.dll from the Metadata directory to the Core directory
+   * Update .Net Framework to 4.8
+   * Fixed broken Binary Requests for Video, Music, and Manuals. This should have fixed the problems with
+     Chrome and the Manual, both /Manual and /Binary/Manual.
+   * Fixed a refresh issue where every other Auto Refresh would bring back the "No Resource" available page.
+   * Fixed bug when no game was selected.
+   * Added more precise version checking.
+   * Added version number to settings panel.

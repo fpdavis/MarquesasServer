@@ -48,13 +48,16 @@
             this.label4 = new System.Windows.Forms.Label();
             this.nudSecondsBetweenRefresh = new System.Windows.Forms.NumericUpDown();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.lblVersion = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudSecondsBetweenRefresh)).BeginInit();
             this.SuspendLayout();
             // 
             // btnStartServer
             // 
             this.btnStartServer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnStartServer.Location = new System.Drawing.Point(12, 185);
+            this.btnStartServer.Location = new System.Drawing.Point(12, 200);
             this.btnStartServer.Name = "btnStartServer";
             this.btnStartServer.Size = new System.Drawing.Size(75, 23);
             this.btnStartServer.TabIndex = 0;
@@ -65,7 +68,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(206, 185);
+            this.btnSave.Location = new System.Drawing.Point(206, 200);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 1;
@@ -77,7 +80,7 @@
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(125, 185);
+            this.btnClose.Location = new System.Drawing.Point(125, 200);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 2;
@@ -261,12 +264,41 @@
             this.toolTip1.ShowAlways = true;
             this.toolTip1.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(98, 173);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(45, 13);
+            this.label5.TabIndex = 22;
+            this.label5.Text = "Version:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(142, 173);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(0, 10);
+            this.label6.TabIndex = 23;
+            // 
+            // lblVersion
+            // 
+            this.lblVersion.AutoSize = true;
+            this.lblVersion.Location = new System.Drawing.Point(142, 173);
+            this.lblVersion.Name = "lblVersion";
+            this.lblVersion.Size = new System.Drawing.Size(10, 10);
+            this.lblVersion.TabIndex = 24;
+            this.lblVersion.Text = "0";
+            // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(293, 220);
+            this.ClientSize = new System.Drawing.Size(293, 235);
+            this.Controls.Add(this.lblVersion);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.nudSecondsBetweenRefresh);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.lblLaunchSecurePort);
@@ -317,5 +349,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown nudSecondsBetweenRefresh;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label lblVersion;
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using CommonPluginHelper;
 using MarquesasServer.Properties;
-
+using System.Reflection;
 //using SuperSocket.SocketBase;
 
 namespace MarquesasServer
@@ -32,6 +32,12 @@ namespace MarquesasServer
 
             btnSave.Enabled = false;
             btnCheckForUpdates.Enabled = true;
+
+            lblVersion.Text = PluginAppSettings.GetString("Version");
+            
+            // The version information in the config file overrides the assembly version.
+            if (string.IsNullOrEmpty(lblVersion.Text)) lblVersion.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            
         }
 
         private void SetServerStatus()

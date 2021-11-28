@@ -6,8 +6,8 @@ using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web.Script.Serialization;
 using System.Windows.Forms;
+using System.Text.Json;
 using SimpleHttp;
 using Unbroken.LaunchBox.Plugins;
 using Unbroken.LaunchBox.Plugins.Data;
@@ -161,19 +161,23 @@ namespace MarquesasServer
         {
             if (IsRunning.Item1 && !bUseHTTPSProtocal)
             {
-                Process.Start(
+                Process.Start(new ProcessStartInfo(
                     "http://" + string.Join(".", MarquesasHttpServerInstance.RunningServer.localIPv4Addresses[0]) +
-                    (MarquesasHttpServerInstance.RunningServer.port != 80
+                     (MarquesasHttpServerInstance.RunningServer.port != 80
                         ? ":" + MarquesasHttpServerInstance.RunningServer.port
-                        : ""));
+                        : "")
+                        ) { UseShellExecute = true }
+                        );
             }
             else if (IsRunning.Item2)
             {
-                Process.Start("https://" +
-                              string.Join(".", MarquesasHttpServerInstance.RunningServer.localIPv4Addresses[0]) +
-                              (MarquesasHttpServerInstance.RunningServer.secure_port != 443
+                Process.Start(new ProcessStartInfo(
+                    "https://" + string.Join(".", MarquesasHttpServerInstance.RunningServer.localIPv4Addresses[0]) +
+                     (MarquesasHttpServerInstance.RunningServer.secure_port != 443
                                   ? ":" + MarquesasHttpServerInstance.RunningServer.port
-                                  : ""));
+                                  : "")
+                                  ) { UseShellExecute = true }
+                        );
             }
         }
 
@@ -188,11 +192,11 @@ namespace MarquesasServer
 
             #region Image Pages
 
-            PropertyInfo[] oProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IGame).GetProperties();
+            PropertyInfo[] oGameProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IGame).GetProperties();
 
             sbTempHTML.AppendLine("<li/><a target='_blank' href='/manual'>Manual</a>");
 
-            foreach (PropertyInfo oProperty in oProperties)
+            foreach (PropertyInfo oProperty in oGameProperties)
             {
                 if (oProperty.Name.Contains("ImagePath"))
                 {
@@ -208,10 +212,10 @@ namespace MarquesasServer
 
             #region Binary Requests
 
-            oProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IGame).GetProperties();
+            //oGameProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IGame).GetProperties();
             sbTempHTML.Clear();
 
-            foreach (PropertyInfo oProperty in oProperties)
+            foreach (PropertyInfo oProperty in oGameProperties)
             {
                 if (oProperty.Name.Contains("Path"))
                 {
@@ -231,9 +235,9 @@ namespace MarquesasServer
             sbTempHTML.AppendLine("<li/><a target='_blank' href='/statemanager'>StateManager</a>");
             sbTempHTML.AppendLine("<li/><a target='_blank' href='/statemanager/isingame'>StateManager/IsInGame</a>");
 
-            oProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IStateManager).GetProperties();
+            oGameProperties = typeof(Unbroken.LaunchBox.Plugins.Data.IStateManager).GetProperties();
 
-            foreach (PropertyInfo oProperty in oProperties)
+            foreach (PropertyInfo oProperty in oGameProperties)
             {
                 sbTempHTML.AppendLine("<li/><a target='_blank' href='/statemanager/" + oProperty.Name.ToLower() +
                                       "'>StateManager/" + oProperty.Name + "</a>");
@@ -249,9 +253,9 @@ namespace MarquesasServer
 
             sbTempHTML.AppendLine("<li/><a target='_blank' href='/selectedgame'>SelectedGame</a>");
 
-            oProperties = typeof(IGame).GetProperties();
+            oGameProperties = typeof(IGame).GetProperties();
 
-            foreach (PropertyInfo oProperty in oProperties)
+            foreach (PropertyInfo oProperty in oGameProperties)
             {
                 sbTempHTML.AppendLine("<li/><a target='_blank' href='/selectedgame/" + oProperty.Name.ToLower() +
                                       "'>SelectedGame/" + oProperty.Name + "</a>");
@@ -266,9 +270,9 @@ namespace MarquesasServer
             sbTempHTML.Clear();
             sbTempHTML.AppendLine("<li/><a target='_blank' href='/selectedgames'>SelectedGames</a>");
 
-            oProperties = typeof(IGame).GetProperties();
+            oGameProperties = typeof(IGame).GetProperties();
 
-            foreach (PropertyInfo oProperty in oProperties)
+            foreach (PropertyInfo oProperty in oGameProperties)
             {
                 sbTempHTML.AppendLine("<li/><a target='_blank' href='/selectedgames/" + oProperty.Name.ToLower() +
                                       "'>SelectedGames/" + oProperty.Name + "</a>");
@@ -307,7 +311,7 @@ namespace MarquesasServer
                 switch (oHttpProcessor.pathParts[1])
                 {
                     case "isingame":
-                        sJSONResponse = new JavaScriptSerializer().Serialize(MarquesasHttpServerInstance.IsInGame);
+                        sJSONResponse = JsonSerializer.Serialize(MarquesasHttpServerInstance.IsInGame);
                         break;
 
                     default:
@@ -318,8 +322,7 @@ namespace MarquesasServer
                         {
                             if (oProperty.Name.ToLower() == oHttpProcessor.pathParts[1])
                             {
-                                sJSONResponse =
-                                    new JavaScriptSerializer().Serialize(oProperty.GetValue(PluginHelper.StateManager));
+                                sJSONResponse = JsonSerializer.Serialize(oProperty.GetValue(PluginHelper.StateManager));
                             }
                         }
                         break;
@@ -327,7 +330,7 @@ namespace MarquesasServer
             }
             else
             {
-                sJSONResponse = new JavaScriptSerializer().Serialize(PluginHelper.StateManager);
+                sJSONResponse = JsonSerializer.Serialize(PluginHelper.StateManager);
             }
 
             WriteJSON(oHttpProcessor, sJSONResponse);
@@ -337,12 +340,11 @@ namespace MarquesasServer
         {
             string sJSONResponse = string.Empty;
 
-            if (PluginHelper.StateManager.GetAllSelectedGames().Length == 1)
+            if (PluginHelper.StateManager.GetAllSelectedGames()?.Length == 1)
             {
                 if (oHttpProcessor.pathParts.Length == 1)
                 {
-                    sJSONResponse =
-                        new JavaScriptSerializer().Serialize(PluginHelper.StateManager.GetAllSelectedGames());
+                    sJSONResponse = JsonSerializer.Serialize(PluginHelper.StateManager.GetAllSelectedGames());
                 }
                 else if (oHttpProcessor.pathParts.Length == 2)
                 {
@@ -353,9 +355,7 @@ namespace MarquesasServer
                     {
                         if (oProperty.Name.ToLower() == oHttpProcessor.pathParts[1].ToLower())
                         {
-                            sJSONResponse =
-                                new JavaScriptSerializer().Serialize(oProperty.GetValue(PluginHelper.StateManager
-                                    .GetAllSelectedGames()[0]));
+                            sJSONResponse = JsonSerializer.Serialize(oProperty.GetValue(PluginHelper.StateManager.GetAllSelectedGames()[0]));
                         }
                     }
                 }
@@ -370,7 +370,7 @@ namespace MarquesasServer
 
             if (oHttpProcessor.pathParts.Length == 1)
             {
-                sJSONResponse = new JavaScriptSerializer().Serialize(PluginHelper.StateManager.GetAllSelectedGames());
+                sJSONResponse = JsonSerializer.Serialize(PluginHelper.StateManager.GetAllSelectedGames());
             }
             else if (oHttpProcessor.pathParts.Length == 2)
             {
@@ -389,7 +389,7 @@ namespace MarquesasServer
                     }
                 }
 
-                sJSONResponse = new JavaScriptSerializer().Serialize(oHashtable);
+                sJSONResponse = JsonSerializer.Serialize(oHashtable);
             }
 
             WriteJSON(oHttpProcessor, sJSONResponse);
@@ -407,19 +407,7 @@ namespace MarquesasServer
 
             string sImagePath = htCachedBinaryPaths[oHttpProcessor.pathParts[1].ToLower()]?.ToString();
 
-            if (!string.IsNullOrWhiteSpace(sImagePath)
-                && (htCachedImagePaths[oHttpProcessor.pathParts[1].ToLower()]?.ToString() != sImagePath)
-                && File.Exists(sImagePath))
-            {
-                htCachedImagePaths[oHttpProcessor.pathParts[1]] = sImagePath;
-
-                htCachedImageHTML[oHttpProcessor.pathParts[1]] =
-                    Properties.Resources.HTML_Marque
-                        .Replace("<!-- SecondsBetweenRefresh -->", PluginAppSettings.GetString("SecondsBetweenRefresh"))
-                        .Replace("<!-- Base64Image -->",
-                            MakeBinarySrcData(sImagePath, (byte[])htCachedBinaries[oHttpProcessor.pathParts[1]]));
-            }
-            else
+            if (string.IsNullOrWhiteSpace(sImagePath) || !File.Exists(sImagePath))
             {
                 htCachedImageHTML[oHttpProcessor.pathParts[1]] = Properties.Resources.HTML_NoResource
                         .Replace("<!-- SecondsBetweenRefresh -->",
@@ -429,6 +417,16 @@ namespace MarquesasServer
                     ;
 
                 htCachedImagePaths[oHttpProcessor.pathParts[1]] = "";
+            }
+            else if (htCachedImagePaths[oHttpProcessor.pathParts[1].ToLower()]?.ToString() != sImagePath)
+            {
+                htCachedImagePaths[oHttpProcessor.pathParts[1]] = sImagePath;
+
+                htCachedImageHTML[oHttpProcessor.pathParts[1]] =
+                    Properties.Resources.HTML_Marque
+                        .Replace("<!-- SecondsBetweenRefresh -->", PluginAppSettings.GetString("SecondsBetweenRefresh"))
+                        .Replace("<!-- Base64Image -->",
+                            MakeBinarySrcData(sImagePath, (byte[])htCachedBinaries[oHttpProcessor.pathParts[1]]));
             }
 
             WriteImageHTML(oHttpProcessor, htCachedImageHTML[oHttpProcessor.pathParts[1]]?.ToString());
@@ -453,7 +451,7 @@ namespace MarquesasServer
             {
                 List<KeyValuePair<string, string>> additionalHeaders = null;
 
-                if (PluginHelper.StateManager.GetAllSelectedGames().Length > 0)
+                if (PluginHelper.StateManager.GetAllSelectedGames()?.Length > 0)
                 {
                     additionalHeaders = new List<KeyValuePair<string, string>>
                     {
@@ -510,6 +508,27 @@ namespace MarquesasServer
                         sBinaryPath = oProperty.GetValue(PluginHelper.StateManager.GetAllSelectedGames()[0])
                             ?.ToString();
                         break;
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(sBinaryPath)) {
+                    MethodInfo[] oGameMethods = typeof(IGame).GetMethods();
+                    foreach (MethodInfo oMethod in oGameMethods)
+                    {
+                        if (oMethod.Name.ToLower() == "get" + sType + "path")
+                        {
+                            if (oMethod.GetParameters().Length == 0)
+                            {
+                                sBinaryPath = oMethod.Invoke(PluginHelper.StateManager.GetAllSelectedGames()[0], new object[] { })
+                                    ?.ToString();
+                            }
+                            else
+                            {
+                                sBinaryPath = oMethod.Invoke(PluginHelper.StateManager.GetAllSelectedGames()[0], new object[] { false })
+                                    ?.ToString();
+                            }
+                            break;
+                        }
                     }
                 }
 
@@ -585,20 +604,7 @@ namespace MarquesasServer
 
             string sManualPath = htCachedBinaryPaths["manual"]?.ToString();
 
-            if (!string.IsNullOrWhiteSpace(sManualPath)
-                && (htCachedImagePaths["manual"]?.ToString() != sManualPath)
-                && File.Exists(sManualPath))
-            {
-                htCachedImagePaths["manual"] = sManualPath;
-
-                htCachedImageHTML["manual"] =
-                    Properties.Resources.HTML_Manual
-                        .Replace("<!-- SecondsBetweenRefresh -->",
-                            (PluginAppSettings.GetInt("SecondsBetweenRefresh") * 1000).ToString())
-                        .Replace("<!-- BinaryPath -->", "/binary/manual")
-                    ;
-            }
-            else
+            if (string.IsNullOrWhiteSpace(sManualPath) || !File.Exists(sManualPath))
             {
                 htCachedImageHTML["manual"] = Properties.Resources.HTML_NoResource
                         .Replace("<!-- SecondsBetweenRefresh -->",
@@ -609,25 +615,30 @@ namespace MarquesasServer
 
                 htCachedImagePaths["manual"] = "";
             }
+            else if (htCachedImagePaths["manual"]?.ToString() != sManualPath)
+            {
+                htCachedImagePaths["manual"] = sManualPath;
+
+                htCachedImageHTML["manual"] =
+                    Properties.Resources.HTML_Manual
+                        .Replace("<!-- SecondsBetweenRefresh -->",
+                            (PluginAppSettings.GetInt("SecondsBetweenRefresh") * 1000).ToString())
+                        .Replace("<!-- BinaryPath -->", "/binary/manual")
+                    ;
+            }
 
             WriteImageHTML(oHttpProcessor, htCachedImageHTML["manual"].ToString());
         }
 
         private static bool DoCacheResponseIfWarranted(HttpProcessor oHttpProcessor)
         {
+            if (PluginAppSettings.GetBoolean("CacheDisabled")) return false;
+
             // Cache the response in the browser using the Etag and If-None-Match
             if (oHttpProcessor.pathParts != null && oHttpProcessor.httpHeaders.ContainsKey("if-none-match")
-                && PluginHelper.StateManager.GetAllSelectedGames().Length == 1
+                && PluginHelper.StateManager.GetAllSelectedGames()?.Length == 1
                 && oHttpProcessor.httpHeaders["if-none-match"] == oHttpProcessor.request_url + gsEtagSeperator +
                 PluginHelper.StateManager.GetAllSelectedGames()[0].Id)
-            {
-                oHttpProcessor.writeNotModified();
-                return true;
-            }
-
-            // Handle the default page that never changes, so any eTag is a good eTag...
-            if (oHttpProcessor.request_url.PathAndQuery == "/" &&
-                !string.IsNullOrWhiteSpace(oHttpProcessor.httpHeaders["if-none-match"]))
             {
                 oHttpProcessor.writeNotModified();
                 return true;
@@ -638,7 +649,7 @@ namespace MarquesasServer
 
         private static bool OneAndOnlyOneGameSelected(HttpProcessor oHttpProcessor)
         {
-            if (PluginHelper.StateManager.GetAllSelectedGames().Length == 1)
+            if (PluginHelper.StateManager.GetAllSelectedGames()?.Length == 1)
             {
                 return true;
             }
