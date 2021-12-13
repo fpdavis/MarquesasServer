@@ -27,6 +27,7 @@ namespace MarquesasServer
             chkSecurePortEnabled.Checked = PluginAppSettings.GetBoolean("SecurePortEnabled");
             nudSecondsBetweenRefresh.Value = (PluginAppSettings.GetInt("SecondsBetweenRefresh") > 0 && PluginAppSettings.GetInt("SecondsBetweenRefresh") < 1000) ? PluginAppSettings.GetInt("SecondsBetweenRefresh") : 15;
             cmbAutomaticUpdates.SelectedIndex = cmbAutomaticUpdates.FindString(PluginAppSettings.GetBoolean("AutomaticUpdates") ? "On" : "Off");
+            chkWriteEnabled.Checked = PluginAppSettings.GetBoolean("WriteEnabled");
 
             SetServerStatus();
 
@@ -72,6 +73,7 @@ namespace MarquesasServer
             toolTip1.SetToolTip(chkSecurePortEnabled, AddNewLinesForTooltip(PluginAppSettings.GetString("SecurePortEnabled_Help").Replace("  ", " ")));
             toolTip1.SetToolTip(nudSecondsBetweenRefresh, AddNewLinesForTooltip(PluginAppSettings.GetString("SecondsBetweenRefresh_Help").Replace("  ", " ")));
             toolTip1.SetToolTip(cmbAutomaticUpdates, AddNewLinesForTooltip(PluginAppSettings.GetString("AutomaticUpdates_Help").Replace("  ", " ")));
+            toolTip1.SetToolTip(chkWriteEnabled, AddNewLinesForTooltip(PluginAppSettings.GetString("WriteEnabled_Help").Replace("  ", " ")));
 
             toolTip1.SetToolTip(lblLaunchPort, AddNewLinesForTooltip("Browse index."));
             toolTip1.SetToolTip(lblLaunchSecurePort, AddNewLinesForTooltip("Browse index."));
@@ -205,6 +207,7 @@ namespace MarquesasServer
             PluginAppSettings.SetString("SecurePortEnabled", chkSecurePortEnabled.Checked ? "True" : "False");
             PluginAppSettings.SetString("SecondsBetweenRefresh", nudSecondsBetweenRefresh.Value.ToString());
             PluginAppSettings.SetString("AutomaticUpdates", cmbAutomaticUpdates.SelectedItem.ToString() == "On" ? "True" : "False");
+            PluginAppSettings.SetString("WriteEnabled", chkWriteEnabled.Checked ? "True" : "False");
         }
 
         private void btnClose_Click(object sender, EventArgs e)

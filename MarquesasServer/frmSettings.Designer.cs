@@ -51,16 +51,18 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.lblVersion = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.chkWriteEnabled = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudSecondsBetweenRefresh)).BeginInit();
             this.SuspendLayout();
             // 
             // btnStartServer
             // 
             this.btnStartServer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnStartServer.Location = new System.Drawing.Point(12, 200);
+            this.btnStartServer.Location = new System.Drawing.Point(12, 240);
             this.btnStartServer.Name = "btnStartServer";
             this.btnStartServer.Size = new System.Drawing.Size(75, 23);
-            this.btnStartServer.TabIndex = 0;
+            this.btnStartServer.TabIndex = 12;
             this.btnStartServer.Text = "Start Server";
             this.btnStartServer.UseVisualStyleBackColor = true;
             this.btnStartServer.Click += new System.EventHandler(this.btnStartServer_Click);
@@ -68,10 +70,10 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(206, 200);
+            this.btnSave.Location = new System.Drawing.Point(206, 240);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 1;
+            this.btnSave.TabIndex = 14;
             this.btnSave.Text = "&Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -80,22 +82,22 @@
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(125, 200);
+            this.btnClose.Location = new System.Drawing.Point(125, 240);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
-            this.btnClose.TabIndex = 2;
+            this.btnClose.TabIndex = 13;
             this.btnClose.Text = "&Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(82, 67);
+            this.label1.Location = new System.Drawing.Point(16, 64);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(61, 13);
+            this.label1.Size = new System.Drawing.Size(126, 19);
             this.label1.TabIndex = 3;
             this.label1.Text = "HTTP Port:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // txtPort
             // 
@@ -104,7 +106,7 @@
             this.txtPort.Name = "txtPort";
             this.txtPort.PromptChar = ' ';
             this.txtPort.Size = new System.Drawing.Size(43, 20);
-            this.txtPort.TabIndex = 4;
+            this.txtPort.TabIndex = 1;
             this.txtPort.ValidatingType = typeof(int);
             this.txtPort.TextChanged += new System.EventHandler(this.ValueChanged);
             // 
@@ -127,7 +129,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(43, 148);
+            this.label3.Location = new System.Drawing.Point(43, 186);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(100, 13);
             this.label3.TabIndex = 9;
@@ -139,7 +141,7 @@
             this.cmbAutomaticUpdates.Items.AddRange(new object[] {
             "On",
             "Off"});
-            this.cmbAutomaticUpdates.Location = new System.Drawing.Point(145, 146);
+            this.cmbAutomaticUpdates.Location = new System.Drawing.Point(145, 184);
             this.cmbAutomaticUpdates.Name = "cmbAutomaticUpdates";
             this.cmbAutomaticUpdates.Size = new System.Drawing.Size(43, 21);
             this.cmbAutomaticUpdates.TabIndex = 10;
@@ -147,9 +149,9 @@
             // 
             // btnCheckForUpdates
             // 
-            this.btnCheckForUpdates.Location = new System.Drawing.Point(194, 145);
+            this.btnCheckForUpdates.Location = new System.Drawing.Point(194, 183);
             this.btnCheckForUpdates.Name = "btnCheckForUpdates";
-            this.btnCheckForUpdates.Size = new System.Drawing.Size(75, 23);
+            this.btnCheckForUpdates.Size = new System.Drawing.Size(75, 24);
             this.btnCheckForUpdates.TabIndex = 11;
             this.btnCheckForUpdates.Text = "Update...";
             this.btnCheckForUpdates.UseVisualStyleBackColor = true;
@@ -162,18 +164,18 @@
             this.txtSecurePort.Name = "txtSecurePort";
             this.txtSecurePort.PromptChar = ' ';
             this.txtSecurePort.Size = new System.Drawing.Size(43, 20);
-            this.txtSecurePort.TabIndex = 15;
+            this.txtSecurePort.TabIndex = 4;
             this.txtSecurePort.ValidatingType = typeof(int);
             this.txtSecurePort.TextChanged += new System.EventHandler(this.ValueChanged);
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(38, 94);
+            this.label2.Location = new System.Drawing.Point(16, 92);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(105, 13);
+            this.label2.Size = new System.Drawing.Size(126, 18);
             this.label2.TabIndex = 14;
             this.label2.Text = "Secure HTTPS Port:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // chkPortEnabled
             // 
@@ -181,7 +183,7 @@
             this.chkPortEnabled.Location = new System.Drawing.Point(194, 65);
             this.chkPortEnabled.Name = "chkPortEnabled";
             this.chkPortEnabled.Size = new System.Drawing.Size(65, 17);
-            this.chkPortEnabled.TabIndex = 16;
+            this.chkPortEnabled.TabIndex = 2;
             this.chkPortEnabled.Text = "Enabled";
             this.chkPortEnabled.UseVisualStyleBackColor = true;
             this.chkPortEnabled.CheckedChanged += new System.EventHandler(this.chkPortEnabled_CheckedChanged);
@@ -192,7 +194,7 @@
             this.chkSecurePortEnabled.Location = new System.Drawing.Point(194, 93);
             this.chkSecurePortEnabled.Name = "chkSecurePortEnabled";
             this.chkSecurePortEnabled.Size = new System.Drawing.Size(65, 17);
-            this.chkSecurePortEnabled.TabIndex = 17;
+            this.chkSecurePortEnabled.TabIndex = 5;
             this.chkSecurePortEnabled.Text = "Enabled";
             this.chkSecurePortEnabled.UseVisualStyleBackColor = true;
             this.chkSecurePortEnabled.CheckedChanged += new System.EventHandler(this.chkSecurePortEnabled_CheckedChanged);
@@ -206,7 +208,7 @@
             this.lblLaunchPort.Location = new System.Drawing.Point(259, 66);
             this.lblLaunchPort.Name = "lblLaunchPort";
             this.lblLaunchPort.Size = new System.Drawing.Size(18, 15);
-            this.lblLaunchPort.TabIndex = 18;
+            this.lblLaunchPort.TabIndex = 3;
             this.lblLaunchPort.Text = "...";
             this.lblLaunchPort.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.lblLaunchPort.Click += new System.EventHandler(this.lblLaunchPort_Click);
@@ -220,19 +222,19 @@
             this.lblLaunchSecurePort.Location = new System.Drawing.Point(259, 94);
             this.lblLaunchSecurePort.Name = "lblLaunchSecurePort";
             this.lblLaunchSecurePort.Size = new System.Drawing.Size(18, 15);
-            this.lblLaunchSecurePort.TabIndex = 19;
+            this.lblLaunchSecurePort.TabIndex = 6;
             this.lblLaunchSecurePort.Text = "...";
             this.lblLaunchSecurePort.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.lblLaunchSecurePort.Click += new System.EventHandler(this.lblLaunchSecurePort_Click);
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 121);
+            this.label4.Location = new System.Drawing.Point(5, 117);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(137, 13);
+            this.label4.Size = new System.Drawing.Size(137, 20);
             this.label4.TabIndex = 20;
             this.label4.Text = "Seconds Between Refresh:";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // nudSecondsBetweenRefresh
             // 
@@ -249,7 +251,7 @@
             0});
             this.nudSecondsBetweenRefresh.Name = "nudSecondsBetweenRefresh";
             this.nudSecondsBetweenRefresh.Size = new System.Drawing.Size(43, 20);
-            this.nudSecondsBetweenRefresh.TabIndex = 21;
+            this.nudSecondsBetweenRefresh.TabIndex = 7;
             this.nudSecondsBetweenRefresh.Value = new decimal(new int[] {
             15,
             0,
@@ -267,7 +269,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(98, 173);
+            this.label5.Location = new System.Drawing.Point(98, 211);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(45, 13);
             this.label5.TabIndex = 22;
@@ -278,24 +280,45 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(142, 173);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(0, 10);
+            this.label6.Size = new System.Drawing.Size(0, 13);
             this.label6.TabIndex = 23;
             // 
             // lblVersion
             // 
             this.lblVersion.AutoSize = true;
-            this.lblVersion.Location = new System.Drawing.Point(142, 173);
+            this.lblVersion.Location = new System.Drawing.Point(142, 211);
             this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(10, 10);
+            this.lblVersion.Size = new System.Drawing.Size(13, 13);
             this.lblVersion.TabIndex = 24;
             this.lblVersion.Text = "0";
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(13, 144);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(129, 19);
+            this.label7.TabIndex = 25;
+            this.label7.Text = "Write Enabled:";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // chkWriteEnabled
+            // 
+            this.chkWriteEnabled.AutoSize = true;
+            this.chkWriteEnabled.Location = new System.Drawing.Point(145, 144);
+            this.chkWriteEnabled.Name = "chkWriteEnabled";
+            this.chkWriteEnabled.Size = new System.Drawing.Size(15, 14);
+            this.chkWriteEnabled.TabIndex = 8;
+            this.chkWriteEnabled.UseVisualStyleBackColor = true;
+            this.chkWriteEnabled.CheckedChanged += new System.EventHandler(this.ValueChanged);
             // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(293, 235);
+            this.ClientSize = new System.Drawing.Size(293, 275);
+            this.Controls.Add(this.chkWriteEnabled);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -352,5 +375,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label lblVersion;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.CheckBox chkWriteEnabled;
     }
 }

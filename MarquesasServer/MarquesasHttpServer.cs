@@ -14,6 +14,7 @@ using Unbroken.LaunchBox.Plugins.Data;
 using CommonPluginHelper;
 using MarquesasServer.Properties;
 using System.Diagnostics;
+using System.Linq;
 
 namespace MarquesasServer
 {
@@ -68,6 +69,10 @@ namespace MarquesasServer
 
                     case "binary":
                         DoBinary(oHttpProcessor);
+                        break;
+
+                    case "selectedgamemethods":
+                        SelectedGameMethods(oHttpProcessor);
                         break;
 
                     default:
@@ -254,6 +259,7 @@ namespace MarquesasServer
             sbTempHTML.AppendLine("<li/><a target='_blank' href='/selectedgame'>SelectedGame</a>");
 
             oGameProperties = typeof(IGame).GetProperties();
+            Array.Sort(oGameProperties, new IGamePropertiesComparer());
 
             foreach (PropertyInfo oProperty in oGameProperties)
             {
@@ -271,6 +277,7 @@ namespace MarquesasServer
             sbTempHTML.AppendLine("<li/><a target='_blank' href='/selectedgames'>SelectedGames</a>");
 
             oGameProperties = typeof(IGame).GetProperties();
+            Array.Sort(oGameProperties, new IGamePropertiesComparer());
 
             foreach (PropertyInfo oProperty in oGameProperties)
             {
@@ -281,6 +288,63 @@ namespace MarquesasServer
             sbIndexPage.Replace("<!-- Selected Game(s) Information -->", sbTempHTML.ToString());
 
             #endregion Selected Game(s) Information
+
+            #region Selected Game Methods
+
+            sbTempHTML.Clear();
+                        
+            MethodInfo[] oGameMethods = typeof(IGame).GetMethods();
+            Array.Sort(oGameMethods, new IGameMethodComparer());
+
+            string sParameters = string.Empty;
+            foreach (var oMethod in oGameMethods)
+            {
+                if (oMethod.GetParameters().Length > 0)
+                {
+                    sParameters = "/";
+                    foreach (var oParameter in oMethod.GetParameters())
+                    {                        
+                        sParameters += $"{oParameter.ParameterType.ToString().Replace("System.", "")} {{{oParameter.Name}";
+
+                        if (oParameter.IsOptional)
+                        {
+                            sParameters += " optional";
+                        }
+                        if (oParameter.HasDefaultValue)
+                        {
+                            sParameters += $" default={oParameter.DefaultValue}";
+                        }
+
+                        sParameters += "}/";
+                    }
+
+                    sParameters = sParameters.TrimEnd('/');
+
+                    if (oMethod.GetParameters().Length > 1)
+                    {
+                        sParameters += "<span style='color: red'> - Not Supported</span>";
+                    }
+                }
+                else
+                {
+                    sParameters = string.Empty;
+                }
+
+                if (oMethod.Name.ToLower().StartsWith("get") && oMethod.GetParameters().Length <= 1)
+                {
+                    sbTempHTML.Append(" <li/><a target='_blank' href='/selectedgamemethods/" + oMethod.Name.ToLower() +
+                           "'>SelectedGameMethods/" + oMethod.Name + sParameters + "</a>");
+                }
+                else
+                {
+                    sbTempHTML.Append(" <li/>" + "SelectedGameMethods/" + oMethod.Name + sParameters);
+                }
+
+            }
+
+            sbIndexPage.Replace("<!-- Selected Game Methods -->", sbTempHTML.ToString());
+
+            #endregion Selected Game Methods
 
             List<KeyValuePair<string, string>> additionalHeaders =
                 new List<KeyValuePair<string, string>>
@@ -293,7 +357,22 @@ namespace MarquesasServer
 
             oHttpProcessor.outputStream.Write(sbIndexPage);
         }
-
+        
+        class IGamePropertiesComparer : IComparer
+        {
+            public int Compare(object x, object y)
+            {
+                return (new CaseInsensitiveComparer()).Compare(((PropertyInfo)x).Name, ((PropertyInfo)y).Name);
+            }
+        }
+        class IGameMethodComparer : IComparer
+        {
+            public int Compare(object x, object y)
+            {
+                return (new CaseInsensitiveComparer()).Compare(((MethodInfo)x).Name, ((MethodInfo)y).Name);
+            }
+        }
+        
         #region Web APIs
 
         private static void WriteJSON(HttpProcessor oHttpProcessor, string sJSONResponse)
@@ -510,7 +589,7 @@ namespace MarquesasServer
                         break;
                     }
                 }
-
+                
                 if (string.IsNullOrWhiteSpace(sBinaryPath)) {
                     MethodInfo[] oGameMethods = typeof(IGame).GetMethods();
                     foreach (MethodInfo oMethod in oGameMethods)
@@ -557,6 +636,60 @@ namespace MarquesasServer
                     htCachedBinaries[sType] = "";
                 }
             }
+        }
+
+        private static void SelectedGameMethods(HttpProcessor oHttpProcessor)
+        {
+            string sJSONResponse = string.Empty;
+            string sMethodName = oHttpProcessor.pathParts[1].ToLower();
+
+            if (!PluginAppSettings.GetBoolean("WriteEnabled") && !sMethodName.ToLower().StartsWith("get"))
+            {
+                oHttpProcessor.writeFailure("Marquesas Server in Read Only Mode.");
+                return;
+            }
+
+            string[] oBooleans = { "true", "false", "1", "0", "yes", "no" };
+            string sParamater = string.Empty;
+            if (oHttpProcessor.pathParts.Length > 2)
+            {
+                sParamater = oHttpProcessor.pathParts[2].ToLower();
+            }
+
+            MethodInfo[] oGameMethods = typeof(IGame).GetMethods();
+            foreach (MethodInfo oMethod in oGameMethods)
+            {
+                if (oMethod.Name.ToLower() == sMethodName)
+                {
+                    if (sParamater == String.Empty && oMethod.GetParameters().Length == 0)
+                    {
+                        sJSONResponse = JsonSerializer.Serialize(oMethod.Invoke(PluginHelper.StateManager.GetAllSelectedGames()[0], new object[] { }));
+                        break;
+                    }
+                    else if (sParamater != String.Empty && oMethod.GetParameters().Length > 0)
+                    {
+                        if (oMethod.GetParameters()[0].ParameterType.ToString() == "System.Boolean")
+                        {
+                            if (Boolean.TryParse(sParamater, out bool bParamater) && oBooleans.Contains(sParamater.ToLower()))
+                            {
+                                sJSONResponse = JsonSerializer.Serialize(oMethod.Invoke(PluginHelper.StateManager.GetAllSelectedGames()[0], new object[] { bParamater }));
+                                break;
+                            }
+                            else 
+                            {
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            sJSONResponse = JsonSerializer.Serialize(oMethod.Invoke(PluginHelper.StateManager.GetAllSelectedGames()[0], new object[] { sParamater }));
+                            break;
+                        }
+                    }                    
+                }
+            }
+
+            WriteJSON(oHttpProcessor, sJSONResponse);
         }
 
         private static void WriteBinary(HttpProcessor oHttpProcessor)
@@ -648,7 +781,7 @@ namespace MarquesasServer
         }
 
         private static bool OneAndOnlyOneGameSelected(HttpProcessor oHttpProcessor)
-        {
+        { 
             if (PluginHelper.StateManager.GetAllSelectedGames()?.Length == 1)
             {
                 return true;

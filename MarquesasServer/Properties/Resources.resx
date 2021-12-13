@@ -289,7 +289,7 @@ Path:&lt;!-- Path --&gt; &lt;br&gt;
   &lt;ul&gt;
     &lt;li&gt;&lt;a href="#tabs-1"&gt;Auto Refreshing Pages&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href="#tabs-2"&gt;API Requests&lt;/a&gt;&lt;/li&gt;
-	&lt;li&gt;&lt;a href="#tabs-3"&gt;Web Sockets&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#tabs-3"&gt;Web Sockets&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
   &lt;div id="tabs-1"&gt;
     &lt;p&gt;&lt;h3&gt;Auto Refreshing Web Pages&lt;/h3&gt;&lt;/p&gt;
@@ -306,7 +306,8 @@ few seconds to insure that the game being played will be reflected in the browse
     &lt;li&gt;&lt;a href="#APItabs-2"&gt;Binary Requests&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href="#APItabs-3"&gt;State Manager&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href="#APItabs-4"&gt;Selected Game Information&lt;/a&gt;&lt;/li&gt;
-	&lt;li&gt;&lt;a href="#APItabs-5"&gt;Selected Game(s) Information&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#APItabs-5"&gt;Selected Game(s) Information&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#APItabs-6"&gt;Selected Game Methods&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
   &lt;div id="APItabs-2"&gt;
     &lt;p&gt;&lt;h3&gt;Binary Requests&lt;/h3&gt;&lt;/p&gt;
@@ -330,6 +331,13 @@ few seconds to insure that the game being played will be reflected in the browse
 
 	&lt;!-- Selected Game(s) Information --&gt;
   &lt;/div&gt;
+    &lt;div id="APItabs-6"&gt;
+    &lt;p&gt;&lt;h3&gt;Selected Game Methods&lt;/h3&gt;&lt;/p&gt;
+	&lt;p&gt;If no game or more than one game is selected these will return empty resulting in a json error that you may need to catch.&lt;/p&gt;
+
+	&lt;!-- Selected Game Methods --&gt;
+  &lt;/div&gt;
+
 &lt;/div&gt;
 &lt;/div&gt;
   &lt;div id="tabs-3"&gt;

@@ -396,8 +396,8 @@ namespace SimpleHttp
 			}
 			catch (Exception oException)
             {
-				
-            }
+				this.writeFailure(oException.ToString());
+			}
 			finally
 			{
 				if (!responseWritten)
