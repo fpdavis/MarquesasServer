@@ -21,7 +21,7 @@ Installation
    Requires .NET Framework Version 4.8 from https://dotnet.microsoft.com/download/dotnet-framework/net48
 
    **See the default index (LaunchBox->Tools->Marquesas Server Admin->Ellipses Button) for a 
-   compreshinsive list of dynamically generated direct links and detailed information.**
+   comprehensive list of dynamically generated direct links and detailed information.**
 
 Auto Refreshing Web Pages
 
@@ -48,15 +48,15 @@ Auto Refreshing Web Pages
    * /Image/Marque
    * /Image/PlatformClearLogo
    * /Image/Screenshot
-   \
+   <br><br>
    * /Manual
 
-JSON API for retrieving
+JSON API for retrieving data
 
    * /StateManager (Unbroken.LaunchBox.Plugins.PluginHelper.StateManager)
    * /StateManager/IsInGame
    * /StateManager/* (Unbroken.LaunchBox.Plugins.PluginHelper.StateManager.*)
-   \
+   <br><br>
    * /SelectedGames (Unbroken.LaunchBox.Plugins.Data.IGame)
    * /SelectedGames/* (Unbroken.LaunchBox.Plugins.Data.IGame.*)
 	  
@@ -83,11 +83,13 @@ JSON API for retrieving raw binaries
    * /Binary/ThemeVideo
 
 See the default index (LaunchBox->Tools->Marquesas Server Admin->Ellipses) for a 
-compreshinsive list of dynamically generated direct links and detailed information.
+comprehensive list of dynamically generated direct links and detailed information.
 
-  Source: https://github.com/fpdavis/MarquesasServer
-\Binaries: https://forums.launchbox-app.com/files/file/675-marquesas-http-server
-\Binaries: https://github.com/fpdavis/MarquesasServer/releases
+Source & Binaries
+
+   * Source: https://github.com/fpdavis/MarquesasServer
+   * Binaries: https://forums.launchbox-app.com/files/file/675-marquesas-http-server
+   * Binaries: https://github.com/fpdavis/MarquesasServer/releases
 
 Todo (in order of importance):
 
@@ -107,14 +109,14 @@ Changes (oldest to newest):
    * Identified HTML to use for serving Base64 encoded image as maximum sized
      background image that maintains aspect ratio and does not exceed the
      bounds of the browser window.
-   \
+   <br><br>
    * Added settings form
-   \
+   <br><br>
    * Tied in form settings to backend code
    * Split out abstract HTTP Server class.
    * Created list object to store HttpServer references.
    * Changed Update.cs to use Application Name from Resource string.
-   \
+   <br><br>
    * Implemented server side and client side caching. Client side caching uses 
      Etag/If-None-Match. This has been tested in Chrome and Edge. The If-None-Match
      sounds promising but may not be as consistant and predictable as a simple 
@@ -122,26 +124,26 @@ Changes (oldest to newest):
    * Converted to a Windows executable to be able to test form.
    * Settings Form now loads and saves data.
    * Added Readme.md file.
-   \
+   <br><br>
    * Upgraded HTTPServer for better threading, stopping, SSL support, and many more options for future expansion.
    * Removed option to select IP Address, can now bind to all available addresses without extra thread overhead.
      This should not be an issue in most cases.
    * Added opton for Secure port number.
    * Added ability to enable or disable each of the ports.
-   \
+   <br><br>
    * Added API Interface for retrieving StateManager information.
    * Removed unused files.
    * Centered the status form.
    * Added communications pathway between ISystemMenuItemPlugin and ISystemEventsPlugin for starting and 
      stopping the server using MarquesasHttpServerInstance.RunningServer.
    * Updated PluginAppSettings.cs to store newly added App.config settings instead of displaying a warning.
-   \
+   <br><br>
    * Converted Helper classes to static classes
    * Added SecondsBetweenRefresh to Admin and app.config
    * Added buttons to launch URL of main server page
    * Moved SelectedGames up one level, will further refine SelectedGame vs SelectedGames vs Game
    * Added initial default page with links to all current pages
-   \
+   <br><br>
    * Added Manual Support
    * Added HTML Error pages
    * Split up game heiarchy into SelectedGame (game being played?) vs SelectedGames (not being played, with possible multiple selections)
@@ -151,17 +153,17 @@ Changes (oldest to newest):
    * Gracefully handles empty properties
    * Added Binary support
    * Continued to refine default HTML page
-   \
+   <br><br>
    * Add port use detection on startup
    * Reworked help to use Tool Tips
    * Added first time run dialog
    * Changed background color on autoloading pages to black
-   \
+   <br><br>
    * Updated update helper to handle multiple files instead of just one Dll in preperation for socket support
    * Addded commented out socket code
    * Completed Etag support for default html page (cache Page/MD5Sum)
    * Fixed issue when a selected game had no available resource, the html page would not refresh as expected
-   \
+   <br><br>
    * Launchbox's upgrade to .Net core moved Unbroken.LaunchBox.Plugins.dll from the Metadata directory to the Core directory
    * Update .Net Framework to 4.8
    * Fixed broken Binary Requests for Video, Music, and Manuals. This should have fixed the problems with
@@ -170,7 +172,7 @@ Changes (oldest to newest):
    * Fixed bug when no game was selected.
    * Added more precise version checking.
    * Added version number to settings panel.
-   \
+   <br><br>
    * Added support for IGame Methods.
    * Added option for a read only mode (Write Enabled) now that write IGame Methods have been added.
-   * Links to IGame Set Methods do not generate HTML links so data isn't accidentally overriden.
+   * Links to IGame Set Methods do not generate HTML links so data isn't accidentally overridden.
