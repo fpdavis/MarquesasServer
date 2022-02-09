@@ -95,12 +95,8 @@ Source & Binaries
 
 Todo (in order of importance):
 
-   * Change search for PlayGame to match GetAllGames
-   * Add platform support
-   * Add support for /Game/ID to pull back game information for games not selected but in XML files.
-     ID could be the games ID, Title, or possibly some other identifier
+   * Add working examples for the new Game & Platform Calls in the Index 
    * Add support for SuperSockets
-   * Need to continue to refine default index page and add documentation to it
    * Memory/CPU profile
 
 Changes (oldest to newest):
@@ -184,3 +180,8 @@ Changes (oldest to newest):
    * Added GetAllGamesLimit to App.config to limit number of entries returned for /GetAllGames/AllProperties. Default is 50.
    * Added partial match search terms on the querystring that are ANDED for GetAllGames for Title, Publisher, and Platform (?Title=Asteroids)
    * Added /PlayGame which matches games on Title, PublisherAndTitle, Id, and LaunchBoxDbId. Examples: /PlayGame/Title/EXACT_TITLE, /PlayGame/PublisherAndTitle/EXACT_PUBLISHERNAME/EXACT_TITLE, /PlayGame/LaunchBoxDbId/123456
+   * Added support for /Game to pull back game information for games not selected but in XML files. Supports the same input as /PlayGame and requires exact matches.
+   * Added /GetAllPlatforms with partial match search terms on the querystring that are ANDED for Title, Manufacturer, and Developer (?Title=Commodore 64)
+   * Added /Platform/Title/EXACT_TITLE/[IncludeGameInfo] for platform support
+   * Added the new API calls to the Index page under API Requests->Game & Platform Calls.
+   

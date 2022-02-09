@@ -33,6 +33,21 @@ namespace MarquesasServer
         public int? LaunchBoxDbId { get; set; }
     }
 
+    public class PlatformInfo
+    {
+        public IPlatform Platform { get; set; }
+        public bool HasGames { get; set; }
+        public int GameCount { get; set; }
+        public int HiddenGameCount { get; set; }
+        public int BrokenGameCount { get; set; }
+        public int GamesMissingVideosCount { get; set; }
+        public int GamesMissingBoxFrontImageCount { get; set; }
+        public int GamesMissingScreenshotImageCount { get; set; }
+        public int GamesMissingClearLogoImageCount { get; set; }
+        public int GamesMissingBackgroundImageCount { get; set; }
+        public object GameInfo { get; set; }
+    }
+
     public class MarquesasHttpServer : HttpServer
     {
         private static Hashtable htCachedBinaryPaths = new Hashtable();
@@ -85,12 +100,21 @@ namespace MarquesasServer
                         SelectedGameMethods(oHttpProcessor);
                         break;
 
-                    case "playgame":
-                        PlayGame(oHttpProcessor);
+                    case "game":
+                        Game(oHttpProcessor);
                         break;
-
+                    case "playgame":
+                        Game(oHttpProcessor, true);
+                        break;
                     case "getallgames":
                         GetAllGames(oHttpProcessor);
+                        break;
+
+                    case "getallplatforms":
+                        GetAllPlatforms(oHttpProcessor);
+                        break;
+                    case "platform":
+                        Platform(oHttpProcessor);
                         break;
 
                     default:
@@ -501,9 +525,9 @@ namespace MarquesasServer
             WriteJSON(oHttpProcessor, sJSONResponse);
         }
 
-        private void PlayGame(HttpProcessor oHttpProcessor)
+        private void Game(HttpProcessor oHttpProcessor, Boolean PlayGame = false)
         {
-            if (MarquesasHttpServerInstance.IsInGame)
+            if (PlayGame && MarquesasHttpServerInstance.IsInGame)
             {
                 oHttpProcessor.writeFailure("503 Service Unavailable", "A game is currently being played. Try again once the game has been closed.");
                 return;
@@ -546,14 +570,17 @@ namespace MarquesasServer
 
             if (oGame != null)
             {
-                oGame.Play();
+                if (PlayGame)
+                {
+                    oGame.Play();
+                }
 
                 string sJSONResponse = JsonSerializer.Serialize(oGame);
                 WriteJSON(oHttpProcessor, sJSONResponse);
             }
             else
             {
-                oHttpProcessor.writeFailure("404 Not Found", "No game match could be found. Valid lookups include Title, PublisherAndTitle, Id, and LaunchBoxDbId. Examples: /PlayGame/Title/EXACT_TITLE, /PlayGame/PublisherAndTitle/EXACT_PUBLISHERNAME/EXACT_TITLE, /PlayGame/LaunchBoxDbId/123456");
+                oHttpProcessor.writeFailure("404 Not Found", "No game match could be found. Valid lookups include Title, PublisherAndTitle, Id, and LaunchBoxDbId. Examples: /[Play]Game/Title/EXACT_TITLE, /[Play]Game/PublisherAndTitle/EXACT_PUBLISHERNAME/EXACT_TITLE, /[Play]Game/LaunchBoxDbId/123456");
             }
         }
 
@@ -593,6 +620,72 @@ namespace MarquesasServer
 
             WriteJSON(oHttpProcessor, sJSONResponse);
         }
+
+        private void GetAllPlatforms(HttpProcessor oHttpProcessor)
+        {
+            string sJSONResponse = string.Empty;
+
+                var oaPlatforms = PluginHelper.DataManager.GetAllPlatforms()
+                    .Where(x => x.SortTitleOrTitle.IndexOf(oHttpProcessor.GetQSParam("title"), StringComparison.CurrentCultureIgnoreCase) != -1
+                         && x.Manufacturer.IndexOf(oHttpProcessor.GetQSParam("manufacturer"), StringComparison.CurrentCultureIgnoreCase) != -1
+                         && x.Developer.IndexOf(oHttpProcessor.GetQSParam("developer"), StringComparison.CurrentCultureIgnoreCase) != -1
+                        );
+
+                sJSONResponse = JsonSerializer.Serialize(oaPlatforms);                        
+
+            WriteJSON(oHttpProcessor, sJSONResponse);
+        }
+
+        private void Platform(HttpProcessor oHttpProcessor)
+        {
+            if (oHttpProcessor.pathParts.Length < 3 || oHttpProcessor.pathParts[1].ToLower() != "title")
+            {
+                oHttpProcessor.writeFailure("404 Not Found", "No platform match could be found. Valid lookup by Title only. Examples: /Platform/Title/EXACT_TITLE/[IncludeGameInfo]");
+                return;
+            }
+
+            var oPlatform = PluginHelper.DataManager.GetAllPlatforms().FirstOrDefault(x => x.SortTitleOrTitle.ToLower() == oHttpProcessor.pathParts[2].ToLower());
+
+            if (oPlatform != null)
+            {
+                PlatformInfo oPlatformInfo = new PlatformInfo();
+                                
+                oPlatformInfo.Platform = oPlatform;
+                oPlatformInfo.HasGames = oPlatform.HasGames(true, true);
+                oPlatformInfo.GameCount = oPlatform.GetGameCount(true, true);
+
+                oPlatformInfo.HiddenGameCount = oPlatformInfo.GameCount  - oPlatform.GetGameCount(false, true);
+                oPlatformInfo.BrokenGameCount = oPlatformInfo.GameCount - oPlatform.GetGameCount(true, false);
+
+                oPlatformInfo.GamesMissingVideosCount = oPlatformInfo.GameCount - oPlatform.GetGameCount(true, true, true, false, false, false, false);
+                oPlatformInfo.GamesMissingBoxFrontImageCount = oPlatformInfo.GameCount - oPlatform.GetGameCount(true, true, false, true, false, false, false);
+                oPlatformInfo.GamesMissingScreenshotImageCount = oPlatformInfo.GameCount - oPlatform.GetGameCount(true, true, false, false, true, false, false);
+                oPlatformInfo.GamesMissingClearLogoImageCount = oPlatformInfo.GameCount - oPlatform.GetGameCount(true, true, false, false, false, true, false);
+                oPlatformInfo.GamesMissingBackgroundImageCount = oPlatformInfo.GameCount - oPlatform.GetGameCount(true, true, false, false, false, false, true);
+
+                if (oHttpProcessor.pathParts.Length == 4 && oHttpProcessor.pathParts[3].ToLower() == "includegameinfo")
+                {
+                    oPlatformInfo.GameInfo = oPlatform.GetAllGames(true, true).Select
+                                     (g => new GameInfo
+                                     {
+                                         Title = g.Title,
+                                         Publisher = g.Publisher,
+                                         Platform = g.Platform,
+                                         Id = g.Id,
+                                         LaunchBoxDbId = g.LaunchBoxDbId
+                                     });
+                }
+
+                string sJSONResponse = JsonSerializer.Serialize(oPlatformInfo);
+
+                WriteJSON(oHttpProcessor, sJSONResponse);
+            }
+            else
+            {
+                oHttpProcessor.writeFailure("404 Not Found", "No platform match could be found. Valid lookup by Title only. Examples: /Platform/Title/EXACT_TITLE/[IncludeGameInfo]");
+            }
+        }
+
         #endregion Web APIs
 
         #region Image Page Methods

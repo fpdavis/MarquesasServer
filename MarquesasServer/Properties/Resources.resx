@@ -261,21 +261,22 @@ Path:&lt;!-- Path --&gt; &lt;br&gt;
   $( function() {
     $( "#APItabs" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
     $( "#APItabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
+	$( "#APItabs" ).removeClass( "ui-widget-content" );	
   } );
   &lt;/script&gt;
     &lt;style&gt;
   .ui-tabs-vertical { width: 100%; }
-  .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 16em; }
+  .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 16em; overflow: hidden; }
   .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
   .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
   .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; }
-  .ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 46em;}
+  .ui-tabs-vertical .ui-tabs-panel { padding-left: 2em; float: left; width: 60%;}
   &lt;/style&gt;
 
 &lt;/head&gt;
 &lt;body&gt;
  
- &lt;p style="text-align:center"&gt;&lt;!-- ApplicationName --&gt; Index&lt;/p&gt;
+ &lt;h3&gt;&lt;p style="text-align:center"&gt;&lt;!-- ApplicationName --&gt; Index&lt;/p&gt;&lt;/h3&gt;
  
  &lt;p&gt;This is an index of links to the &lt;!-- ApplicationName --&gt; running from within your LaunchBox.
  These links will only work while LaunchBox is active and the server is enabled. The server
@@ -298,55 +299,83 @@ as an old tablet to display the marque of the game currently being played in Big
 the page be loaded and then the browser set to full screen (kiosk) mode. In most browser on Windows you
 can toggle kiosk mode by hitting F11 when in your browser. Each page will refresh automatically every
 few seconds to insure that the game being played will be reflected in the browser.&lt;/p&gt;
-	&lt;!-- Auto Refreshing Web Pages --&gt;
-  &lt;/div&gt;
-  &lt;div id="tabs-2"&gt;
-	&lt;div id="APItabs"&gt;
-  &lt;ul&gt;
-    &lt;li&gt;&lt;a href="#APItabs-2"&gt;Binary Requests&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href="#APItabs-3"&gt;State Manager&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href="#APItabs-4"&gt;Selected Game Information&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href="#APItabs-5"&gt;Selected Game(s) Information&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href="#APItabs-6"&gt;Selected Game Methods&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-  &lt;div id="APItabs-2"&gt;
-    &lt;p&gt;&lt;h3&gt;Binary Requests&lt;/h3&gt;&lt;/p&gt;
-	&lt;p&gt;(returns raw file)&lt;/p&gt;
-	&lt;!-- Binary Requests --&gt;
-  &lt;/div&gt;
-  &lt;div id="APItabs-3"&gt;
-    &lt;p&gt;&lt;h3&gt;State Manager&lt;/h3&gt;&lt;/p&gt;
-	&lt;!-- State Manager --&gt;
-  &lt;/div&gt;
-    &lt;div id="APItabs-4"&gt;
-    &lt;p&gt;&lt;h3&gt;Selected Game Information&lt;/h3&gt;&lt;/p&gt;
-	&lt;p&gt;If no game or more than one game is selected these will return empty resulting in a json error that you may need to catch.&lt;/p&gt;
 
-	&lt;!-- Selected Game Information --&gt;
+	&lt;ul&gt;
+		&lt;!-- Auto Refreshing Web Pages --&gt;
+	&lt;/ul&gt;
   &lt;/div&gt;
-    &lt;div id="APItabs-5"&gt;
-    &lt;p&gt;&lt;h3&gt;Selected Game(s) Information&lt;/h3&gt;&lt;/p&gt;
-	&lt;p&gt;If no game is selected these will return empty resulting in a json error that you may need to catch.&lt;/p&gt;
-    &lt;p&gt;This returns a set of Game IDs followed by the value of the property being requested. Example: {"Game ID":"Property Value","Game 2 ID":"Property Value 2", ... }&lt;/p&gt;
+	&lt;div id="tabs-2"&gt;
+		&lt;div id="APItabs"&gt;
+			&lt;ul&gt;    
+				&lt;li&gt;&lt;a href="#APItabs-3"&gt;State Manager&lt;/a&gt;&lt;/li&gt;
+				&lt;li&gt;&lt;a href="#APItabs-2"&gt;Selected Game Binary Requests&lt;/a&gt;&lt;/li&gt;
+				&lt;li&gt;&lt;a href="#APItabs-4"&gt;Selected Game Information&lt;/a&gt;&lt;/li&gt;
+				&lt;li&gt;&lt;a href="#APItabs-5"&gt;Selected Game(s) Information&lt;/a&gt;&lt;/li&gt;
+				&lt;li&gt;&lt;a href="#APItabs-6"&gt;Selected Game Methods&lt;/a&gt;&lt;/li&gt;
+				&lt;li&gt;&lt;a href="#APItabs-7"&gt;Game &amp; Platform Calls&lt;/a&gt;&lt;/li&gt;
+			&lt;/ul&gt;
+			&lt;div id="APItabs-2"&gt;
+				&lt;p&gt;&lt;h3&gt;Binary Requests&lt;/h3&gt;&lt;/p&gt;
+				&lt;p&gt;(returns raw file)&lt;/p&gt;
+				
+				&lt;ul&gt;
+					&lt;!-- Binary Requests --&gt;
+				&lt;/ul&gt;
+			&lt;/div&gt;
+			&lt;div id="APItabs-3"&gt;
+				&lt;p&gt;&lt;h3&gt;State Manager&lt;/h3&gt;&lt;/p&gt;
+				
+				&lt;ul&gt;
+					&lt;!-- State Manager --&gt;
+				&lt;/ul&gt;
+			&lt;/div&gt;
+			&lt;div id="APItabs-4"&gt;
+				&lt;p&gt;&lt;h3&gt;Selected Game Information&lt;/h3&gt;&lt;/p&gt;
+				&lt;p&gt;If no game or more than one game is selected these will return empty resulting in a json error that you may need to catch.&lt;/p&gt;
 
-	&lt;!-- Selected Game(s) Information --&gt;
-  &lt;/div&gt;
-    &lt;div id="APItabs-6"&gt;
-    &lt;p&gt;&lt;h3&gt;Selected Game Methods&lt;/h3&gt;&lt;/p&gt;
-	&lt;p&gt;If no game or more than one game is selected these will return empty resulting in a json error that you may need to catch.&lt;/p&gt;
+				&lt;ul&gt;
+					&lt;!-- Selected Game Information --&gt;
+				&lt;/ul&gt;
+			&lt;/div&gt;
+			&lt;div id="APItabs-5"&gt;
+				&lt;p&gt;&lt;h3&gt;Selected Game(s) Information&lt;/h3&gt;&lt;/p&gt;
+				&lt;p&gt;If no game is selected these will return empty resulting in a json error that you may need to catch.&lt;/p&gt;
+				&lt;p&gt;This returns a set of Game IDs followed by the value of the property being requested. Example: {"Game ID":"Property Value","Game 2 ID":"Property Value 2", ... }&lt;/p&gt;
 
-	&lt;!-- Selected Game Methods --&gt;
-  &lt;/div&gt;
+				&lt;ul&gt;
+					&lt;!-- Selected Game(s) Information --&gt;
+				&lt;/ul&gt;
+			&lt;/div&gt;
+			&lt;div id="APItabs-6"&gt;
+				&lt;p&gt;&lt;h3&gt;Selected Game Methods&lt;/h3&gt;&lt;/p&gt;
+				&lt;p&gt;If no game or more than one game is selected these will return empty resulting in a json error that you may need to catch.&lt;/p&gt;
 
-&lt;/div&gt;
-&lt;/div&gt;
-  &lt;div id="tabs-3"&gt;
-    &lt;p&gt;&lt;h3&gt;Web Sockets&lt;/h3&gt;&lt;/p&gt;
-	
-	Coming soon? Only if you ask! Let me know if you are interested in this feature. If there is enough interest I may be able to make it happen.
-	&lt;!-- Web Sockets --&gt;
-  &lt;/div&gt;
- 
+				&lt;ul&gt;
+					&lt;!-- Selected Game Methods --&gt;
+				&lt;/ul&gt;
+			&lt;/div&gt;
+			&lt;div id="APItabs-7"&gt;
+				&lt;p&gt;&lt;h3&gt;Game &amp; Platform Calls&lt;/h3&gt;&lt;/p&gt;
+				&lt;p&gt;Game and Platform calls for non-selected items. Results are based on titles or identifiers with either exact matches or partial search matches. Items in brackets ([]) are optional. Query string paramaters (name/value pairs following a question mark (?)) may be used in any combination and results must partially match ALL of the value terms included in the call.&lt;/p&gt;
+
+				&lt;ul&gt;
+					&lt;li/&gt;&lt;a target='_blank' href='/GetAllGames?Title=asteroids&amp;Publisher=Atari'&gt;GetAllGames[?Title=asteroids][&amp;Publisher=Atari]&lt;/a&gt; (supports Title, Publisher, AND Platform)
+					&lt;li/&gt;&lt;a target='_blank' href='/GetAllGames/AllProperties?Publisher=Atari'&gt;GetAllGames/[AllProperties][?Title=asteroids][&amp;Publisher=Atari]&lt;/a&gt; (when AllProperties is included, number of results are limited by GetAllGamesLimit as set in the .Config file)				
+					&lt;li/&gt;&lt;a target='_blank' href='/PlayGame/Title/Asteroids'&gt;PlayGame/Title/Asteroids&lt;/a&gt; (supports Title, PublisherAndTitle, Id, OR LaunchBoxDbId)
+					&lt;li/&gt;&lt;a target='_blank' href='/Game/Title/Asteroids'&gt;Game/Title/Asteroids&lt;/a&gt; (supports Title, PublisherAndTitle, Id, OR LaunchBoxDbId)
+					&lt;li/&gt;&lt;a target='_blank' href='/GetAllPlatforms'&gt;GetAllPlatforms&lt;/a&gt;
+					&lt;li/&gt;&lt;a target='_blank' href='/GetAllPlatforms?Title=Atari&amp;Manufacturer=Atari&amp;Developer=Atari'&gt;GetAllPlatforms?Title=Atari&amp;Manufacturer=Atari&amp;Developer=Atari&lt;/a&gt; (supports Title, Manufacturer, AND Developer)
+					&lt;li/&gt;&lt;a target='_blank' href='/Platform/Title/Atari 2600/IncludeGameInfo'&gt;/Platform/Title/Atari 2600/[IncludeGameInfo]&lt;/a&gt;				
+				&lt;/ul&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+	 &lt;div id="tabs-3"&gt;
+		&lt;p&gt;&lt;h3&gt;Web Sockets&lt;/h3&gt;&lt;/p&gt;
+		
+		Coming soon? Only if you ask! Let me know if you are interested in this feature. If there is enough interest I may be able to make it happen.
+		&lt;!-- Web Sockets --&gt;
+	 &lt;/div&gt; 
  
 &lt;/body&gt;
 &lt;/html&gt;</value>
