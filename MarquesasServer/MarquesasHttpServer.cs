@@ -21,7 +21,16 @@ namespace MarquesasServer
     public static class MarquesasHttpServerInstance
     {
         public static MarquesasHttpServer RunningServer = new MarquesasHttpServer();
-        public static Boolean IsInGame;
+        public static Boolean IsInGame;        
+    }
+
+    public class GameInfo
+    {
+        public string Title { get; set; }
+        public string Publisher { get; set; }
+        public string Platform { get; set; }
+        public string Id { get; set; }
+        public int? LaunchBoxDbId { get; set; }
     }
 
     public class MarquesasHttpServer : HttpServer
@@ -33,6 +42,7 @@ namespace MarquesasServer
         private static Hashtable htCachedImageHTML = new Hashtable();
 
         private static string gsEtagSeperator = ":";
+        private static int giGetAllGamesLimit;
 
         #region Server Methods
 
@@ -45,7 +55,7 @@ namespace MarquesasServer
         {
             if (oHttpProcessor.pathParts?.Length > 0)
             {
-                switch (oHttpProcessor.pathParts[0])
+                switch (oHttpProcessor.pathParts[0].ToLower())
                 {
                     case "statemanager":
                         DoStateManager(oHttpProcessor);
@@ -73,6 +83,14 @@ namespace MarquesasServer
 
                     case "selectedgamemethods":
                         SelectedGameMethods(oHttpProcessor);
+                        break;
+
+                    case "playgame":
+                        PlayGame(oHttpProcessor);
+                        break;
+
+                    case "getallgames":
+                        GetAllGames(oHttpProcessor);
                         break;
 
                     default:
@@ -140,6 +158,15 @@ namespace MarquesasServer
                 MessageBox.Show(sWhatsNotAvailable + ".", Resources.ApplicationName + " Port Binding Error",
                     MessageBoxButtons.OK);
             }
+        }
+        new public void Initialize()
+        {
+            if (!int.TryParse(PluginAppSettings.GetString("GetAllGamesLimit"), out giGetAllGamesLimit))
+            {
+                giGetAllGamesLimit = 50;
+            }
+
+            base.Initialize();
         }
 
         public void FirstTimeRunCheck()
@@ -474,13 +501,105 @@ namespace MarquesasServer
             WriteJSON(oHttpProcessor, sJSONResponse);
         }
 
+        private void PlayGame(HttpProcessor oHttpProcessor)
+        {
+            if (MarquesasHttpServerInstance.IsInGame)
+            {
+                oHttpProcessor.writeFailure("503 Service Unavailable", "A game is currently being played. Try again once the game has been closed.");
+                return;
+            }
+
+            IGame oGame = null;
+
+            if (oHttpProcessor.pathParts.Length == 2)
+            {
+                // Go by Title
+                oGame = PluginHelper.DataManager.GetAllGames().FirstOrDefault(x => x.Title.ToLower() == oHttpProcessor.pathParts[1].ToLower());
+            }
+            else if (oHttpProcessor.pathParts.Length > 2)
+            {
+                switch (oHttpProcessor.pathParts[1].ToLower())
+                {
+                    case "title":
+                        oGame = PluginHelper.DataManager.GetAllGames().FirstOrDefault(x => x.Title.ToLower() == oHttpProcessor.pathParts[2].ToLower());
+                        break;
+                    case "publisherandtitle":
+                        if (oHttpProcessor.pathParts.Length == 3)
+                        {
+                            oGame = PluginHelper.DataManager.GetAllGames().FirstOrDefault(x => x.Platform == oHttpProcessor.pathParts[2].ToLower() && x.Title.ToLower() == oHttpProcessor.pathParts[3].ToLower());
+                        }
+                        break;
+                    case "id":
+                        oGame = PluginHelper.DataManager.GetAllGames().FirstOrDefault(x => x.Id == oHttpProcessor.pathParts[2]);
+                        break;
+                    case "launchboxdbid":
+                        if (int.TryParse(oHttpProcessor.pathParts[2], out int iId))
+                        {
+                            oGame = PluginHelper.DataManager.GetAllGames().FirstOrDefault(x => x.LaunchBoxDbId == iId);
+                        }
+                        break;
+                    default:
+                        oGame = PluginHelper.DataManager.GetAllGames().FirstOrDefault(x => x.Title.ToLower() == oHttpProcessor.pathParts[2].ToLower());
+                        break;
+                }
+            }
+
+            if (oGame != null)
+            {
+                oGame.Play();
+
+                string sJSONResponse = JsonSerializer.Serialize(oGame);
+                WriteJSON(oHttpProcessor, sJSONResponse);
+            }
+            else
+            {
+                oHttpProcessor.writeFailure("404 Not Found", "No game match could be found. Valid lookups include Title, PublisherAndTitle, Id, and LaunchBoxDbId. Examples: /PlayGame/Title/EXACT_TITLE, /PlayGame/PublisherAndTitle/EXACT_PUBLISHERNAME/EXACT_TITLE, /PlayGame/LaunchBoxDbId/123456");
+            }
+        }
+
+        private void GetAllGames(HttpProcessor oHttpProcessor)
+        {
+            string sJSONResponse = string.Empty;
+
+            if (oHttpProcessor.pathParts.Length == 2 && oHttpProcessor.pathParts[1].ToLower() == "allproperties")
+            {
+                var oaGames = PluginHelper.DataManager.GetAllGames()
+                    .Where(x => x.Title.IndexOf(oHttpProcessor.GetQSParam("title"), StringComparison.CurrentCultureIgnoreCase) != -1
+                         && x.Publisher.IndexOf(oHttpProcessor.GetQSParam("publisher"), StringComparison.CurrentCultureIgnoreCase) != -1
+                         && x.Platform.IndexOf(oHttpProcessor.GetQSParam("platform"), StringComparison.CurrentCultureIgnoreCase) != -1
+                        ).Take(giGetAllGamesLimit);                
+
+                sJSONResponse = JsonSerializer.Serialize(oaGames);
+            }            
+            else
+            {
+                var oaGames = PluginHelper.DataManager.GetAllGames()
+                    .Where(x => x.Title.IndexOf(oHttpProcessor.GetQSParam("title"), StringComparison.CurrentCultureIgnoreCase) != -1
+                         && x.Publisher.IndexOf(oHttpProcessor.GetQSParam("publisher"), StringComparison.CurrentCultureIgnoreCase) != -1
+                         && x.Platform.IndexOf(oHttpProcessor.GetQSParam("platform"), StringComparison.CurrentCultureIgnoreCase) != -1
+                         )
+                         .Select
+                         (g => new GameInfo
+                         {
+                             Title = g.Title,
+                             Publisher = g.Publisher,
+                             Platform = g.Platform,
+                             Id = g.Id,
+                             LaunchBoxDbId = g.LaunchBoxDbId
+                         });
+
+                sJSONResponse = JsonSerializer.Serialize(oaGames);
+            }
+
+            WriteJSON(oHttpProcessor, sJSONResponse);
+        }
         #endregion Web APIs
 
         #region Image Page Methods
 
         private void DoImage(HttpProcessor oHttpProcessor)
         {
-            if (DoCacheResponseIfWarranted(oHttpProcessor) || !OneAndOnlyOneGameSelected(oHttpProcessor)) return;
+            if (DoCacheResponseIfWarranted(oHttpProcessor)) return;
 
             LoadBinary(oHttpProcessor);
 
@@ -563,7 +682,7 @@ namespace MarquesasServer
 
         private void LoadBinary(HttpProcessor oHttpProcessor)
         {
-            if (oHttpProcessor.pathParts != null && PluginHelper.StateManager.GetAllSelectedGames().Length == 1)
+            if (oHttpProcessor.pathParts != null)
             {
                 string sType;
                 if (oHttpProcessor.pathParts.Length > 1)
@@ -577,35 +696,57 @@ namespace MarquesasServer
 
                 string sBinaryPath = null;
 
-                PropertyInfo[] oProperties = typeof(IGame).GetProperties();
-
-                // A linq statement would look totally sexy here
-                foreach (PropertyInfo oProperty in oProperties)
+                if (PluginHelper.StateManager.GetAllSelectedGames()?.Length == 1)
                 {
-                    if (oProperty.Name.ToLower() == sType + "path" || oProperty.Name.ToLower() == sType + "imagepath")
+                    PropertyInfo[] oProperties = typeof(IGame).GetProperties();
+
+                    // A linq statement would look totally sexy here
+                    foreach (PropertyInfo oProperty in oProperties)
                     {
-                        sBinaryPath = oProperty.GetValue(PluginHelper.StateManager.GetAllSelectedGames()[0])
-                            ?.ToString();
-                        break;
+                        if (oProperty.Name.ToLower() == sType + "path" || oProperty.Name.ToLower() == sType + "imagepath")
+                        {
+                            sBinaryPath = oProperty.GetValue(PluginHelper.StateManager.GetAllSelectedGames()[0])
+                                ?.ToString();
+                            break;
+                        }
+                    }
+
+                    if (string.IsNullOrWhiteSpace(sBinaryPath))
+                    {
+                        MethodInfo[] oGameMethods = typeof(IGame).GetMethods();
+                        foreach (MethodInfo oMethod in oGameMethods)
+                        {
+                            if (oMethod.Name.ToLower() == "get" + sType + "path")
+                            {
+                                if (oMethod.GetParameters().Length == 0)
+                                {
+                                    sBinaryPath = oMethod.Invoke(PluginHelper.StateManager.GetAllSelectedGames()[0], new object[] { })
+                                        ?.ToString();
+                                }
+                                else
+                                {
+                                    sBinaryPath = oMethod.Invoke(PluginHelper.StateManager.GetAllSelectedGames()[0], new object[] { false })
+                                        ?.ToString();
+                                }
+                                break;
+                            }
+                        }
                     }
                 }
-                
-                if (string.IsNullOrWhiteSpace(sBinaryPath)) {
-                    MethodInfo[] oGameMethods = typeof(IGame).GetMethods();
-                    foreach (MethodInfo oMethod in oGameMethods)
+                else
+                {
+                    // Get an image for the platform
+                    IPlatform oSelectedPlatform = PluginHelper.StateManager.GetSelectedPlatform();
+
+                    PropertyInfo[] oProperties = typeof(IPlatform).GetProperties();
+                    sBinaryPath = oSelectedPlatform.BannerImagePath;
+
+                    // A linq statement would look totally sexy here
+                    foreach (PropertyInfo oProperty in oProperties)
                     {
-                        if (oMethod.Name.ToLower() == "get" + sType + "path")
+                        if (oProperty.Name.ToLower() == sType + "path" || oProperty.Name.ToLower() == sType + "imagepath")
                         {
-                            if (oMethod.GetParameters().Length == 0)
-                            {
-                                sBinaryPath = oMethod.Invoke(PluginHelper.StateManager.GetAllSelectedGames()[0], new object[] { })
-                                    ?.ToString();
-                            }
-                            else
-                            {
-                                sBinaryPath = oMethod.Invoke(PluginHelper.StateManager.GetAllSelectedGames()[0], new object[] { false })
-                                    ?.ToString();
-                            }
+                            sBinaryPath = oProperty.GetValue(oProperties)?.ToString();
                             break;
                         }
                     }
@@ -675,7 +816,7 @@ namespace MarquesasServer
                                 sJSONResponse = JsonSerializer.Serialize(oMethod.Invoke(PluginHelper.StateManager.GetAllSelectedGames()[0], new object[] { bParamater }));
                                 break;
                             }
-                            else 
+                            else
                             {
                                 continue;
                             }
@@ -685,7 +826,7 @@ namespace MarquesasServer
                             sJSONResponse = JsonSerializer.Serialize(oMethod.Invoke(PluginHelper.StateManager.GetAllSelectedGames()[0], new object[] { sParamater }));
                             break;
                         }
-                    }                    
+                    }
                 }
             }
 

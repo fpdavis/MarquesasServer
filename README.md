@@ -57,9 +57,11 @@ JSON API for retrieving data
    * /StateManager/IsInGame
    * /StateManager/* (Unbroken.LaunchBox.Plugins.PluginHelper.StateManager.*)
    <br><br>
-   * /SelectedGames (Unbroken.LaunchBox.Plugins.Data.IGame)
-   * /SelectedGames/* (Unbroken.LaunchBox.Plugins.Data.IGame.*)
-	  
+   * /SelectedGame (Unbroken.LaunchBox.Plugins.Data.IGame.Properties)
+   * /SelectedGames (Unbroken.LaunchBox.Plugins.Data.IGame.Properties)
+   * /SelectedGames/* (Unbroken.LaunchBox.Plugins.Data.IGame.Properties.*)
+   * /SelectedGameMethods/* (Unbroken.LaunchBox.Plugins.Data.IGame.Methods.*)
+
 JSON API for retrieving raw binaries
 
    * /Binary/ScreenshotImage
@@ -93,6 +95,7 @@ Source & Binaries
 
 Todo (in order of importance):
 
+   * Change search for PlayGame to match GetAllGames
    * Add platform support
    * Add support for /Game/ID to pull back game information for games not selected but in XML files.
      ID could be the games ID, Title, or possibly some other identifier
@@ -176,3 +179,8 @@ Changes (oldest to newest):
    * Added support for IGame Methods.
    * Added option for a read only mode (Write Enabled) now that write IGame Methods have been added.
    * Links to IGame Set Methods do not generate HTML links so data isn't accidentally overridden.
+   <br><br>
+   * Added /GetAllGames that supports AllProperties (/GetAllGames/AllProperties)
+   * Added GetAllGamesLimit to App.config to limit number of entries returned for /GetAllGames/AllProperties. Default is 50.
+   * Added partial match search terms on the querystring that are ANDED for GetAllGames for Title, Publisher, and Platform (?Title=Asteroids)
+   * Added /PlayGame which matches games on Title, PublisherAndTitle, Id, and LaunchBoxDbId. Examples: /PlayGame/Title/EXACT_TITLE, /PlayGame/PublisherAndTitle/EXACT_PUBLISHERNAME/EXACT_TITLE, /PlayGame/LaunchBoxDbId/123456
