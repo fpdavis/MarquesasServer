@@ -58,6 +58,7 @@ namespace MarquesasServer
 
         private static string gsEtagSeperator = ":";
         private static int giGetAllGamesLimit;
+        private static string gsAccessControlAllowOrigin;
 
         #region Server Methods
 
@@ -117,6 +118,9 @@ namespace MarquesasServer
                         Platform(oHttpProcessor);
                         break;
 
+                    case "html":
+                        DoHTMLPage(oHttpProcessor);
+                        break;
                     default:
                         DoIndexPage(oHttpProcessor);
                         break;
@@ -188,6 +192,12 @@ namespace MarquesasServer
             if (!int.TryParse(PluginAppSettings.GetString("GetAllGamesLimit"), out giGetAllGamesLimit))
             {
                 giGetAllGamesLimit = 50;
+            }
+
+            gsAccessControlAllowOrigin = PluginAppSettings.GetString("Access-Control-Allow-Origin");
+            if (string.IsNullOrEmpty(gsAccessControlAllowOrigin))
+            {
+                gsAccessControlAllowOrigin = "*";
             }
 
             base.Initialize();
@@ -397,18 +407,33 @@ namespace MarquesasServer
 
             #endregion Selected Game Methods
 
-            List<KeyValuePair<string, string>> additionalHeaders =
-                new List<KeyValuePair<string, string>>
-                {
-                    new KeyValuePair<string, string>("Etag",
-                        oHttpProcessor.request_url + gsEtagSeperator + ComputeHash(sbIndexPage.ToString()))
-                };
+            var oAdditionalHeaders = AdditionalHeaders();
 
-            oHttpProcessor.writeSuccess("text/html", sbIndexPage.ToString().Length, "200 OK", additionalHeaders);
+            oAdditionalHeaders.Add(new KeyValuePair<string, string>("Etag",
+                        oHttpProcessor.request_url + gsEtagSeperator + ComputeHash(sbIndexPage.ToString())));
+
+            oHttpProcessor.writeSuccess("text/html", sbIndexPage.ToString().Length, "200 OK", oAdditionalHeaders);
 
             oHttpProcessor.outputStream.Write(sbIndexPage);
         }
-        
+
+        public void DoHTMLPage(HttpProcessor oHttpProcessor)
+        {
+            if (DoCacheResponseIfWarranted(oHttpProcessor)) return;
+
+            // Once we have more pages we could check for which one to return
+            StringBuilder sbHTMLPage = new StringBuilder(Resources.HTML_Example_Usage);
+
+            var oAdditionalHeaders = AdditionalHeaders();
+
+            oAdditionalHeaders.Add(new KeyValuePair<string, string>("Etag",
+                        oHttpProcessor.request_url + gsEtagSeperator + ComputeHash(sbHTMLPage.ToString())));
+
+            oHttpProcessor.writeSuccess("text/html", sbHTMLPage.ToString().Length, "200 OK", oAdditionalHeaders);
+
+            oHttpProcessor.outputStream.Write(sbHTMLPage);
+        }
+
         class IGamePropertiesComparer : IComparer
         {
             public int Compare(object x, object y)
@@ -423,12 +448,19 @@ namespace MarquesasServer
                 return (new CaseInsensitiveComparer()).Compare(((MethodInfo)x).Name, ((MethodInfo)y).Name);
             }
         }
-        
+
         #region Web APIs
+        private static List<KeyValuePair<string, string>> AdditionalHeaders()
+        {
+            var oAdditionalHeaders = new List<KeyValuePair<string, string>>();
+            oAdditionalHeaders.Add(new KeyValuePair<string, string>("Access-Control-Allow-Origin", gsAccessControlAllowOrigin));
+
+            return oAdditionalHeaders;
+        }
 
         private static void WriteJSON(HttpProcessor oHttpProcessor, string sJSONResponse)
         {
-            oHttpProcessor.writeSuccess("application/json", sJSONResponse.Length);
+            oHttpProcessor.writeSuccess("application/json", sJSONResponse.Length, "200 OK", AdditionalHeaders());
             oHttpProcessor.outputStream.WriteLine(sJSONResponse);
         }
 
@@ -740,18 +772,16 @@ namespace MarquesasServer
         {
             if (!string.IsNullOrWhiteSpace(sHTMLResponse))
             {
-                List<KeyValuePair<string, string>> additionalHeaders = null;
+                var oAdditionalHeaders = AdditionalHeaders();
 
                 if (PluginHelper.StateManager.GetAllSelectedGames()?.Length > 0)
                 {
-                    additionalHeaders = new List<KeyValuePair<string, string>>
-                    {
+                    oAdditionalHeaders.Add(
                         new KeyValuePair<string, string>("Etag",
-                            oHttpProcessor.request_url + gsEtagSeperator + PluginHelper.StateManager.GetAllSelectedGames()[0].Id)
-                    };
+                            oHttpProcessor.request_url + gsEtagSeperator + PluginHelper.StateManager.GetAllSelectedGames()[0].Id));                            
                 }
 
-                oHttpProcessor.writeSuccess("text/html", sHTMLResponse.Length, "200 OK", additionalHeaders);
+                oHttpProcessor.writeSuccess("text/html", sHTMLResponse.Length, "200 OK", oAdditionalHeaders);
 
                 oHttpProcessor.outputStream.WriteLine(sHTMLResponse);
             }
@@ -930,18 +960,14 @@ namespace MarquesasServer
         {
             if (!string.IsNullOrWhiteSpace(htCachedBinaries[oHttpProcessor.pathParts[1]].ToString()))
             {
-                List<KeyValuePair<string, string>> additionalHeaders =
-                    new List<KeyValuePair<string, string>>
-                    {
-                        new KeyValuePair<string, string>("Etag",
-                            oHttpProcessor.request_url + gsEtagSeperator + PluginHelper.StateManager.GetAllSelectedGames()[0].Id),
-                        new KeyValuePair<string, string>("Content-disposition",
-                            "inline; filename=\"" +
-                            Path.GetFileName(PluginHelper.StateManager.GetAllSelectedGames()[0]
-                                .GetManualPath()) + "\""),
-                        new KeyValuePair<string, string>("Content-Transfer-Encoding", "binary"),
-                        new KeyValuePair<string, string>("Accept-Ranges", "none")
-                    };
+                var oAdditionalHeaders = AdditionalHeaders();
+
+                oAdditionalHeaders.Add(new KeyValuePair<string, string>("Etag",
+                            oHttpProcessor.request_url + gsEtagSeperator + PluginHelper.StateManager.GetAllSelectedGames()[0].Id));
+                oAdditionalHeaders.Add(new KeyValuePair<string, string>("Content-disposition", "inline; filename=\"" +
+                            Path.GetFileName(PluginHelper.StateManager.GetAllSelectedGames()[0].GetManualPath()) + "\""));
+                oAdditionalHeaders.Add(new KeyValuePair<string, string>("Content-Transfer-Encoding", "binary"));
+                oAdditionalHeaders.Add(new KeyValuePair<string, string>("Accept-Ranges", "none"));
 
                 string sExtension = Path.GetExtension(htCachedBinaryPaths[oHttpProcessor.pathParts[1]].ToString());
                 if (sExtension.Length > 1)
@@ -950,7 +976,7 @@ namespace MarquesasServer
                 }
 
                 oHttpProcessor.writeSuccess("application/" + sExtension,
-                    ((byte[])htCachedBinaries[oHttpProcessor.pathParts[1]]).Length, "200 OK", additionalHeaders);
+                    ((byte[])htCachedBinaries[oHttpProcessor.pathParts[1]]).Length, "200 OK", oAdditionalHeaders);
 
                 oHttpProcessor.rawOutputStream.Write((byte[])htCachedBinaries[oHttpProcessor.pathParts[1]], 0,
                     ((byte[])htCachedBinaries[oHttpProcessor.pathParts[1]]).Length);

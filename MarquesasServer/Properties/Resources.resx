@@ -290,7 +290,8 @@ Path:&lt;!-- Path --&gt; &lt;br&gt;
   &lt;ul&gt;
     &lt;li&gt;&lt;a href="#tabs-1"&gt;Auto Refreshing Pages&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href="#tabs-2"&gt;API Requests&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href="#tabs-3"&gt;Web Sockets&lt;/a&gt;&lt;/li&gt;
+	&lt;li&gt;&lt;a href="#tabs-3"&gt;Javascript Example Page&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#tabs-4"&gt;Web Sockets&lt;/a&gt;&lt;/li&gt;	
   &lt;/ul&gt;
   &lt;div id="tabs-1"&gt;
     &lt;p&gt;&lt;h3&gt;Auto Refreshing Web Pages&lt;/h3&gt;&lt;/p&gt;
@@ -370,7 +371,16 @@ few seconds to insure that the game being played will be reflected in the browse
 			&lt;/div&gt;
 		&lt;/div&gt;
 	&lt;/div&gt;
-	 &lt;div id="tabs-3"&gt;
+	&lt;div id="tabs-3"&gt;
+		&lt;p&gt;&lt;h3&gt;Javascript Examples&lt;/h3&gt;&lt;/p&gt;
+		
+		Click the link below to open up a stand alone page written entirely using HTML/CSS/Javascript. It uses the Marquesas Server's APIs to retrieve and display platform and game information and demonstrates checking the status of Launchbox and even launch games.
+		
+		&lt;p&gt;
+		&lt;a target="_blank" href="/HTML/Example_Usage"&gt;Marquesas Javascript Examples&lt;/a&gt;
+		&lt;/p&gt;
+	 &lt;/div&gt; 
+	 &lt;div id="tabs-4"&gt;
 		&lt;p&gt;&lt;h3&gt;Web Sockets&lt;/h3&gt;&lt;/p&gt;
 		
 		Coming soon? Only if you ask! Let me know if you are interested in this feature. If there is enough interest I may be able to make it happen.
@@ -382,5 +392,311 @@ few seconds to insure that the game being played will be reflected in the browse
   </data>
   <data name="UpdateError" xml:space="preserve">
     <value>This may be due to a network issue, a configuration issue, lack of file permissions, or a too out of date plugin that can not be auto updated. If this error persists please update manually by downloading the latest version from https://forums.launchbox-app.com/files/file/675-marquesas-http-server or https://github.com/fpdavis/MarquesasServer/releases</value>
+  </data>
+  <data name="HTML_Example_Usage" xml:space="preserve">
+    <value>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"&gt;
+    &lt;title&gt;Marquesas Javascript Examples&lt;/title&gt;
+  &lt;/head&gt;
+    &lt;body&gt;
+  &lt;style&gt;
+* {
+  margin: 10;
+  padding: 5;
+}
+
+dt {
+  display: block;
+  float: left;
+  width: 175px;
+  text-align: right;
+  font-weight: bold;
+}
+
+dt:after {
+  content: ': ';
+}
+
+dd {
+  display: block;
+  margin-left: 190px;
+}
+&lt;/style&gt;
+
+  	
+	&lt;h3&gt;Marquesas Javascript Examples&lt;/h3&gt;
+	
+      &lt;p&gt;
+      &lt;select id="SelectPlatform" name="SelectPlatform" onchange="FetchGames(this); LoadPlatformInformation(this)"&gt;
+        &lt;option&gt;Select Platform&lt;/option&gt;
+      &lt;/select&gt;
+      &lt;select id="SelectGame" name="SelectGame" onchange="LoadGameInformation(this);" disabled&gt;
+        &lt;option&gt;Select Game&lt;/option&gt;
+      &lt;/select&gt;
+	  &lt;button id="btnPlayGame" onclick="PlayGame()" disabled&gt;Play&lt;/button&gt;
+	  &lt;button id="btnViewSource" onclick="ViewSource()"&gt;View Source&lt;/button&gt;
+    &lt;/p&gt;
+		
+	&lt;span id="spanStatus"&gt;&lt;/span&gt;
+		
+	&lt;h3&gt;Status&lt;/h3&gt;
+	&lt;p&gt;
+	&lt;dt&gt;In Game&lt;/dt&gt;&lt;dd id="ddIsingame"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;Selected Game&lt;/dt&gt;&lt;dd id="ddSelectedGame"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;BigBox&lt;/dt&gt;&lt;dd id="ddIsBigBox"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;Premium&lt;/dt&gt;&lt;dd id="ddIsPremium"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;BigBox Locked&lt;/dt&gt;&lt;dd id="ddIsBigBoxLocked"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;BigBox Current Theme&lt;/dt&gt;&lt;dd id="ddBigBoxCurrentTheme"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;BigBox In AttractMode&lt;/dt&gt;&lt;dd id="ddIsBigBoxInAttractMode"&gt;&amp;nbsp;&lt;/dd&gt;			
+	&lt;/p&gt;
+	
+	&lt;h3&gt;Platform Information&lt;/h3&gt;
+	
+	&lt;p&gt;
+	&lt;dt&gt;Name&lt;/dt&gt;&lt;dd id="ddPlatformName"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;Game Count&lt;/dt&gt;&lt;dd id="ddPlatformGameCount"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;Release Date&lt;/dt&gt;&lt;dd id="ddPlatformReleaseDate"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;Manufacturer&lt;/dt&gt;&lt;dd id="ddPlatformManufacturer"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;Developer&lt;/dt&gt;&lt;dd id="ddPlatformDeveloper"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;/p&gt;
+	
+	&lt;h3&gt;Game Information&lt;/h3&gt;
+	
+	&lt;p&gt;
+	&lt;dt&gt;Title&lt;/dt&gt;&lt;dd id="ddTitle"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;Publisher&lt;/dt&gt;&lt;dd id="ddPublisher"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;Developer&lt;/dt&gt;&lt;dd id="ddDeveloper"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;Release Date&lt;/dt&gt;&lt;dd id="ddReleaseDate"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;Last Played&lt;/dt&gt;&lt;dd id="ddLastPlayedDate"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;Play Count&lt;/dt&gt;&lt;dd id="ddPlayCount"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;dt&gt;Play Time&lt;/dt&gt;&lt;dd id="ddPlayTime"&gt;&amp;nbsp;&lt;/dd&gt;
+	&lt;/p&gt;
+	
+	&lt;p&gt;
+	&lt;dt&gt;Notes&lt;/dt&gt;&lt;dd id="ddNotes"&gt;&amp;nbsp;&lt;/dd&gt;	
+	&lt;/p&gt;
+	
+    &lt;script language="javascript"&gt;
+	  let sURL = "http://127.0.0.1";
+	  let oSelectPlatform = document.getElementById("SelectPlatform");  
+	  let oSelectGame = document.getElementById("SelectGame");    
+	  let obtnPlayGame = document.getElementById("btnPlayGame");
+     let oSpanStatus = document.getElementById("spanStatus"); 	  
+	  let popUpObj;
+	  
+      async function LoadPlatformOptions() {   
+	   oSelectPlatform.options.length = 0;
+	   oSelectPlatform.options[0] = new Option("Select Platform", "");
+	  
+        let oPromiseGetAllPlatforms = await fetch(sURL + "/GetAllPlatforms");
+      
+        if (oPromiseGetAllPlatforms.ok)
+        {
+          let sJSON = await oPromiseGetAllPlatforms.json();
+          sJSON = sJSON.sort(function(a, b){return a.Name &gt; b.Name;});
+
+          for (let i in sJSON) 
+          {       
+             oSelectPlatform.options[oSelectPlatform.options.length] = new Option(sJSON[i].Name, sJSON[i].Name);
+          }   		  
+        }
+      }
+      
+	  async function LoadPlatformInformation(oSelectPlatform) {	  	
+	  	  document.getElementById("ddPlatformName").innerHTML = "&amp;nbsp;";	
+		  document.getElementById("ddPlatformGameCount").innerHTML = "&amp;nbsp;";	
+		  document.getElementById("ddPlatformReleaseDate").innerHTML = "&amp;nbsp;";	
+		  document.getElementById("ddPlatformManufacturer").innerHTML = "&amp;nbsp;";	
+		  document.getElementById("ddPlatformDeveloper").innerHTML = "&amp;nbsp;";	
+		  
+	     if (oSelectPlatform.selectedIndex == 0) { return; }
+		 
+		let oPlatformInformation = await fetch(sURL + "/Platform/Title/" + oSelectPlatform.value);
+		   
+		if (oPlatformInformation.ok)
+        {
+          let sJSON = await oPlatformInformation.json();  
+          
+		  document.getElementById("ddPlatformName").innerHTML = (sJSON.Platform.Name) ? sJSON.Platform.Name : "&amp;nbsp;";	
+		  document.getElementById("ddPlatformGameCount").innerHTML = (sJSON.GameCount) ? sJSON.GameCount : "&amp;nbsp;";	
+		  document.getElementById("ddPlatformReleaseDate").innerHTML = (sJSON.Platform.ReleaseDate) ? (new Date(sJSON.Platform.ReleaseDate)).toDateString() : "&amp;nbsp;";	
+		  document.getElementById("ddPlatformManufacturer").innerHTML = (sJSON.Platform.Manufacturer) ? sJSON.Platform.Manufacturer : "&amp;nbsp;";	
+		  document.getElementById("ddPlatformDeveloper").innerHTML = (sJSON.Platform.Developer) ? sJSON.Platform.Developer : "&amp;nbsp;";	
+		}
+	  }
+	  	  
+      async function LoadGameOptions(sPlatform) { 
+	    oSelectGame.options.length = 0;
+	    oSelectGame.options[0] = new Option("Select Game", "");
+	    oSelectGame.disabled = "disabled";
+	  
+        let oPromiseGetAllGames = await fetch(sURL + "/GetAllGames?Platform=" + sPlatform);
+      
+        if (oPromiseGetAllGames.ok)
+        {
+          let sJSON = await oPromiseGetAllGames.json();          
+          sJSON = sJSON.sort(function(a, b){return a.Title &gt; b.Title;});
+		  
+          for (let i in sJSON) 
+          {       
+             oSelectGame.options[oSelectGame.options.length] = new Option(sJSON[i].Title, sJSON[i].Id);
+          } 
+
+		  oSelectGame.disabled = "";
+        }
+      }
+      
+      async function LoadGameInformation(oSelectGame) {
+	  
+	     obtnPlayGame.disabled = "disabled";
+		 
+		 document.getElementById("ddTitle").innerHTML = "&amp;nbsp;";	
+		 document.getElementById("ddPublisher").innerHTML = "&amp;nbsp;";	
+		 document.getElementById("ddDeveloper").innerHTML = "&amp;nbsp;";	
+		 document.getElementById("ddReleaseDate").innerHTML = "&amp;nbsp;";	
+		 document.getElementById("ddLastPlayedDate").innerHTML = "&amp;nbsp;";
+		 document.getElementById("ddPlayCount").innerHTML = "&amp;nbsp;";	
+		 document.getElementById("ddPlayTime").innerHTML = "&amp;nbsp;";	
+		 document.getElementById("ddNotes").innerHTML = "&amp;nbsp;";	
+		  
+	     if (oSelectGame.selectedIndex == 0) {return;}
+	  
+	  	let oGameInformation = await fetch(sURL + "/Game/Id/" + oSelectGame.value);
+
+		if (oGameInformation.ok)
+        {
+          let sJSON = await oGameInformation.json();  
+          
+		  document.getElementById("ddTitle").innerHTML = (sJSON.Title) ? sJSON.Title : "&amp;nbsp;";	
+		  document.getElementById("ddPublisher").innerHTML = (sJSON.Publisher) ? sJSON.Publisher : "&amp;nbsp;";	
+		  document.getElementById("ddDeveloper").innerHTML = (sJSON.Developer) ? sJSON.Developer : "&amp;nbsp;";	
+		  document.getElementById("ddReleaseDate").innerHTML = (sJSON.ReleaseDate) ? (new Date(sJSON.ReleaseDate)).toDateString()  : "&amp;nbsp;";	
+		  document.getElementById("ddLastPlayedDate").innerHTML = (sJSON.LastPlayedDate) ? (new Date(sJSON.LastPlayedDate)).toDateString() : "Never";	
+		  document.getElementById("ddPlayCount").innerHTML = (sJSON.PlayCount) ? sJSON.PlayCount : "0";	
+		  document.getElementById("ddPlayTime").innerHTML = (sJSON.PlayTime) ? msToTime(sJSON.PlayTime) : "0";	
+		  document.getElementById("ddNotes").innerHTML = sJSON.Notes + "&lt;p&gt;Visit Wikipedia for more information... &lt;a href='" + sJSON.WikipediaUrl + "'/&gt;" + sJSON.WikipediaUrl + "&lt;/a&gt;&lt;/p&gt;";		  
+		  
+		  obtnPlayGame.disabled = "";
+		}
+      }     
+      
+	  async function PlayGame() {
+	   let oSelectGame= document.getElementById("SelectGame"); 
+	   let oPlayGame = await fetch(sURL + "/PlayGame/Id/" + oSelectGame.value);
+	   
+	   	if (oPlayGame.ok)
+        {
+		 let sJSON = await oPlayGame.json(); 
+		 
+		 // Game Info is returned but we don't need it.
+		 oSpanStatus.innerHTML = "Launching " + sJSON.Title;
+		}
+	  }
+	  
+      function FetchGames (oSelectPlatform) {
+	  	 
+		 oSelectGame.disabled = "disabled";
+		 obtnPlayGame.disabled = "disabled";
+		 
+        if (oSelectPlatform.selectedIndex == 0)  {return;}
+       
+        LoadGameOptions(oSelectPlatform.value);
+      }
+
+		async function UpdateStatus()
+		{      
+			document.getElementById("ddIsBigBoxLocked").innerHTML = "&amp;nbsp;";	
+			document.getElementById("ddIsBigBoxInAttractMode").innerHTML = "&amp;nbsp;";	
+			document.getElementById("ddIsBigBox").innerHTML = "&amp;nbsp;";	
+			document.getElementById("ddIsPremium").innerHTML = "&amp;nbsp;";	
+			document.getElementById("ddBigBoxCurrentTheme").innerHTML = "&amp;nbsp;";	
+				
+		  	let oStateManager = await fetch(sURL + "/statemanager");
+
+			if (oStateManager.ok)
+			{			
+                let sJSON = await oStateManager.json();  
+		  
+				document.getElementById("ddIsBigBoxLocked").innerHTML = (sJSON.IsBigBoxLocked) ? CapitalizeWords(sJSON.IsBigBoxLocked) : "Not Applicable";	
+				document.getElementById("ddIsBigBoxInAttractMode").innerHTML = (sJSON.IsBigBoxInAttractMode) ? CapitalizeWords(sJSON.IsBigBoxInAttractMode) : "Not Applicable";	
+				document.getElementById("ddIsBigBox").innerHTML = (sJSON.IsBigBox) ? CapitalizeWords(sJSON.IsBigBox) : "False";	
+				document.getElementById("ddIsPremium").innerHTML = (sJSON.IsPremium) ? CapitalizeWords(sJSON.IsPremium) : "False";	
+				document.getElementById("ddBigBoxCurrentTheme").innerHTML = (sJSON.BigBoxCurrentTheme) ? sJSON.BigBoxCurrentTheme : "Not Applicable";	
+			}
+			
+			oStateManager = await fetch(sURL + "/statemanager/isingame");
+			if (oStateManager.ok)
+			{			
+                let sText = await oStateManager.text();  
+				
+				document.getElementById("ddIsingame").innerHTML = sText ? CapitalizeWords(sText) : "False";	
+				
+				if (sText == "true")
+				{
+				 oSpanStatus.innerHTML = "";
+				 document.getElementById("ddIsingame").innerHTML = CapitalizeWords(sText);	
+				}
+				else
+				 {
+					 if (oSpanStatus.innerHTML.includes("..."))
+					 {
+						oSpanStatus.innerHTML = "";
+					 }
+					 else if (oSpanStatus.innerHTML.includes("."))
+						 {
+							oSpanStatus.innerHTML += ".";
+						 }
+					 
+					 document.getElementById("ddIsingame").innerHTML = "False";	
+				 }
+		    }
+			
+			oStateManager = await fetch(sURL + "/selectedgame/title");
+			if (oStateManager.ok)
+			{			
+                let sText = await oStateManager.text();  
+				
+				document.getElementById("ddSelectedGame").innerHTML = sText ? CapitalizeWords(sText) : "No Selection";	
+		    }
+			
+			setTimeout(UpdateStatus, 30000);
+		}
+		
+		function msToTime(s) {
+
+		  // Pad to 2 or 3 digits, default is 2
+		  function pad(n, z) {
+			z = z || 2;
+			return ('00' + n).slice(-z);
+		  }
+
+		  var ms = s % 1000;
+		  s = (s - ms) / 1000;
+		  var secs = s % 60;
+		  s = (s - secs) / 60;
+		  var mins = s % 60;
+		  var hrs = (s - mins) / 60;
+
+		  return pad(hrs) + ':' + pad(mins) + ':' + pad(secs) + " h:m:s";
+		}
+		function CapitalizeWords(str) {
+			return String(str).replace(/\b\w/g, l =&gt; l.toUpperCase())
+		}
+		function ViewSource() {
+		
+			popUpObj = window.open(window.location,"ModalPopUp,location=no,statusbar=no,menubar=no","width=500,height=800");
+			popUpObj.focus();	
+		}
+
+	  oSelectGame.disabled = "disabled";
+	  obtnPlayGame.disabled = "disabled";
+      LoadPlatformOptions();
+      setTimeout(UpdateStatus, 1000);
+	  
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</value>
   </data>
 </root>

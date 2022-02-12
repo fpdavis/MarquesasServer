@@ -79,6 +79,50 @@ namespace MarquesasServer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///  &lt;head&gt;
+        ///    &lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=UTF-8&quot;&gt;
+        ///    &lt;title&gt;Marquesas Javascript Examples&lt;/title&gt;
+        ///  &lt;/head&gt;
+        ///    &lt;body&gt;
+        ///  &lt;style&gt;
+        ///* {
+        ///  margin: 10;
+        ///  padding: 5;
+        ///}
+        ///
+        ///dt {
+        ///  display: block;
+        ///  float: left;
+        ///  width: 175px;
+        ///  text-align: right;
+        ///  font-weight: bold;
+        ///}
+        ///
+        ///dt:after {
+        ///  content: &apos;: &apos;;
+        ///}
+        ///
+        ///dd {
+        ///  display: block;
+        ///  margin-left: 190px;
+        ///}
+        ///&lt;/style&gt;
+        ///
+        ///  	
+        ///	&lt;h3&gt;Marquesas Javascript Examples&lt;/h3&gt;
+        ///	
+        ///      &lt;p&gt;
+        ///      &lt;select i [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HTML_Example_Usage {
+            get {
+                return ResourceManager.GetString("HTML_Example_Usage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!doctype html&gt;
         ///&lt;html lang=&quot;en&quot;&gt;
         ///&lt;head&gt;
