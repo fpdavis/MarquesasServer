@@ -184,4 +184,6 @@ Changes (oldest to newest):
    * Added /GetAllPlatforms with partial match search terms on the querystring that are ANDED for Title, Manufacturer, and Developer (?Title=Commodore 64)
    * Added /Platform/Title/EXACT_TITLE/[IncludeGameInfo] for platform support
    * Added the new API calls to the Index page under API Requests->Game & Platform Calls.
-   
+   <br><br>
+    * Added headers for Access-Control-Allow-Origin configurable in the app.config file.
+    * Added Javascript only example page

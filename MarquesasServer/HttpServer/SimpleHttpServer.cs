@@ -514,10 +514,13 @@ namespace SimpleHttp
 		/// </summary>
 		/// <param name="code">(OPTIONAL) The http error code (including explanation entity).  For example: "404 Not Found" where 404 is the error code and "Not Found" is the explanation.</param>
 		/// <param name="description">(OPTIONAL) A description string to send after the headers as the response.  This is typically shown to the remote user in his browser.  If null, the code string is sent here.  If "", no response body is sent by this function, and you may or may not want to write your own.</param>
-		public virtual void writeFailure(string code = "404 Not Found", string description = null)
+		public virtual void writeFailure(string code = "404 Not Found", string description = null, List<KeyValuePair<string, string>> additionalHeaders = null)
 		{
 			responseWritten = true;
 			outputStream.WriteLine("HTTP/1.1 " + code);
+			if (additionalHeaders != null)
+				foreach (KeyValuePair<string, string> header in additionalHeaders)
+					outputStream.WriteLine(header.Key + ": " + header.Value);
 			outputStream.WriteLine("Connection: close");
 			outputStream.WriteLine("");
 			if (description == null)

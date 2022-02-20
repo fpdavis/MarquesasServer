@@ -81,40 +81,19 @@ namespace MarquesasServer.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
         ///&lt;html&gt;
-        ///  &lt;head&gt;
-        ///    &lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=UTF-8&quot;&gt;
-        ///    &lt;title&gt;Marquesas Javascript Examples&lt;/title&gt;
-        ///  &lt;/head&gt;
+        ///    
+        ///    &lt;head&gt;
+        ///        &lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=UTF-8&quot;&gt;
+        ///        &lt;title&gt;
+        ///            Marquesas Javascript Examples
+        ///        &lt;/title&gt;
+        ///    &lt;/head&gt;
+        ///    
         ///    &lt;body&gt;
-        ///  &lt;style&gt;
-        ///* {
-        ///  margin: 10;
-        ///  padding: 5;
-        ///}
-        ///
-        ///dt {
-        ///  display: block;
-        ///  float: left;
-        ///  width: 175px;
-        ///  text-align: right;
-        ///  font-weight: bold;
-        ///}
-        ///
-        ///dt:after {
-        ///  content: &apos;: &apos;;
-        ///}
-        ///
-        ///dd {
-        ///  display: block;
-        ///  margin-left: 190px;
-        ///}
-        ///&lt;/style&gt;
-        ///
-        ///  	
-        ///	&lt;h3&gt;Marquesas Javascript Examples&lt;/h3&gt;
-        ///	
-        ///      &lt;p&gt;
-        ///      &lt;select i [rest of string was truncated]&quot;;.
+        ///        &lt;style&gt;
+        ///            * { margin: 10; padding: 5; } h3 { clear: left; padding: 20px; } dt { display: block;
+        ///            float: left; width: 175px; text-align: right; font-weight: bold; } dt:after { content:
+        ///            &apos;:&apos;; } dd { display: block; } dd:before { content: &apos; &apos;; display:inlin [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HTML_Example_Usage {
             get {

@@ -396,307 +396,489 @@ few seconds to insure that the game being played will be reflected in the browse
   <data name="HTML_Example_Usage" xml:space="preserve">
     <value>&lt;!DOCTYPE html&gt;
 &lt;html&gt;
-  &lt;head&gt;
-    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"&gt;
-    &lt;title&gt;Marquesas Javascript Examples&lt;/title&gt;
-  &lt;/head&gt;
+    
+    &lt;head&gt;
+        &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"&gt;
+        &lt;title&gt;
+            Marquesas Javascript Examples
+        &lt;/title&gt;
+    &lt;/head&gt;
+    
     &lt;body&gt;
-  &lt;style&gt;
-* {
-  margin: 10;
-  padding: 5;
-}
-
-dt {
-  display: block;
-  float: left;
-  width: 175px;
-  text-align: right;
-  font-weight: bold;
-}
-
-dt:after {
-  content: ': ';
-}
-
-dd {
-  display: block;
-  margin-left: 190px;
-}
-&lt;/style&gt;
-
-  	
-	&lt;h3&gt;Marquesas Javascript Examples&lt;/h3&gt;
-	
-      &lt;p&gt;
-      &lt;select id="SelectPlatform" name="SelectPlatform" onchange="FetchGames(this); LoadPlatformInformation(this)"&gt;
-        &lt;option&gt;Select Platform&lt;/option&gt;
-      &lt;/select&gt;
-      &lt;select id="SelectGame" name="SelectGame" onchange="LoadGameInformation(this);" disabled&gt;
-        &lt;option&gt;Select Game&lt;/option&gt;
-      &lt;/select&gt;
-	  &lt;button id="btnPlayGame" onclick="PlayGame()" disabled&gt;Play&lt;/button&gt;
-	  &lt;button id="btnViewSource" onclick="ViewSource()"&gt;View Source&lt;/button&gt;
-    &lt;/p&gt;
-		
-	&lt;span id="spanStatus"&gt;&lt;/span&gt;
-		
-	&lt;h3&gt;Status&lt;/h3&gt;
-	&lt;p&gt;
-	&lt;dt&gt;In Game&lt;/dt&gt;&lt;dd id="ddIsingame"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;Selected Game&lt;/dt&gt;&lt;dd id="ddSelectedGame"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;BigBox&lt;/dt&gt;&lt;dd id="ddIsBigBox"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;Premium&lt;/dt&gt;&lt;dd id="ddIsPremium"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;BigBox Locked&lt;/dt&gt;&lt;dd id="ddIsBigBoxLocked"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;BigBox Current Theme&lt;/dt&gt;&lt;dd id="ddBigBoxCurrentTheme"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;BigBox In AttractMode&lt;/dt&gt;&lt;dd id="ddIsBigBoxInAttractMode"&gt;&amp;nbsp;&lt;/dd&gt;			
-	&lt;/p&gt;
-	
-	&lt;h3&gt;Platform Information&lt;/h3&gt;
-	
-	&lt;p&gt;
-	&lt;dt&gt;Name&lt;/dt&gt;&lt;dd id="ddPlatformName"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;Game Count&lt;/dt&gt;&lt;dd id="ddPlatformGameCount"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;Release Date&lt;/dt&gt;&lt;dd id="ddPlatformReleaseDate"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;Manufacturer&lt;/dt&gt;&lt;dd id="ddPlatformManufacturer"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;Developer&lt;/dt&gt;&lt;dd id="ddPlatformDeveloper"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;/p&gt;
-	
-	&lt;h3&gt;Game Information&lt;/h3&gt;
-	
-	&lt;p&gt;
-	&lt;dt&gt;Title&lt;/dt&gt;&lt;dd id="ddTitle"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;Publisher&lt;/dt&gt;&lt;dd id="ddPublisher"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;Developer&lt;/dt&gt;&lt;dd id="ddDeveloper"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;Release Date&lt;/dt&gt;&lt;dd id="ddReleaseDate"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;Last Played&lt;/dt&gt;&lt;dd id="ddLastPlayedDate"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;Play Count&lt;/dt&gt;&lt;dd id="ddPlayCount"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;dt&gt;Play Time&lt;/dt&gt;&lt;dd id="ddPlayTime"&gt;&amp;nbsp;&lt;/dd&gt;
-	&lt;/p&gt;
-	
-	&lt;p&gt;
-	&lt;dt&gt;Notes&lt;/dt&gt;&lt;dd id="ddNotes"&gt;&amp;nbsp;&lt;/dd&gt;	
-	&lt;/p&gt;
-	
-    &lt;script language="javascript"&gt;
-	  let sURL = "http://127.0.0.1";
-	  let oSelectPlatform = document.getElementById("SelectPlatform");  
-	  let oSelectGame = document.getElementById("SelectGame");    
-	  let obtnPlayGame = document.getElementById("btnPlayGame");
-     let oSpanStatus = document.getElementById("spanStatus"); 	  
-	  let popUpObj;
-	  
-      async function LoadPlatformOptions() {   
-	   oSelectPlatform.options.length = 0;
-	   oSelectPlatform.options[0] = new Option("Select Platform", "");
-	  
-        let oPromiseGetAllPlatforms = await fetch(sURL + "/GetAllPlatforms");
-      
-        if (oPromiseGetAllPlatforms.ok)
-        {
-          let sJSON = await oPromiseGetAllPlatforms.json();
-          sJSON = sJSON.sort(function(a, b){return a.Name &gt; b.Name;});
-
-          for (let i in sJSON) 
-          {       
-             oSelectPlatform.options[oSelectPlatform.options.length] = new Option(sJSON[i].Name, sJSON[i].Name);
-          }   		  
-        }
-      }
-      
-	  async function LoadPlatformInformation(oSelectPlatform) {	  	
-	  	  document.getElementById("ddPlatformName").innerHTML = "&amp;nbsp;";	
-		  document.getElementById("ddPlatformGameCount").innerHTML = "&amp;nbsp;";	
-		  document.getElementById("ddPlatformReleaseDate").innerHTML = "&amp;nbsp;";	
-		  document.getElementById("ddPlatformManufacturer").innerHTML = "&amp;nbsp;";	
-		  document.getElementById("ddPlatformDeveloper").innerHTML = "&amp;nbsp;";	
-		  
-	     if (oSelectPlatform.selectedIndex == 0) { return; }
-		 
-		let oPlatformInformation = await fetch(sURL + "/Platform/Title/" + oSelectPlatform.value);
-		   
-		if (oPlatformInformation.ok)
-        {
-          let sJSON = await oPlatformInformation.json();  
-          
-		  document.getElementById("ddPlatformName").innerHTML = (sJSON.Platform.Name) ? sJSON.Platform.Name : "&amp;nbsp;";	
-		  document.getElementById("ddPlatformGameCount").innerHTML = (sJSON.GameCount) ? sJSON.GameCount : "&amp;nbsp;";	
-		  document.getElementById("ddPlatformReleaseDate").innerHTML = (sJSON.Platform.ReleaseDate) ? (new Date(sJSON.Platform.ReleaseDate)).toDateString() : "&amp;nbsp;";	
-		  document.getElementById("ddPlatformManufacturer").innerHTML = (sJSON.Platform.Manufacturer) ? sJSON.Platform.Manufacturer : "&amp;nbsp;";	
-		  document.getElementById("ddPlatformDeveloper").innerHTML = (sJSON.Platform.Developer) ? sJSON.Platform.Developer : "&amp;nbsp;";	
-		}
-	  }
-	  	  
-      async function LoadGameOptions(sPlatform) { 
-	    oSelectGame.options.length = 0;
-	    oSelectGame.options[0] = new Option("Select Game", "");
-	    oSelectGame.disabled = "disabled";
-	  
-        let oPromiseGetAllGames = await fetch(sURL + "/GetAllGames?Platform=" + sPlatform);
-      
-        if (oPromiseGetAllGames.ok)
-        {
-          let sJSON = await oPromiseGetAllGames.json();          
-          sJSON = sJSON.sort(function(a, b){return a.Title &gt; b.Title;});
-		  
-          for (let i in sJSON) 
-          {       
-             oSelectGame.options[oSelectGame.options.length] = new Option(sJSON[i].Title, sJSON[i].Id);
-          } 
-
-		  oSelectGame.disabled = "";
-        }
-      }
-      
-      async function LoadGameInformation(oSelectGame) {
-	  
-	     obtnPlayGame.disabled = "disabled";
-		 
-		 document.getElementById("ddTitle").innerHTML = "&amp;nbsp;";	
-		 document.getElementById("ddPublisher").innerHTML = "&amp;nbsp;";	
-		 document.getElementById("ddDeveloper").innerHTML = "&amp;nbsp;";	
-		 document.getElementById("ddReleaseDate").innerHTML = "&amp;nbsp;";	
-		 document.getElementById("ddLastPlayedDate").innerHTML = "&amp;nbsp;";
-		 document.getElementById("ddPlayCount").innerHTML = "&amp;nbsp;";	
-		 document.getElementById("ddPlayTime").innerHTML = "&amp;nbsp;";	
-		 document.getElementById("ddNotes").innerHTML = "&amp;nbsp;";	
-		  
-	     if (oSelectGame.selectedIndex == 0) {return;}
-	  
-	  	let oGameInformation = await fetch(sURL + "/Game/Id/" + oSelectGame.value);
-
-		if (oGameInformation.ok)
-        {
-          let sJSON = await oGameInformation.json();  
-          
-		  document.getElementById("ddTitle").innerHTML = (sJSON.Title) ? sJSON.Title : "&amp;nbsp;";	
-		  document.getElementById("ddPublisher").innerHTML = (sJSON.Publisher) ? sJSON.Publisher : "&amp;nbsp;";	
-		  document.getElementById("ddDeveloper").innerHTML = (sJSON.Developer) ? sJSON.Developer : "&amp;nbsp;";	
-		  document.getElementById("ddReleaseDate").innerHTML = (sJSON.ReleaseDate) ? (new Date(sJSON.ReleaseDate)).toDateString()  : "&amp;nbsp;";	
-		  document.getElementById("ddLastPlayedDate").innerHTML = (sJSON.LastPlayedDate) ? (new Date(sJSON.LastPlayedDate)).toDateString() : "Never";	
-		  document.getElementById("ddPlayCount").innerHTML = (sJSON.PlayCount) ? sJSON.PlayCount : "0";	
-		  document.getElementById("ddPlayTime").innerHTML = (sJSON.PlayTime) ? msToTime(sJSON.PlayTime) : "0";	
-		  document.getElementById("ddNotes").innerHTML = sJSON.Notes + "&lt;p&gt;Visit Wikipedia for more information... &lt;a href='" + sJSON.WikipediaUrl + "'/&gt;" + sJSON.WikipediaUrl + "&lt;/a&gt;&lt;/p&gt;";		  
-		  
-		  obtnPlayGame.disabled = "";
-		}
-      }     
-      
-	  async function PlayGame() {
-	   let oSelectGame= document.getElementById("SelectGame"); 
-	   let oPlayGame = await fetch(sURL + "/PlayGame/Id/" + oSelectGame.value);
-	   
-	   	if (oPlayGame.ok)
-        {
-		 let sJSON = await oPlayGame.json(); 
-		 
-		 // Game Info is returned but we don't need it.
-		 oSpanStatus.innerHTML = "Launching " + sJSON.Title;
-		}
-	  }
-	  
-      function FetchGames (oSelectPlatform) {
-	  	 
-		 oSelectGame.disabled = "disabled";
-		 obtnPlayGame.disabled = "disabled";
-		 
-        if (oSelectPlatform.selectedIndex == 0)  {return;}
-       
-        LoadGameOptions(oSelectPlatform.value);
-      }
-
-		async function UpdateStatus()
-		{      
-			document.getElementById("ddIsBigBoxLocked").innerHTML = "&amp;nbsp;";	
-			document.getElementById("ddIsBigBoxInAttractMode").innerHTML = "&amp;nbsp;";	
-			document.getElementById("ddIsBigBox").innerHTML = "&amp;nbsp;";	
-			document.getElementById("ddIsPremium").innerHTML = "&amp;nbsp;";	
-			document.getElementById("ddBigBoxCurrentTheme").innerHTML = "&amp;nbsp;";	
+        &lt;style&gt;
+            * { margin: 10; padding: 5; } h3 { clear: left; padding: 20px; } dt { display: block;
+            float: left; width: 175px; text-align: right; font-weight: bold; } dt:after { content:
+            ':'; } dd { display: block; } dd:before { content: ' '; display:inline-block; width:
+            10px; } .Banner { height: 150px; } .Center { display: block; margin-left: auto; margin-right:
+            auto; text-align: center; } .InformationSection { display:table; margin:0 auto; width:
+            50% } .left { float: left; padding: 0 20px 20px 0; } .Status { color: #8C001A;  font-weight: bold; }
+        &lt;/style&gt;
+        &lt;img id="imgMarquesasLogo" class="Banner Center" src="data:image/gif;base64,R0lGODlh4ACWAKEDAPEeKP/NAv///3O2vCH5BAEKAAMALAAAAADgAJYAAAL+jI+py+0Po5y02oulyLz7D4ZiKJTjiabqmpYmC8fyvLoujef6ztg3DwwKTz7b8IhMRopGpfOJZPqg1CpOOrVqt0RslgsOW7xFsfnsIDPRbLZ63Y6D31K5vUqv3/fJPJYPGOT3F1h4NUhoqFiDmLj4KNJIBkn5ITlZmXlxqabpqcGJ+Tm6EPpGinpgeppKukrX+vkKG5s5m1dLeYubu7jr12v4CxwMODxYvHeMnCy3jNjc9gwdfTbdWC12jZ3NtS3ZrfUNHk41fln+dI6e3rfO3i70zhkvP09fv3Mfmq+zb9qPxj+AAWMMXFWQxUGECVssZNgw0kOIES1NfFXR4kX+ihk3bZzVEcPHWyHHjCRZEtRJkCkhrPzVMs3LXTF7zIRZE8HNYTlV7eSZ8+exoEKHtiy67CjSpCGXPmvq9GnFqNOmUq2a8Oq1rFq39uu67SvYsPHGbgOANq3atWzbun0LN67cuXTdmn1WN6/evXz7wr17zK/gwYQLAwC8y7DixYztIn7VOLJkw49NTb6MmW9lTpk7e467udHn0aTVhh5UOvXo03RUu/bMWs3r2ZhjY6GNe7JtJrl7N95tw7fwxcBLDD9eGDjy5YN3M3/eNzb06XtZU79eNzT27XM3c//+FzH48Y7vkj+/1jz69WjNsn8P9r38rvLnU61f/z5++0iq9+Nf6t9/QgW434AECjjTgf7dpOCCKzUY4IMQOrjRhAR+ZOGFE2V44IYcajjQhwoeJOKI+5TY4IkomrjOihC+4+KL48Q44Yw0yjjNjRZeo+OOy/SY4Y9A+pjYkEEWaSSRqyT54SxMNmnZk1ByJuWUolUp4iVYlnjlllmi5iWXeYS54phkovjGmS7KpmaZt7W5phRwxsjbnHT6YCeNweWpp3F86vlnoIK+VwAAOw=="
+        /&gt;
+        &lt;h3 class="Center"&gt;
+            Marquesas Javascript Examples
+        &lt;/h3&gt;
+        &lt;p class="Center"&gt;
+            &lt;select id="SelectPlatform" name="SelectPlatform" onchange="FetchGames(this); LoadPlatformInformation(this); fadeOut(oSpanGameInformation); obtnPlayGame.disabled='disabled'"&gt;
+                &lt;option&gt;
+                    Select Platform
+                &lt;/option&gt;
+            &lt;/select&gt;
+            &lt;select id="SelectGame" name="SelectGame" onchange="LoadGameInformation(this);"
+            disabled&gt;
+                &lt;option&gt;
+                    Select Game
+                &lt;/option&gt;
+            &lt;/select&gt;
+            &lt;button id="btnPlayGame" onclick="PlayGame()" disabled&gt;
+                Play
+            &lt;/button&gt;
+            &lt;button id="btnViewSource" onclick="ViewSource()"&gt;
+                View Source
+            &lt;/button&gt;
+        &lt;/p&gt;
+        &lt;span id="spanStatus" class="Center Status"&gt;&lt;/span&gt;
+		&lt;span class="InformationSection"&gt;
+            &lt;h3 class="Center"&gt;
+                Status
+            &lt;/h3&gt;
+	        &lt;span id="spanInformationSection"&gt;
+                &lt;dt&gt;
+                    In Game
+                &lt;/dt&gt;
+                &lt;dd id="ddIsingame"&gt;
+                    &amp;nbsp;
+                &lt;/dd&gt;
+                &lt;dt&gt;
+                    Selected Game
+                &lt;/dt&gt;
+                &lt;dd id="ddSelectedGame"&gt;
+                    &amp;nbsp;
+                &lt;/dd&gt;
+                &lt;dt&gt;
+                    BigBox
+                &lt;/dt&gt;
+                &lt;dd id="ddIsBigBox"&gt;
+                    &amp;nbsp;
+                &lt;/dd&gt;
+                &lt;dt&gt;
+                    Premium
+                &lt;/dt&gt;
+                &lt;dd id="ddIsPremium"&gt;
+                    &amp;nbsp;
+                &lt;/dd&gt;
+                &lt;dt&gt;
+                    BigBox Locked
+                &lt;/dt&gt;
+                &lt;dd id="ddIsBigBoxLocked"&gt;
+                    &amp;nbsp;
+                &lt;/dd&gt;
+                &lt;dt&gt;
+                    BigBox Current Theme
+                &lt;/dt&gt;
+                &lt;dd id="ddBigBoxCurrentTheme"&gt;
+                    &amp;nbsp;
+                &lt;/dd&gt;
+                &lt;dt&gt;
+                    BigBox In AttractMode
+                &lt;/dt&gt;
+                &lt;dd id="ddIsBigBoxInAttractMode"&gt;
+                    &amp;nbsp;
+                &lt;/dd&gt;
+            &lt;/span&gt;
+            &lt;span id="spanPlatformInformation" style="visibility: hidden; opacity: 0"&gt;
+                &lt;h3 class="Center"&gt;
+                    Platform Information
+                &lt;/h3&gt;
+                &lt;img id="imgPlatformLogo" class="Banner left" src="" /&gt;
+                &lt;p&gt;
+                    &lt;dt&gt;
+                        Name
+                    &lt;/dt&gt;
+                    &lt;dd id="ddPlatformName"&gt;
+                        &amp;nbsp;
+                    &lt;/dd&gt;
+                    &lt;dt&gt;
+                        Game Count
+                    &lt;/dt&gt;
+                    &lt;dd id="ddPlatformGameCount"&gt;
+                        &amp;nbsp;
+                    &lt;/dd&gt;
+                    &lt;dt&gt;
+                        Release Date
+                    &lt;/dt&gt;
+                    &lt;dd id="ddPlatformReleaseDate"&gt;
+                        &amp;nbsp;
+                    &lt;/dd&gt;
+                    &lt;dt&gt;
+                        Manufacturer
+                    &lt;/dt&gt;
+                    &lt;dd id="ddPlatformManufacturer"&gt;
+                        &amp;nbsp;
+                    &lt;/dd&gt;
+                    &lt;dt&gt;
+                        Developer
+                    &lt;/dt&gt;
+                    &lt;dd id="ddPlatformDeveloper"&gt;
+                        &amp;nbsp;
+                    &lt;/dd&gt;
+                &lt;/p&gt;
+            &lt;/span&gt;
+            &lt;span id="spanGameInformation" style="visibility: hidden; opacity: 0"&gt;
+                &lt;h3 class="Center"&gt;
+                    Game Information
+                &lt;/h3&gt;
+                &lt;img id="imgGameLogo" class="Banner left" src="" /&gt;
+                &lt;p&gt;
+                    &lt;dt&gt;
+                        Title
+                    &lt;/dt&gt;
+                    &lt;dd id="ddTitle"&gt;
+                        &amp;nbsp;
+                    &lt;/dd&gt;
+                    &lt;dt&gt;
+                        Publisher
+                    &lt;/dt&gt;
+                    &lt;dd id="ddPublisher"&gt;
+                        &amp;nbsp;
+                    &lt;/dd&gt;
+                    &lt;dt&gt;
+                        Developer
+                    &lt;/dt&gt;
+                    &lt;dd id="ddDeveloper"&gt;
+                        &amp;nbsp;
+                    &lt;/dd&gt;
+                    &lt;dt&gt;
+                        Release Date
+                    &lt;/dt&gt;
+                    &lt;dd id="ddReleaseDate"&gt;
+                        &amp;nbsp;
+                    &lt;/dd&gt;
+                    &lt;dt&gt;
+                        Last Played
+                    &lt;/dt&gt;
+                    &lt;dd id="ddLastPlayedDate"&gt;
+                        &amp;nbsp;
+                    &lt;/dd&gt;
+                    &lt;dt&gt;
+                        Play Count
+                    &lt;/dt&gt;
+                    &lt;dd id="ddPlayCount"&gt;
+                        &amp;nbsp;
+                    &lt;/dd&gt;
+                    &lt;dt&gt;
+                        Play Time
+                    &lt;/dt&gt;
+                    &lt;dd id="ddPlayTime"&gt;
+                        &amp;nbsp;
+                    &lt;/dd&gt;
+                &lt;/p&gt;
+                &lt;p style="clear:left; top-margin:25px"&gt;
+                    &lt;dt&gt;
+                        Notes
+                    &lt;/dt&gt;
+                    &lt;dd id="ddNotes"&gt;
+                        &amp;nbsp;
+                    &lt;/dd&gt;
+                &lt;/p&gt;
+            &lt;/span&gt;
+        &lt;/span&gt;
+        &lt;script language="javascript"&gt;
+            let sURL = location.protocol + "//" + window.location.hostname; 
+			//  sURL = "http://127.0.0.1"; // For debugging locally from file system or another server
+			let iUpdateStatusInterval = 30000;
 				
-		  	let oStateManager = await fetch(sURL + "/statemanager");
+            let oSelectPlatform = document.getElementById("SelectPlatform");
+            let oSelectGame = document.getElementById("SelectGame");
+            let obtnPlayGame = document.getElementById("btnPlayGame");
+            let oSpanStatus = document.getElementById("spanStatus");
+            let oSpanInformationSection = document.getElementById("spanInformationSection");
+			let oSpanPlatformInformation = document.getElementById("spanPlatformInformation");
+            let oSpanGameInformation = document.getElementById("spanGameInformation");
 
-			if (oStateManager.ok)
-			{			
-                let sJSON = await oStateManager.json();  
-		  
-				document.getElementById("ddIsBigBoxLocked").innerHTML = (sJSON.IsBigBoxLocked) ? CapitalizeWords(sJSON.IsBigBoxLocked) : "Not Applicable";	
-				document.getElementById("ddIsBigBoxInAttractMode").innerHTML = (sJSON.IsBigBoxInAttractMode) ? CapitalizeWords(sJSON.IsBigBoxInAttractMode) : "Not Applicable";	
-				document.getElementById("ddIsBigBox").innerHTML = (sJSON.IsBigBox) ? CapitalizeWords(sJSON.IsBigBox) : "False";	
-				document.getElementById("ddIsPremium").innerHTML = (sJSON.IsPremium) ? CapitalizeWords(sJSON.IsPremium) : "False";	
-				document.getElementById("ddBigBoxCurrentTheme").innerHTML = (sJSON.BigBoxCurrentTheme) ? sJSON.BigBoxCurrentTheme : "Not Applicable";	
+            let oDdPlatformName = document.getElementById("ddPlatformName");
+            let oddPlatformGameCount = document.getElementById("ddPlatformGameCount");
+            let oDdPlatformReleaseDate = document.getElementById("ddPlatformReleaseDate");
+            let oDdPlatformManufacturer = document.getElementById("ddPlatformManufacturer");
+            let oDdPlatformDeveloper = document.getElementById("ddPlatformDeveloper");
+            let oImgPlatformLogo = document.getElementById("imgPlatformLogo");
+            let oimgGameLogo = document.getElementById("imgGameLogo");
+
+            let oDdTitle = document.getElementById("ddTitle");
+            let oDdPublisher = document.getElementById("ddPublisher");
+            let oDdDeveloper = document.getElementById("ddDeveloper");
+            let oDdReleaseDate = document.getElementById("ddReleaseDate");
+            let oDdLastPlayedDate = document.getElementById("ddLastPlayedDate");
+            let oDdPlayCount = document.getElementById("ddPlayCount");
+            let oDdPlayTime = document.getElementById("ddPlayTime");
+            let oDdNotes = document.getElementById("ddNotes");
+
+            let oDdIsBigBoxLocked = document.getElementById("ddIsBigBoxLocked");
+            let oDdIsBigBoxInAttractMode = document.getElementById("ddIsBigBoxInAttractMode");
+            let oDdIsBigBox = document.getElementById("ddIsBigBox");
+            let oDdIsPremium = document.getElementById("ddIsPremium");
+            let oDdBigBoxCurrentTheme = document.getElementById("ddBigBoxCurrentTheme");
+            let oDdIsingame = document.getElementById("ddIsingame");	
+            let oDdSelectedGame = document.getElementById("ddSelectedGame");			
+            let popUpObj;
+
+            async function LoadPlatformOptions() {
+                oSelectPlatform.options.length = 0;
+                oSelectPlatform.options[0] = new Option("Select Platform", "");
+
+                let oPromiseGetAllPlatforms = await fetch(sURL + "/GetAllPlatforms");
+
+                if (oPromiseGetAllPlatforms.ok) {
+                    let sJSON = await oPromiseGetAllPlatforms.json();
+                    sJSON = sJSON.sort(function(a, b) {
+                        return a.Name &gt; b.Name;
+                    });
+
+                    for (let i in sJSON) {
+                        oSelectPlatform.options[oSelectPlatform.options.length] = new Option(sJSON[i].Name, sJSON[i].Name);
+                    }
+                }
+            }
+
+            async function LoadPlatformInformation(oSelectPlatform) {
+
+                if (oSelectPlatform.selectedIndex == 0) {
+                    fadeOut(oSpanPlatformInformation);
+                    return;
+                }
+
+                let oPlatformInformation = await fetch(sURL + "/Platform/Title/" + oSelectPlatform.value);
+
+                if (oPlatformInformation.ok) {
+                    oImgPlatformLogo.src = sURL + "/Platform/Title/" + oSelectPlatform.value + "?binary=BannerImage";
+
+                    let sJSON = await oPlatformInformation.json();
+
+                    oDdPlatformName.innerHTML = (sJSON.Platform.Name) ? sJSON.Platform.Name : "&amp;nbsp;";
+                    oddPlatformGameCount.innerHTML = (sJSON.GameCount) ? sJSON.GameCount : "&amp;nbsp;";
+                    oDdPlatformReleaseDate.innerHTML = (sJSON.Platform.ReleaseDate) ? (new Date(sJSON.Platform.ReleaseDate)).toDateString() : "&amp;nbsp;";
+                    oDdPlatformManufacturer.innerHTML = (sJSON.Platform.Manufacturer) ? sJSON.Platform.Manufacturer : "&amp;nbsp;";
+                    oDdPlatformDeveloper.innerHTML = (sJSON.Platform.Developer) ? sJSON.Platform.Developer : "&amp;nbsp;";
+
+					fadeIn(oSpanPlatformInformation);
+                } else {
+                    fadeOut(oSpanPlatformInformation);
+                }
+            }
+
+            async function LoadGameOptions(sPlatform) {
+                oSelectGame.options.length = 0;
+                oSelectGame.options[0] = new Option("Select Game", "");
+                oSelectGame.disabled = "disabled";
+
+                let oPromiseGetAllGames = await fetch(sURL + "/GetAllGames?Platform=" + sPlatform);
+
+                if (oPromiseGetAllGames.ok) {
+                    let sJSON = await oPromiseGetAllGames.json();
+                    sJSON = sJSON.sort(function(a, b) {
+                        return a.Title &gt; b.Title;
+                    });
+
+                    for (let i in sJSON) {
+                        oSelectGame.options[oSelectGame.options.length] = new Option(sJSON[i].Title, sJSON[i].Id);
+                    }
+
+                    oSelectGame.disabled = "";
+                }
+            }
+
+            async function LoadGameInformation(oSelectGame) {
+
+                if (oSelectGame.selectedIndex == 0) {
+                    fadeOut(oSpanGameInformation);				
+                    obtnPlayGame.disabled = "disabled";
+                    return;
+                }
+
+                let oGameInformation = await fetch(sURL + "/Game/Id/" + oSelectGame.value);
+
+                if (oGameInformation.ok) {
+                    oimgGameLogo.src = sURL + "/Game/Id/" + oSelectGame.value + "?binary=FrontImage";
+
+                    let sJSON = await oGameInformation.json();
+
+                    oDdTitle.innerHTML = (sJSON.Title) ? sJSON.Title : "&amp;nbsp;";
+                    oDdPublisher.innerHTML = (sJSON.Publisher) ? sJSON.Publisher : "&amp;nbsp;";
+                    oDdDeveloper.innerHTML = (sJSON.Developer) ? sJSON.Developer : "&amp;nbsp;";
+                    oDdReleaseDate.innerHTML = (sJSON.ReleaseDate) ? (new Date(sJSON.ReleaseDate)).toDateString() : "&amp;nbsp;";
+                    oDdLastPlayedDate.innerHTML = (sJSON.LastPlayedDate) ? (new Date(sJSON.LastPlayedDate)).toDateString() : "Never";
+                    oDdPlayCount.innerHTML = (sJSON.PlayCount) ? sJSON.PlayCount : "0";
+                    oDdPlayTime.innerHTML = (sJSON.PlayTime) ? msToTime(sJSON.PlayTime) : "0";
+                    oDdNotes.innerHTML = sJSON.Notes
+
+                    if (sJSON.WikipediaUrl.length &gt; 0) {
+                        oDdNotes.innerHTML += "&lt;p&gt;Visit Wikipedia for more information... &lt;a href='" + sJSON.WikipediaUrl + "'/&gt;" + sJSON.WikipediaUrl + "&lt;/a&gt;&lt;/p&gt;";
+                    }
+
+                    if (oDdIsingame.innerHTML == "False") {
+                       obtnPlayGame.disabled = "";
+					}
+
+					fadeIn(oSpanGameInformation);
+                } else {
+                    fadeOut(oSpanGameInformation);				
+                    obtnPlayGame.disabled = "disabled";
+                }
+            }
+			
+            async function PlayGame() {
+                let oSelectGame = document.getElementById("SelectGame");
+                let oPlayGame = await fetch(sURL + "/PlayGame/Id/" + oSelectGame.value);
+
+                if (oPlayGame.ok) {
+                    let sJSON = await oPlayGame.json();
+
+                    // Game Info is returned but we don't need it.
+                    oSpanStatus.innerHTML = "Launching " + sJSON.Title;
+                }
+            }
+
+            function FetchGames(oSelectPlatform) {
+
+                oSelectGame.disabled = "disabled";
+                obtnPlayGame.disabled = "disabled";
+
+                if (oSelectPlatform.selectedIndex == 0) {
+                    return;
+                }
+
+                LoadGameOptions(oSelectPlatform.value);
+            }
+
+            async function UpdateStatus() {
+
+                let oStateManager = await fetch(sURL + "/statemanager");
+
+                if (oStateManager.ok) {
+                    let sJSON = await oStateManager.json();
+
+                    oDdIsBigBoxLocked.innerHTML = (sJSON.IsBigBoxLocked) ? CapitalizeWords(sJSON.IsBigBoxLocked) : "Not Applicable";
+                    oDdIsBigBoxInAttractMode.innerHTML = (sJSON.IsBigBoxInAttractMode) ? CapitalizeWords(sJSON.IsBigBoxInAttractMode) : "Not Applicable";
+                    oDdIsBigBox.innerHTML = (sJSON.IsBigBox) ? CapitalizeWords(sJSON.IsBigBox) : "False";
+                    oDdIsPremium.innerHTML = (sJSON.IsPremium) ? CapitalizeWords(sJSON.IsPremium) : "False";
+                    oDdBigBoxCurrentTheme.innerHTML = (sJSON.BigBoxCurrentTheme) ? sJSON.BigBoxCurrentTheme : "Not Applicable";
+                }
+				else {
+				   oDdIsBigBoxLocked.innerHTML = "&amp;nbsp;";
+                   oDdIsBigBoxInAttractMode.innerHTML = "&amp;nbsp;";
+                   oDdIsBigBox.innerHTML = "&amp;nbsp;";
+                   oDdIsPremium.innerHTML = "&amp;nbsp;";
+                   oDdBigBoxCurrentTheme.innerHTML = "&amp;nbsp;";
+				}
+
+                oStateManager = await fetch(sURL + "/statemanager/isingame");
+                if (oStateManager.ok) {
+                    let sText = await oStateManager.text();
+
+                    oDdIsingame.innerHTML = sText ? CapitalizeWords(sText) : "False";
+
+                    if (sText == "true") {
+                        oSpanStatus.innerHTML = "";
+                        oDdIsingame.innerHTML = CapitalizeWords(sText);
+						obtnPlayGame.disabled = "disabled";
+                    } else {
+                        if (oSpanStatus.innerHTML.includes("...")) {
+                            oSpanStatus.innerHTML = "";
+                        } else if (oSpanStatus.innerHTML.includes(".")) {
+                            oSpanStatus.innerHTML += ".";
+                        }
+
+                        document.getElementById("ddIsingame").innerHTML = "False";
+                    }
+                }
+				else {
+				 oDdIsingame.innerHTML = "Unknown";
+				 oSpanStatus.innerHTML = "";
+				}
+
+                oStateManager = await fetch(sURL + "/selectedgame/title");
+                if (oStateManager.ok) {
+                    let sText = await oStateManager.text();
+
+                    oDdSelectedGame.innerHTML = sText ? CapitalizeWords(sText) : "No Selection";
+                }
+                else {
+                    oDdSelectedGame.innerHTML = "Unknown";
+                }
+				
+                fadeIn(oSpanInformationSection);
+
+                setTimeout(function() { fadeOut(oSpanInformationSection); }, iUpdateStatusInterval - 450);
+			    setTimeout(UpdateStatus, iUpdateStatusInterval);
+            }
+
+            // Javascript UI and Helper functions
+
+            function msToTime(s) {
+
+                // Pad to 2 or 3 digits, default is 2
+
+                function pad(n, z) {
+                    z = z || 2;
+                    return ('00' + n).slice(-z);
+                }
+
+                var ms = s % 1000;
+                s = (s - ms) / 1000;
+                var secs = s % 60;
+                s = (s - secs) / 60;
+                var mins = s % 60;
+                var hrs = (s - mins) / 60;
+
+                return pad(hrs) + ':' + pad(mins) + ':' + pad(secs) + " h:m:s";
+            }
+
+            function CapitalizeWords(str) {
+                return String(str).replace(/\b\w/g, l =&gt; l.toUpperCase())
+            }
+       
+			function fadeIn(oSpan) {
+			    oSpan.style.visibility = "visible";
+				clearInterval(oSpan.FadeInIntervalID);	
+				clearInterval(oSpan.FadeOutIntervalID);	
+				oSpan.FadeInIntervalID = setInterval(function() { Show(oSpan); }, 50);
+			}	  
+			function Show(oSpan) {
+				let iOpacity = Number(window.getComputedStyle(oSpan).getPropertyValue("opacity"));
+				if ( iOpacity &lt; 1) {
+					oSpan.style.opacity = iOpacity + 0.1;				
+				} else {
+					clearInterval(oSpan.FadeInIntervalID);				
+				}
 			}
 			
-			oStateManager = await fetch(sURL + "/statemanager/isingame");
-			if (oStateManager.ok)
-			{			
-                let sText = await oStateManager.text();  
-				
-				document.getElementById("ddIsingame").innerHTML = sText ? CapitalizeWords(sText) : "False";	
-				
-				if (sText == "true")
-				{
-				 oSpanStatus.innerHTML = "";
-				 document.getElementById("ddIsingame").innerHTML = CapitalizeWords(sText);	
+			function fadeOut(oSpan) {
+			    clearInterval(oSpan.FadeInIntervalID);	
+			    clearInterval(oSpan.FadeOutIntervalID);	
+				oSpan.FadeOutIntervalID = setInterval(function() { Hide(oSpan); }, 50);
+			}	  
+			function Hide(oSpan) {
+				let iOpacity = Number(window.getComputedStyle(oSpan).getPropertyValue("opacity"));
+				if ( iOpacity &gt; 0) {
+					oSpan.style.opacity = iOpacity - 0.1;				
+				} else {
+				    oSpan.style.visibility = "hidden";
+					clearInterval(oSpan.FadeOutIntervalID);				
 				}
-				else
-				 {
-					 if (oSpanStatus.innerHTML.includes("..."))
-					 {
-						oSpanStatus.innerHTML = "";
-					 }
-					 else if (oSpanStatus.innerHTML.includes("."))
-						 {
-							oSpanStatus.innerHTML += ".";
-						 }
-					 
-					 document.getElementById("ddIsingame").innerHTML = "False";	
-				 }
-		    }
+			}
 			
-			oStateManager = await fetch(sURL + "/selectedgame/title");
-			if (oStateManager.ok)
-			{			
-                let sText = await oStateManager.text();  
-				
-				document.getElementById("ddSelectedGame").innerHTML = sText ? CapitalizeWords(sText) : "No Selection";	
-		    }
-			
-			setTimeout(UpdateStatus, 30000);
-		}
-		
-		function msToTime(s) {
+            function ViewSource() {
+                window.open(window.location + "?src=true", "ModalPopUp,location=no,statusbar=no,menubar=no", "width=500,height=800");
+            }
 
-		  // Pad to 2 or 3 digits, default is 2
-		  function pad(n, z) {
-			z = z || 2;
-			return ('00' + n).slice(-z);
-		  }
+            oSelectGame.disabled = "disabled";
+            obtnPlayGame.disabled = "disabled";
+            LoadPlatformOptions();
+            
+			setTimeout(UpdateStatus, 1000);
+        &lt;/script&gt;
+    &lt;/body&gt;
 
-		  var ms = s % 1000;
-		  s = (s - ms) / 1000;
-		  var secs = s % 60;
-		  s = (s - secs) / 60;
-		  var mins = s % 60;
-		  var hrs = (s - mins) / 60;
-
-		  return pad(hrs) + ':' + pad(mins) + ':' + pad(secs) + " h:m:s";
-		}
-		function CapitalizeWords(str) {
-			return String(str).replace(/\b\w/g, l =&gt; l.toUpperCase())
-		}
-		function ViewSource() {
-		
-			popUpObj = window.open(window.location,"ModalPopUp,location=no,statusbar=no,menubar=no","width=500,height=800");
-			popUpObj.focus();	
-		}
-
-	  oSelectGame.disabled = "disabled";
-	  obtnPlayGame.disabled = "disabled";
-      LoadPlatformOptions();
-      setTimeout(UpdateStatus, 1000);
-	  
-    &lt;/script&gt;
-  &lt;/body&gt;
 &lt;/html&gt;</value>
   </data>
 </root>

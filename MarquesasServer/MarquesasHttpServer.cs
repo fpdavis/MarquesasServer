@@ -127,7 +127,6 @@ namespace MarquesasServer
                 }
             }
         }
-
         public override void handlePOSTRequest(HttpProcessor p, StreamReader inputData)
         {
             handleGETRequest(p);
@@ -429,7 +428,14 @@ namespace MarquesasServer
             oAdditionalHeaders.Add(new KeyValuePair<string, string>("Etag",
                         oHttpProcessor.request_url + gsEtagSeperator + ComputeHash(sbHTMLPage.ToString())));
 
-            oHttpProcessor.writeSuccess("text/html", sbHTMLPage.ToString().Length, "200 OK", oAdditionalHeaders);
+            if (oHttpProcessor.GetQSParam("src").ToLower() == "true")
+            {
+                oHttpProcessor.writeSuccess("text/plain", sbHTMLPage.ToString().Length, "200 OK", oAdditionalHeaders);
+            }
+            else
+            {
+                oHttpProcessor.writeSuccess("text/html", sbHTMLPage.ToString().Length, "200 OK", oAdditionalHeaders);
+            }
 
             oHttpProcessor.outputStream.Write(sbHTMLPage);
         }
@@ -561,7 +567,7 @@ namespace MarquesasServer
         {
             if (PlayGame && MarquesasHttpServerInstance.IsInGame)
             {
-                oHttpProcessor.writeFailure("503 Service Unavailable", "A game is currently being played. Try again once the game has been closed.");
+                oHttpProcessor.writeFailure("503 Service Unavailable", "A game is currently being played. Try again once the game has been closed.", AdditionalHeaders());
                 return;
             }
 
@@ -607,15 +613,44 @@ namespace MarquesasServer
                     oGame.Play();
                 }
 
-                string sJSONResponse = JsonSerializer.Serialize(oGame);
-                WriteJSON(oHttpProcessor, sJSONResponse);
+                if (string.IsNullOrWhiteSpace(oHttpProcessor.GetQSParam("binary")))
+                {
+                    string sJSONResponse = JsonSerializer.Serialize(oGame);
+                    WriteJSON(oHttpProcessor, sJSONResponse);
+                }
+                else
+                {
+                    GameBinary(oHttpProcessor, oGame, oHttpProcessor.GetQSParam("binary"));
+                }
             }
             else
             {
                 oHttpProcessor.writeFailure("404 Not Found", "No game match could be found. Valid lookups include Title, PublisherAndTitle, Id, and LaunchBoxDbId. Examples: /[Play]Game/Title/EXACT_TITLE, /[Play]Game/PublisherAndTitle/EXACT_PUBLISHERNAME/EXACT_TITLE, /[Play]Game/LaunchBoxDbId/123456");
             }
         }
+        private void GameBinary(HttpProcessor oHttpProcessor, IGame oGame, string sType)
+        {
+            sType = sType.ToLower();
 
+            string sBinaryPath = GetGameBinaryPath(oGame, sType);
+
+            if (string.IsNullOrWhiteSpace(sBinaryPath))
+            {
+                var oPlatform = PluginHelper.DataManager.GetAllPlatforms().FirstOrDefault(x => x.SortTitleOrTitle.ToLower() == oGame.Platform.ToLower());
+
+                sBinaryPath = GetPlatformBinaryPath(oPlatform, sType);
+            }
+
+            if (!File.Exists(sBinaryPath))
+            {
+                sBinaryPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\" + sBinaryPath;
+            }
+
+            if (File.Exists(sBinaryPath))
+            {
+                WriteBinary(oHttpProcessor, sBinaryPath, File.ReadAllBytes(sBinaryPath));
+            }
+        }
         private void GetAllGames(HttpProcessor oHttpProcessor)
         {
             string sJSONResponse = string.Empty;
@@ -667,7 +702,6 @@ namespace MarquesasServer
 
             WriteJSON(oHttpProcessor, sJSONResponse);
         }
-
         private void Platform(HttpProcessor oHttpProcessor)
         {
             if (oHttpProcessor.pathParts.Length < 3 || oHttpProcessor.pathParts[1].ToLower() != "title")
@@ -680,6 +714,12 @@ namespace MarquesasServer
 
             if (oPlatform != null)
             {
+                if (!string.IsNullOrWhiteSpace(oHttpProcessor.GetQSParam("binary")))
+                {
+                    PlatformBinary(oHttpProcessor, oPlatform, oHttpProcessor.GetQSParam("binary"));
+                    return;
+                }
+
                 PlatformInfo oPlatformInfo = new PlatformInfo();
                                 
                 oPlatformInfo.Platform = oPlatform;
@@ -715,6 +755,22 @@ namespace MarquesasServer
             else
             {
                 oHttpProcessor.writeFailure("404 Not Found", "No platform match could be found. Valid lookup by Title only. Examples: /Platform/Title/EXACT_TITLE/[IncludeGameInfo]");
+            }
+        }
+        private void PlatformBinary(HttpProcessor oHttpProcessor, IPlatform oPlatform, string sType)
+        {
+            sType = sType.ToLower();
+
+            var sBinaryPath = GetPlatformBinaryPath(oPlatform, sType);
+
+            if (!File.Exists(sBinaryPath))
+            {
+                sBinaryPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\" + sBinaryPath;
+            }
+
+            if (File.Exists(sBinaryPath))
+            {
+                WriteBinary(oHttpProcessor, sBinaryPath, File.ReadAllBytes(sBinaryPath));
             }
         }
 
@@ -800,7 +856,6 @@ namespace MarquesasServer
             if (DoCacheResponseIfWarranted(oHttpProcessor)) return;
 
             LoadBinary(oHttpProcessor);
-            WriteBinary(oHttpProcessor);
         }
 
         private void LoadBinary(HttpProcessor oHttpProcessor)
@@ -821,58 +876,14 @@ namespace MarquesasServer
 
                 if (PluginHelper.StateManager.GetAllSelectedGames()?.Length == 1)
                 {
-                    PropertyInfo[] oProperties = typeof(IGame).GetProperties();
-
-                    // A linq statement would look totally sexy here
-                    foreach (PropertyInfo oProperty in oProperties)
-                    {
-                        if (oProperty.Name.ToLower() == sType + "path" || oProperty.Name.ToLower() == sType + "imagepath")
-                        {
-                            sBinaryPath = oProperty.GetValue(PluginHelper.StateManager.GetAllSelectedGames()[0])
-                                ?.ToString();
-                            break;
-                        }
-                    }
-
-                    if (string.IsNullOrWhiteSpace(sBinaryPath))
-                    {
-                        MethodInfo[] oGameMethods = typeof(IGame).GetMethods();
-                        foreach (MethodInfo oMethod in oGameMethods)
-                        {
-                            if (oMethod.Name.ToLower() == "get" + sType + "path")
-                            {
-                                if (oMethod.GetParameters().Length == 0)
-                                {
-                                    sBinaryPath = oMethod.Invoke(PluginHelper.StateManager.GetAllSelectedGames()[0], new object[] { })
-                                        ?.ToString();
-                                }
-                                else
-                                {
-                                    sBinaryPath = oMethod.Invoke(PluginHelper.StateManager.GetAllSelectedGames()[0], new object[] { false })
-                                        ?.ToString();
-                                }
-                                break;
-                            }
-                        }
-                    }
+                    sBinaryPath = GetGameBinaryPath(PluginHelper.StateManager.GetAllSelectedGames()[0], sType);
                 }
                 else
                 {
                     // Get an image for the platform
-                    IPlatform oSelectedPlatform = PluginHelper.StateManager.GetSelectedPlatform();
+                    IPlatform oPlatform = PluginHelper.StateManager.GetSelectedPlatform();
 
-                    PropertyInfo[] oProperties = typeof(IPlatform).GetProperties();
-                    sBinaryPath = oSelectedPlatform.BannerImagePath;
-
-                    // A linq statement would look totally sexy here
-                    foreach (PropertyInfo oProperty in oProperties)
-                    {
-                        if (oProperty.Name.ToLower() == sType + "path" || oProperty.Name.ToLower() == sType + "imagepath")
-                        {
-                            sBinaryPath = oProperty.GetValue(oProperties)?.ToString();
-                            break;
-                        }
-                    }
+                    sBinaryPath = GetPlatformBinaryPath(oPlatform, sType);
                 }
 
                 if (!string.IsNullOrWhiteSpace(sBinaryPath)
@@ -899,7 +910,71 @@ namespace MarquesasServer
                     htCachedBinaryPaths[sType] = "";
                     htCachedBinaries[sType] = "";
                 }
+
+                WriteBinary(oHttpProcessor, htCachedBinaryPaths[sType].ToString(), (byte[])htCachedBinaries[sType]);
             }
+        }
+
+        private static string GetPlatformBinaryPath(IPlatform oPlatform, string sType)
+        {
+            if (oPlatform == null) { return null; }
+
+            string sBinaryPath;
+            PropertyInfo[] oProperties = typeof(IPlatform).GetProperties();
+            sBinaryPath = oPlatform.BannerImagePath;
+
+            // A linq statement would look totally sexy here
+            foreach (PropertyInfo oProperty in oProperties)
+            {
+                if (oProperty.Name.ToLower() == sType + "path" || oProperty.Name.ToLower() == sType + "imagepath")
+                {
+                    sBinaryPath = oProperty.GetValue(oPlatform)?.ToString();
+                    break;
+                }
+            }
+
+            return sBinaryPath;
+        }
+
+        private static string GetGameBinaryPath(IGame oGame, string sType)
+        {
+            if (oGame == null) { return null; }
+
+            string sBinaryPath = null;
+
+            PropertyInfo[] oProperties = typeof(IGame).GetProperties();
+
+            // A linq statement would look totally sexy here
+            foreach (PropertyInfo oProperty in oProperties)
+            {
+                if (oProperty.Name.ToLower() == sType + "path" || oProperty.Name.ToLower() == sType + "imagepath")
+                {
+                    sBinaryPath = oProperty.GetValue(oGame)?.ToString();
+                    break;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(sBinaryPath))
+            {
+                MethodInfo[] oGameMethods = typeof(IGame).GetMethods();
+                foreach (MethodInfo oMethod in oGameMethods)
+                {
+                    if (oMethod.Name.ToLower() == "get" + sType + "path")
+                    {
+                        if (oMethod.GetParameters().Length == 0)
+                        {
+                            sBinaryPath = oMethod.Invoke(oGame, new object[] { })?.ToString();
+                        }
+                        else
+                        {
+                            sBinaryPath = oMethod.Invoke(oGame, new object[] { false })?.ToString();
+                        }
+                        break;
+                    }
+                }
+            }
+
+            return sBinaryPath;
         }
 
         private static void SelectedGameMethods(HttpProcessor oHttpProcessor)
@@ -956,30 +1031,25 @@ namespace MarquesasServer
             WriteJSON(oHttpProcessor, sJSONResponse);
         }
 
-        private static void WriteBinary(HttpProcessor oHttpProcessor)
+        private static void WriteBinary(HttpProcessor oHttpProcessor, string sBinaryPath, byte[] oBinary)
         {
-            if (!string.IsNullOrWhiteSpace(htCachedBinaries[oHttpProcessor.pathParts[1]].ToString()))
+            if (oBinary != null)
             {
                 var oAdditionalHeaders = AdditionalHeaders();
 
-                oAdditionalHeaders.Add(new KeyValuePair<string, string>("Etag",
-                            oHttpProcessor.request_url + gsEtagSeperator + PluginHelper.StateManager.GetAllSelectedGames()[0].Id));
-                oAdditionalHeaders.Add(new KeyValuePair<string, string>("Content-disposition", "inline; filename=\"" +
-                            Path.GetFileName(PluginHelper.StateManager.GetAllSelectedGames()[0].GetManualPath()) + "\""));
+                oAdditionalHeaders.Add(new KeyValuePair<string, string>("Etag", oHttpProcessor.request_url + gsEtagSeperator + sBinaryPath));
+                oAdditionalHeaders.Add(new KeyValuePair<string, string>("Content-disposition", "inline; filename=\"" + Path.GetFileName(sBinaryPath) + "\""));
                 oAdditionalHeaders.Add(new KeyValuePair<string, string>("Content-Transfer-Encoding", "binary"));
                 oAdditionalHeaders.Add(new KeyValuePair<string, string>("Accept-Ranges", "none"));
 
-                string sExtension = Path.GetExtension(htCachedBinaryPaths[oHttpProcessor.pathParts[1]].ToString());
+                string sExtension = Path.GetExtension(sBinaryPath);
                 if (sExtension.Length > 1)
                 {
                     sExtension = sExtension.Substring(1);
                 }
 
-                oHttpProcessor.writeSuccess("application/" + sExtension,
-                    ((byte[])htCachedBinaries[oHttpProcessor.pathParts[1]]).Length, "200 OK", oAdditionalHeaders);
-
-                oHttpProcessor.rawOutputStream.Write((byte[])htCachedBinaries[oHttpProcessor.pathParts[1]], 0,
-                    ((byte[])htCachedBinaries[oHttpProcessor.pathParts[1]]).Length);
+                oHttpProcessor.writeSuccess("application/" + sExtension, oBinary.Length, "200 OK", oAdditionalHeaders);
+                oHttpProcessor.rawOutputStream.Write(oBinary, 0, oBinary.Length);
             }
             else
             {
